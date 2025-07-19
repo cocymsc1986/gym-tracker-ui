@@ -1,5 +1,4 @@
 import axios from "axios";
-import { data, redirect } from "react-router";
 import type { Route } from "../../+types/root";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -19,20 +18,22 @@ export async function clientAction({ request }: Route.ActionArgs) {
     });
 
     const tokenData = {
-      token: response.data.token,
-      refreshToken: response.data.refreshToken,
-      expiresAt: response.data.expiresAt
-        ? Date.now() + response.data.expiresAt * 1000
+      token: response.data.access_token,
+      refreshToken: response.data.refresh_token,
+      expiresAt: response.data.expires_in
+        ? Date.now() + response.data.expires_in * 1000
         : undefined,
     };
 
-    console.log("Token data:", tokenData);
-
-    // setTokenData(tokenData);
-
-    return redirect("/");
+    return {
+      status: 200,
+      tokenData,
+    };
   } catch (error) {
     console.error("Login failed:", error);
-    throw data("Login failed", { status: 400 });
+    return {
+      status: 400,
+      error: "Login failed. Please check your credentials.",
+    };
   }
 }

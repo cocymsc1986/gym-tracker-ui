@@ -8,6 +8,8 @@ import {
 } from "react-router";
 
 import type { Route } from "./+types/root";
+import { AuthProvider } from "./lib/auth-context";
+import { Header } from "./components/Header";
 import "./app.css";
 import "./index.css";
 
@@ -34,7 +36,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
+        <AuthProvider>
+          <Header />
+          {children}
+        </AuthProvider>
         <ScrollRestoration />
         <Scripts />
       </body>

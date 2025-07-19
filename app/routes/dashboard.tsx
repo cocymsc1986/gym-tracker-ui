@@ -1,5 +1,6 @@
 import type { Route } from "./+types/dashboard";
 import { Dashboard } from "@/pages/Dashboard";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 export async function clientLoader(_args: Route.LoaderArgs) {
   return {
@@ -17,10 +18,4 @@ export default function Component({ loaderData }: Route.ComponentProps) {
       <Dashboard workouts={loaderData.workouts} />
     </ProtectedRoute>
   );
-}
-
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  // auth check logic
-
-  return <>{children}</>;
 }
