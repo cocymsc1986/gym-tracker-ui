@@ -21,6 +21,8 @@
     "@react-router/node": "^7.6.2",
     "@react-router/serve": "^7.6.2",
     "@tailwindcss/vite": "^4.1.8",
+    "amazon-cognito-identity-js": "^6.3.15",
+    "aws-jwt-verify": "^5.1.0",
     "axios": "^1.10.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
