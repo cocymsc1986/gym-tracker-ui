@@ -7,9 +7,9 @@ import {
   useRef,
   type ReactNode,
 } from "react";
-import { validateJWT, type JWTPayload } from "./jwt-validation";
+import { validateJWT, type JWTPayload } from "./jwtValidation";
 
-interface TokenData {
+export interface TokenData {
   token: string;
   refreshToken: string;
   expiresAt?: number;
@@ -26,7 +26,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const TOKEN_STORAGE_KEY = "gym-tracker-tokens";
+export const TOKEN_STORAGE_KEY = "gym-tracker-tokens";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [tokens, setTokensState] = useState<TokenData | null>(null);

@@ -1,18 +1,15 @@
-import axios from "axios";
+import { apiClient } from "@/lib/apiClient";
 import type { Route } from "../../+types/root";
 
-const API_URL = import.meta.env.VITE_API_URL;
-
 export async function clientAction({ request }: Route.ActionArgs) {
-  const URL = `${API_URL}/auth/signin`;
-  console.info(`<POST> - ${URL}`);
+  const path = "/auth/signin";
 
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
 
   try {
-    const response = await axios.post(URL, {
+    const response = await apiClient.post(path, {
       email,
       password,
     });

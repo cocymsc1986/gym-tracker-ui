@@ -8,7 +8,7 @@ import {
 } from "react-router";
 
 import type { Route } from "./+types/root";
-import { AuthProvider } from "./lib/auth-context";
+import { AuthProvider } from "./lib/authContext";
 import { Header } from "./components/Header";
 import "./app.css";
 import "./index.css";

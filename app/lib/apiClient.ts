@@ -24,6 +24,8 @@ export function getStoredToken(): string | null {
 // Set up request interceptor to automatically add token
 apiClient.interceptors.request.use(
   (config) => {
+    // Log the request URL for debugging
+    console.info(`<${config.method?.toUpperCase()}> - ${config.url}`);
     // If no auth header is set, try to get token from storage
     if (!config.headers.Authorization) {
       const token = getStoredToken();
@@ -46,13 +48,13 @@ apiClient.interceptors.response.use(
       // Token is invalid, clear storage and redirect to login
       console.log("Received 401, clearing tokens and redirecting to login");
       localStorage.removeItem("gym-tracker-tokens");
-      
+
       // Only redirect if we're not already on the login page
       if (window.location.pathname !== "/login") {
         window.location.href = "/login";
       }
     }
-    
+
     return Promise.reject(error);
   }
 );
