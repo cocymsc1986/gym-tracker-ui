@@ -1,24 +1,26 @@
 import { apiClient } from "@/lib/apiClient";
-import type { Route } from "./+types/register";
+import { type Route } from "../../+types/root";
+import { getUserId } from "@/lib/getUserId";
 
 export async function clientAction({ request }: Route.ActionArgs) {
-  const path = "/auth/signup";
+  const userId = await getUserId();
+  const path = `/workouts/${userId}`;
 
   const formData = await request.formData();
-  const username = formData.get("username") as string;
-  const password = formData.get("password") as string;
+  const name = formData.get("workout-name") as string;
+  const date = formData.get("workout-date") as string;
 
-  if (!username || !password) {
+  if (!name || !date) {
     return {
       status: 400,
-      error: "Username and password are required",
+      error: "Name and date are required",
     };
   }
 
   try {
     const response = await apiClient.post(
       path,
-      { email: username, password },
+      { name, date },
       {
         method: "POST",
         headers: {
@@ -30,7 +32,7 @@ export async function clientAction({ request }: Route.ActionArgs) {
     if (response.status !== 201) {
       return {
         status: response.status,
-        error: "Registration failed",
+        error: "Create workout failed",
       };
     }
 
@@ -41,7 +43,7 @@ export async function clientAction({ request }: Route.ActionArgs) {
       data,
     };
   } catch (error) {
-    console.error("Registration error:", error);
+    console.error("Create workout error:", error);
     return {
       status: 500,
       error: "Failed to connect to server",

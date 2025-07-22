@@ -4,8 +4,11 @@ export default [
   index("./routes/dashboard.tsx"),
   route("login", "./routes/login.tsx"),
   route("register", "./routes/register.tsx"),
+  route("workout", "./routes/add-workout.tsx"),
+  route("workout/:id", "./routes/workout.tsx"),
 
   // api routes
   route("api/login", "./api/actions/login.ts"),
   route("api/register", "./api/actions/register.ts"),
+  route("api/workout", "./api/actions/workout.ts"),
 ] satisfies RouteConfig;
