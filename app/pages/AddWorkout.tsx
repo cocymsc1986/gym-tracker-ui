@@ -40,7 +40,7 @@ export function AddWorkout() {
             </Button>
           </CardAction>
         </CardHeader>
-        <fetcher.Form method="post" action="/api/workout">
+        <fetcher.Form method="post" action="/api/add-workout">
           <CardContent>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
