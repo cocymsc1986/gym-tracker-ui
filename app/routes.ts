@@ -10,5 +10,5 @@ export default [
   // api routes
   route("api/login", "./api/actions/login.ts"),
   route("api/register", "./api/actions/register.ts"),
-  route("api/workout", "./api/actions/workout.ts"),
+  route("api/add-workout", "./api/actions/add-workout.ts"),
 ] satisfies RouteConfig;

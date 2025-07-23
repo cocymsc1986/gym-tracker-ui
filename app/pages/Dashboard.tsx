@@ -1,7 +1,6 @@
-interface Workout {
-  id: number;
-  name: string;
-}
+import { Link } from "react-router";
+
+import { type Workout } from "@/types/Workout";
 
 interface DashboardProps {
   workouts: Workout[];
@@ -15,8 +14,10 @@ export function Dashboard({ workouts }: DashboardProps) {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {workouts.map((workout) => (
-          <div key={workout.id} className="bg-white p-4 rounded shadow">
-            <h2 className="text-xl font-semibold">{workout.name}</h2>
+          <div key={workout.workoutId} className="bg-white p-4 rounded shadow">
+            <h2 className="text-xl font-semibold">
+              <Link to={`/workout/${workout.workoutId}`}>{workout.name}</Link>
+            </h2>
           </div>
         ))}
       </div>
