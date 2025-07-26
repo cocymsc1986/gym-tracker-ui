@@ -40,7 +40,12 @@ export function AddWorkout() {
             </Button>
           </CardAction>
         </CardHeader>
-        <fetcher.Form method="post" action="/api/add-workout">
+        <fetcher.Form
+          method="post"
+          action="/api/add-workout"
+          encType="multipart/form-data"
+          data-testid="add-workout-form"
+        >
           <CardContent>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
@@ -85,7 +90,7 @@ export function AddWorkout() {
           </CardContent>
           <CardFooter className="flex-col gap-2">
             <Button type="submit" className="w-full" disabled={busy}>
-              {busy ? "Creating workout..." : "Add Workout"}
+              {busy ? "Creating workout..." : "Create Workout"}
             </Button>
           </CardFooter>
         </fetcher.Form>

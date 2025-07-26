@@ -1,18 +1,18 @@
 export type ExerciseType = "Weights" | "Cardio" | "Other";
 
 export type WeightItem = {
-  Weight: float;
-  Unit: string;
-  Reps: number;
+  weight: float;
+  unit: string;
+  reps: number;
 };
 
 export type Exercise = {
-  ExerciseID: string;
-  Name: string;
-  ExerciseType: ExerciseType;
-  Time: string;
-  Distance: float;
-  DistanceUnit: string;
-  Level: string;
-  Sets: WeightItem[];
+  exerciseID: string;
+  name: string;
+  exerciseType: ExerciseType;
+  time: string;
+  distance: float;
+  distanceUnit: string;
+  level: string;
+  sets: WeightItem[];
 };
