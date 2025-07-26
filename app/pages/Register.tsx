@@ -58,13 +58,13 @@ export function Register() {
           <CardContent>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
-                  id="username"
-                  name="username"
+                  id="email"
+                  name="email"
                   type="text"
-                  placeholder="Enter your username"
-                  autoComplete="username"
+                  placeholder="Enter your email"
+                  autoComplete="email"
                   required
                   onChange={() => {
                     // clear any previous error messages
