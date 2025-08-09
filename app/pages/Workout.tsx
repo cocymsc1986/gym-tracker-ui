@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardAction,
+  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -13,6 +14,8 @@ import {
 import { type Exercise } from "@/types/Exercise";
 import { DataTable } from "@/components/ui/data-table";
 import { useState } from "react";
+import { AddExerciseModal } from "@/components/AddExerciseModal";
+import type { Workout } from "@/types/Workout";
 
 export const columns: ColumnDef<Exercise>[] = [
   {
@@ -28,39 +31,44 @@ export const columns: ColumnDef<Exercise>[] = [
 export function Workout({
   loaderData: workout,
 }: {
-  loaderData: { id: number; name: string; exercises: Exercise[] } | null;
+  loaderData: Workout | null;
 }) {
   const [showModal, setShowModal] = useState(false);
-
-  const showAddExerciseModal = () => {
-    // Logic to show modal for adding an exercise
-  };
   if (!workout) {
     return <div>Loading...</div>;
   }
 
   if (workout) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <Card className="w-full max-w-sm">
+      <div className="p-4 w-full max-w-4xl mx-auto">
+        <div className="flex justify-between items-center mb-4">
+          <Button variant="link" asChild>
+            <Link to="/">&lt; Back to dashboard</Link>
+          </Button>
+          <Button variant="default" onClick={() => setShowModal(true)}>
+            Add Exercise
+          </Button>
+        </div>
+        <Card className="w-full">
           <CardHeader>
-            <CardTitle>Workout</CardTitle>
+            <CardTitle>{workout.name || `Workout ${workout.date}`}</CardTitle>
             <CardDescription>
-              Workout tracking data. Add as many exercises as you want.
+              {new Date(workout.date).toLocaleDateString()}
             </CardDescription>
-            <CardAction>
-              <Button variant="link" asChild>
-                <Link to="/">Back to dashboard</Link>
-              </Button>
-              <Button variant="primary" asChild onClick={showAddExerciseModal}>
-                Add Exercise
-              </Button>
-            </CardAction>
-            {workout.exercises && workout.exercises.length > 0 && (
-              <DataTable columns={columns} data={workout.exercises} />
-            )}
+            <CardContent className="p-0 mt-4">
+              {!workout.exercises || workout.exercises.length === 0 ? (
+                <div className="p-4 text-center text-gray-500">
+                  No exercises added yet.
+                </div>
+              ) : (
+                <DataTable columns={columns} data={workout.exercises} />
+              )}
+            </CardContent>
           </CardHeader>
         </Card>
+        {showModal && (
+          <AddExerciseModal showModal={showModal} setShowModal={setShowModal} />
+        )}
       </div>
     );
   }

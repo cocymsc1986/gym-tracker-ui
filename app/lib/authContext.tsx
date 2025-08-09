@@ -79,7 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setUserPayload(validation.payload);
             lastValidatedToken.current = tokens.token;
           } else {
-            console.log("Token validation failed:", validation.error);
+            console.info("Token validation failed:", validation.error);
             setUserPayload(null);
             lastValidatedToken.current = null;
             // Clear invalid tokens

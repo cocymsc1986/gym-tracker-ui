@@ -7,8 +7,9 @@ export default [
   route("workout", "./routes/add-workout.tsx"),
   route("workout/:id", "./routes/workout.tsx"),
 
-  // api routes
+  // api POST routes
   route("api/login", "./api/actions/login.ts"),
   route("api/register", "./api/actions/register.ts"),
   route("api/add-workout", "./api/actions/add-workout.ts"),
+  route("api/add-exercise", "./api/actions/add-exercise.ts"),
 ] satisfies RouteConfig;

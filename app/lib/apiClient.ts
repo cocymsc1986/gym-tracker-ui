@@ -46,7 +46,7 @@ apiClient.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Token is invalid, clear storage and redirect to login
-      console.log("Received 401, clearing tokens and redirecting to login");
+      console.info("Received 401, clearing tokens and redirecting to login");
       localStorage.removeItem("gym-tracker-tokens");
 
       // Only redirect if we're not already on the login page

@@ -18,6 +18,9 @@ export function Header() {
           <div className="flex items-center gap-4">
             {isAuthenticated ? (
               <>
+                <Button variant="link" size="sm">
+                  <Link to="/">Dashboard</Link>
+                </Button>
                 <Button variant="outline" size="sm">
                   <Link to="/workout">Add Workout</Link>
                 </Button>

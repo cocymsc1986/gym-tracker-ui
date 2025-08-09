@@ -6,40 +6,45 @@ import {
   RouterProvider,
 } from "react-router";
 import { Workout } from "./Workout";
-import { type Exercise } from "@/types/Exercise";
+import {
+  DistanceUnits,
+  ExerciseType,
+  WeightUnits,
+  type Exercise,
+} from "@/types/Exercise";
 
 const mockExercises: Exercise[] = [
   {
     exerciseID: "1",
     name: "Bench Press",
-    exerciseType: "Weights",
+    exerciseType: ExerciseType.WEIGHTS,
     time: "00:10:00",
     distance: 0,
-    distanceUnit: "",
-    level: "Intermediate",
+    distanceUnit: undefined,
+    level: 1,
     sets: [
-      { weight: 80, unit: "kg", reps: 10 },
-      { weight: 85, unit: "kg", reps: 8 },
+      { weight: 80, unit: WeightUnits.KG, reps: 10 },
+      { weight: 85, unit: WeightUnits.KG, reps: 8 },
     ],
   },
   {
     exerciseID: "2",
     name: "Running",
-    exerciseType: "Cardio",
+    exerciseType: ExerciseType.CARDIO,
     time: "00:30:00",
     distance: 5,
-    distanceUnit: "km",
-    level: "Beginner",
+    distanceUnit: DistanceUnits.KM,
+    level: 1,
     sets: [],
   },
   {
     exerciseID: "3",
     name: "Stretching",
-    exerciseType: "Other",
+    exerciseType: ExerciseType.OTHER,
     time: "00:15:00",
     distance: 0,
-    distanceUnit: "",
-    level: "Beginner",
+    distanceUnit: undefined,
+    level: 1,
     sets: [],
   },
 ];
@@ -93,7 +98,7 @@ describe("Workout", () => {
     const router = setupRouter(workoutWithoutExercises);
     render(<RouterProvider router={router} />);
 
-    expect(screen.getByText("Workout")).toBeInTheDocument();
+    expect(screen.getByText("Empty Workout")).toBeInTheDocument();
     expect(screen.queryByText("Weights")).not.toBeInTheDocument();
   });
 });
