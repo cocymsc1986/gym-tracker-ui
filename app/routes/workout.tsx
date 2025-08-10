@@ -1,7 +1,7 @@
 import { Workout } from "@/pages/Workout";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { getUserId } from "@/lib/getUserId";
-import type { Exercise } from "@/types/Exercise";
+import type { Workout as WorkoutType } from "@/types/Workout";
 import type { Route } from "./+types/workout";
 import { apiClient } from "@/lib/apiClient";
 
@@ -21,6 +21,17 @@ export async function clientLoader(_args: Route.LoaderArgs) {
       return null;
     }
 
+    if (response.data.exercises && response.data.exercises.length > 0) {
+      response.data.exercises = await Promise.all(
+        response.data.exercises.map(async (exercise: string) => {
+          const exerciseResult = await apiClient.get(
+            `/exercises/${userId}/${exercise}`
+          );
+          return exerciseResult.data;
+        })
+      );
+    }
+
     return response.data;
   } catch (error) {
     console.error("Error fetching workout data:", error);
@@ -34,7 +45,7 @@ export async function clientLoader(_args: Route.LoaderArgs) {
 export default function Component({
   loaderData,
 }: {
-  loaderData: { id: number; name: string; exercises: Exercise[] } | null;
+  loaderData: WorkoutType | null;
 }) {
   return (
     <ProtectedRoute>
