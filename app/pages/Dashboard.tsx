@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 
 import { Activities } from "@/components/Activities";
+import { Tracker } from "@/components/Tracker";
 
 interface DashboardProps {
   workouts: Workout[];
@@ -23,9 +24,9 @@ export function Dashboard({ workouts }: DashboardProps) {
             Workout tracking data. Add as many exercises as you want.
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          {/* <Tracker /> */}
+        <CardContent className="flex flex-col md:flex-row gap-4 items-start">
           <Activities workouts={workouts} />
+          <Tracker workouts={workouts} />
         </CardContent>
       </Card>
     </div>
