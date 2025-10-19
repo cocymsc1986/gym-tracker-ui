@@ -9,7 +9,7 @@ const mockPost = vi.fn().mockResolvedValue({
 
 vi.mock("@/lib/apiClient", () => ({
   apiClient: {
-    post: (url: string, body: any, headers: any) =>
+    post: (url: string, body: unknown, headers: unknown) =>
       mockPost(url, body, headers),
   },
 }));
@@ -38,6 +38,7 @@ describe("add-exercise action", () => {
       body: formData,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await clientAction({ request } as any);
 
     expect(mockPost).toHaveBeenCalledTimes(2);
@@ -88,6 +89,7 @@ describe("add-exercise action", () => {
       body: formData,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await clientAction({ request } as any);
 
     expect(mockPost).toHaveBeenCalledTimes(2);
@@ -143,6 +145,7 @@ describe("add-exercise action", () => {
       body: formData,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await clientAction({ request } as any);
 
     expect(mockPost).toHaveBeenCalledTimes(2);
@@ -190,6 +193,7 @@ describe("add-exercise action", () => {
       body: formData,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await clientAction({ request } as any);
 
     expect(result).toEqual({
@@ -210,6 +214,7 @@ describe("add-exercise action", () => {
       body: formData,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await clientAction({ request } as any);
 
     expect(result).toEqual({
@@ -230,6 +235,7 @@ describe("add-exercise action", () => {
       body: formData,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await clientAction({ request } as any);
 
     expect(result).toEqual({
@@ -252,6 +258,7 @@ describe("add-exercise action", () => {
       body: formData,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await clientAction({ request } as any);
 
     expect(result).toEqual({
@@ -273,6 +280,7 @@ describe("add-exercise action", () => {
       body: formData,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await clientAction({ request } as any);
 
     expect(result).toEqual({
@@ -300,6 +308,7 @@ describe("add-exercise action", () => {
       body: formData,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await clientAction({ request } as any);
 
     expect(result).toEqual({
@@ -328,6 +337,7 @@ describe("add-exercise action", () => {
       body: formData,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await clientAction({ request } as any);
 
     expect(result).toEqual({

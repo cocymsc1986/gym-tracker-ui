@@ -6,7 +6,7 @@ import tseslint from "typescript-eslint";
 import vitest from "eslint-plugin-vitest";
 
 export default tseslint.config(
-  { ignores: ["dist", ".react-router/**/*"] },
+  { ignores: ["dist", "build", ".react-router/**/*"] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],
@@ -39,7 +39,6 @@ export default tseslint.config(
       globals: {
         ...globals.browser,
         ...globals.node,
-        ...vitest.environments["vitest-globals"].globals,
       },
     },
     plugins: {

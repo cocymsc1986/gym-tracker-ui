@@ -12,6 +12,7 @@ const mockUseAuth = vi.fn();
 vi.mock("react-router", () => ({
   useFetcher: () => mockUseFetcher(),
   useNavigate: () => mockNavigate,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Link: ({ children, to, ...props }: any) => (
     <a href={to} {...props}>
       {children}
@@ -28,14 +29,15 @@ describe("Login", () => {
   beforeEach(() => {
     // Reset mocks before each test
     vi.clearAllMocks();
-    
+
     // Default mock implementations
     mockUseFetcher.mockReturnValue({
       data: null,
       state: "idle",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       Form: ({ children, ...props }: any) => <form {...props}>{children}</form>,
     });
-    
+
     mockUseAuth.mockReturnValue({
       setTokens: mockSetTokens,
       isAuthenticated: false,
@@ -53,6 +55,7 @@ describe("Login", () => {
     mockUseFetcher.mockReturnValue({
       data: { error: "Invalid credentials" },
       state: "idle",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       Form: ({ children, ...props }: any) => <form {...props}>{children}</form>,
     });
 
@@ -71,6 +74,7 @@ describe("Login", () => {
     mockUseFetcher.mockReturnValue({
       data: { status: 200, tokenData },
       state: "idle",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       Form: ({ children, ...props }: any) => <form {...props}>{children}</form>,
     });
 

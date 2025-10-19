@@ -12,6 +12,7 @@ const mockUseAuth = vi.fn();
 vi.mock("react-router", () => ({
   useFetcher: () => mockUseFetcher(),
   useNavigate: () => mockNavigate,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Link: ({ children, to, ...props }: any) => (
     <a href={to} {...props}>
       {children}
@@ -33,6 +34,7 @@ describe("Register", () => {
     mockUseFetcher.mockReturnValue({
       data: null,
       state: "idle",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       Form: ({ children, ...props }: any) => <form {...props}>{children}</form>,
     });
 
@@ -53,6 +55,7 @@ describe("Register", () => {
     mockUseFetcher.mockReturnValue({
       data: { error: "Invalid email" },
       state: "idle",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       Form: ({ children, ...props }: any) => <form {...props}>{children}</form>,
     });
 
@@ -65,6 +68,7 @@ describe("Register", () => {
     mockUseFetcher.mockReturnValue({
       data: { status: 201, data: { message: "Check your email" } },
       state: "idle",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       Form: ({ children, ...props }: any) => <form {...props}>{children}</form>,
     });
 

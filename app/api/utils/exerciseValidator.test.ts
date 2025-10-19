@@ -6,7 +6,6 @@ import {
   type CardioExercise,
 } from "./exerciseValidator";
 import { ExerciseType, WeightUnits, DistanceUnits } from "@/types/Exercise";
-import type { C } from "vitest/dist/chunks/environment.d.cL3nLXbE.js";
 
 describe("exerciseValidator", () => {
   describe("validateWeights", () => {

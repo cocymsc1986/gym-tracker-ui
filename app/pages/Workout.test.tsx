@@ -12,6 +12,7 @@ import {
   WeightUnits,
   type Exercise,
 } from "@/types/Exercise";
+import { type Workout as WorkoutType } from "@/types/Workout";
 
 const mockExercises: Exercise[] = [
   {
@@ -49,15 +50,16 @@ const mockExercises: Exercise[] = [
   },
 ];
 
-const mockWorkout = {
-  id: 1,
+const mockWorkout: WorkoutType = {
+  workoutId: 1,
+  date: "2024-06-15",
   name: "Morning Workout",
   exercises: mockExercises,
 };
 
-const setupRouter = (workout: any) => {
+const setupRouter = (workout?: WorkoutType) => {
   const routes = createRoutesFromElements(
-    <Route path="/" element={<Workout loaderData={workout} />} />
+    <Route path="/" element={<Workout loaderData={workout || null} />} />
   );
 
   return createMemoryRouter(routes, {
@@ -82,7 +84,7 @@ describe("Workout", () => {
   });
 
   it("displays loading state when no workout data", () => {
-    const router = setupRouter(null);
+    const router = setupRouter();
     render(<RouterProvider router={router} />);
 
     expect(screen.getByText("Loading...")).toBeInTheDocument();
@@ -90,7 +92,8 @@ describe("Workout", () => {
 
   it("renders workout without exercises", () => {
     const workoutWithoutExercises = {
-      id: 1,
+      workoutId: 1,
+      date: "2024-06-16",
       name: "Empty Workout",
       exercises: [],
     };
