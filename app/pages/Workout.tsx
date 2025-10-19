@@ -38,6 +38,10 @@ export function Workout({
     return <div>Loading...</div>;
   }
 
+  const onRowClick = (row: Exercise) => {
+    console.log("Row clicked:", row);
+  };
+
   if (workout) {
     return (
       <div className="p-4 w-full max-w-4xl mx-auto">
@@ -61,7 +65,11 @@ export function Workout({
                   No exercises added yet.
                 </div>
               ) : (
-                <DataTable columns={columns} data={workout.exercises} />
+                <DataTable
+                  columns={columns}
+                  data={workout.exercises}
+                  onRowClick={onRowClick}
+                />
               )}
             </CardContent>
           </CardHeader>
