@@ -16,7 +16,7 @@ import { type Workout as WorkoutType } from "@/types/Workout";
 
 const mockExercises: Exercise[] = [
   {
-    exerciseID: "1",
+    exerciseId: "1",
     name: "Bench Press",
     exerciseType: ExerciseType.WEIGHTS,
     time: "00:10:00",
@@ -29,7 +29,7 @@ const mockExercises: Exercise[] = [
     ],
   },
   {
-    exerciseID: "2",
+    exerciseId: "2",
     name: "Running",
     exerciseType: ExerciseType.CARDIO,
     time: "00:30:00",
@@ -39,7 +39,7 @@ const mockExercises: Exercise[] = [
     sets: [],
   },
   {
-    exerciseID: "3",
+    exerciseId: "3",
     name: "Stretching",
     exerciseType: ExerciseType.OTHER,
     time: "00:15:00",
@@ -57,9 +57,13 @@ const mockWorkout: WorkoutType = {
   exercises: mockExercises,
 };
 
-const setupRouter = (workout?: WorkoutType) => {
+const setupRouter = (workout?: WorkoutType, userExercises: string[] = []) => {
+  const loaderData = workout
+    ? { workout, userExercises }
+    : { workout: null, userExercises };
+
   const routes = createRoutesFromElements(
-    <Route path="/" element={<Workout loaderData={workout || null} />} />
+    <Route path="/" element={<Workout loaderData={loaderData} />} />
   );
 
   return createMemoryRouter(routes, {
