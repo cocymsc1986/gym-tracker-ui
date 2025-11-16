@@ -21,6 +21,7 @@ import { AddSets } from "./AddSets";
 
 import { DistanceUnits, ExerciseType, WeightUnits } from "@/types/Exercise";
 import { useEffect, useState } from "react";
+import { Combobox } from "./ui/combobox";
 const exerciseTypes = Object.values(ExerciseType);
 const distanceUnits = Object.values(DistanceUnits);
 const weightUnits = Object.values(WeightUnits);
@@ -150,11 +151,14 @@ const exerciseTypeMap = {
 export function AddExerciseModal({
   showModal,
   setShowModal,
+  userExercises,
 }: {
   showModal: boolean;
   setShowModal: (open: boolean) => void;
+  userExercises: string[];
 }) {
   const [selectedType, setSelectedType] = useState<ExerciseType | null>(null);
+  const [exerciseName, setExerciseName] = useState("");
 
   const fetcher = useFetcher();
   const params = useParams();
@@ -170,7 +174,7 @@ export function AddExerciseModal({
     if (response && response.status === 201) {
       setShowModal(false);
     }
-  }, [response]);
+  }, [response, setShowModal]);
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -190,6 +194,8 @@ export function AddExerciseModal({
 
     fetcher.submit(formData, { method: "post", action: "/api/add-exercise" });
   };
+
+  const uniqueExerciseNames = Array.from(new Set(userExercises));
 
   return (
     <Dialog open={showModal} onOpenChange={setShowModal}>
@@ -221,12 +227,12 @@ export function AddExerciseModal({
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="exercise-name">Exercise Name</Label>
-                <Input
-                  id="exercise-name"
+                <Combobox
                   name="exercise-name"
-                  type="text"
-                  autoComplete="off"
-                  placeholder="Enter exercise name"
+                  options={uniqueExerciseNames}
+                  value={exerciseName}
+                  onChange={setExerciseName}
+                  placeholder="Type or select a previous exercise name..."
                 />
               </div>
               {selectedType ? (

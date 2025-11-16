@@ -16,7 +16,7 @@ import { useState } from "react";
 import { AddExerciseModal } from "@/components/AddExerciseModal";
 import type { Workout } from "@/types/Workout";
 
-export const columns: ColumnDef<Exercise>[] = [
+const columns: ColumnDef<Exercise>[] = [
   {
     accessorKey: "exerciseType",
     header: "Exercise Type",
@@ -28,10 +28,16 @@ export const columns: ColumnDef<Exercise>[] = [
 ];
 
 export function Workout({
-  loaderData: workout,
+  loaderData,
 }: {
-  loaderData: Workout | null;
+  loaderData: {
+    workout: Workout | null;
+    userExercises: string[];
+  };
 }) {
+  const workout = loaderData?.workout;
+  const userExercises = loaderData?.userExercises;
+
   const [showModal, setShowModal] = useState(false);
   if (!workout) {
     return <div>Loading...</div>;
@@ -66,7 +72,11 @@ export function Workout({
           </CardHeader>
         </Card>
         {showModal && (
-          <AddExerciseModal showModal={showModal} setShowModal={setShowModal} />
+          <AddExerciseModal
+            showModal={showModal}
+            setShowModal={setShowModal}
+            userExercises={userExercises}
+          />
         )}
       </div>
     );

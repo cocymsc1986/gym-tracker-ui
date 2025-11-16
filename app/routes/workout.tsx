@@ -4,6 +4,7 @@ import { getUserId } from "@/lib/getUserId";
 import type { Workout as WorkoutType } from "@/types/Workout";
 import type { Route } from "./+types/workout";
 import { apiClient } from "@/lib/apiClient";
+import type { Exercise } from "@/types/Exercise";
 
 export async function clientLoader(_args: Route.LoaderArgs) {
   const userId = getUserId();
@@ -13,26 +14,40 @@ export async function clientLoader(_args: Route.LoaderArgs) {
   }
 
   try {
-    const url = `/workouts/${userId}/${_args.params.id}`;
-    const response = await apiClient.get(url);
+    const getWorkoutDataUrl = `/workouts/${userId}/${_args.params.id}`;
+    const getAllUserExercisesUrl = `/exercises/${userId}`;
 
-    if (response.status !== 200) {
-      console.error("Failed to fetch workout data:", response.statusText);
+    const [workoutResponse, exercisesResponse] = await Promise.all([
+      apiClient.get<WorkoutType>(getWorkoutDataUrl),
+      apiClient.get<Exercise[]>(getAllUserExercisesUrl),
+    ]);
+
+    if (workoutResponse.status !== 200) {
+      console.error(
+        "Failed to fetch workout data:",
+        workoutResponse.statusText
+      );
       return null;
     }
 
-    if (response.data.exercises && response.data.exercises.length > 0) {
-      response.data.exercises = await Promise.all(
-        response.data.exercises.map(async (exercise: string) => {
-          const exerciseResult = await apiClient.get(
-            `/exercises/${userId}/${exercise}`
-          );
-          return exerciseResult.data;
-        })
+    const userExercises = exercisesResponse.data.map((e: Exercise) => e.name);
+
+    if (
+      workoutResponse.data.exercises &&
+      workoutResponse.data.exercises.length > 0
+    ) {
+      const workoutExercises = exercisesResponse.data.filter(
+        (exercise: Exercise) =>
+          workoutResponse.data.exercises.includes(exercise.exerciseId)
       );
+
+      workoutResponse.data.exercises = workoutExercises;
     }
 
-    return response.data;
+    return {
+      workout: workoutResponse.data,
+      userExercises,
+    };
   } catch (error) {
     console.error("Error fetching workout data:", error);
     throw new Response("Failed to fetch workout data", {
