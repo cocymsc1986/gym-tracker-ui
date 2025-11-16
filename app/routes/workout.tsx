@@ -1,7 +1,7 @@
 import { Workout } from "@/pages/Workout";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { getUserId } from "@/lib/getUserId";
-import type { Workout as WorkoutType } from "@/types/Workout";
+import type { WorkoutResponse, Workout as WorkoutType } from "@/types/Workout";
 import type { Route } from "./+types/workout";
 import { apiClient } from "@/lib/apiClient";
 import type { Exercise } from "@/types/Exercise";
@@ -18,7 +18,7 @@ export async function clientLoader(_args: Route.LoaderArgs) {
     const getAllUserExercisesUrl = `/exercises/${userId}`;
 
     const [workoutResponse, exercisesResponse] = await Promise.all([
-      apiClient.get<WorkoutType>(getWorkoutDataUrl),
+      apiClient.get<WorkoutResponse>(getWorkoutDataUrl),
       apiClient.get<Exercise[]>(getAllUserExercisesUrl),
     ]);
 
@@ -32,20 +32,25 @@ export async function clientLoader(_args: Route.LoaderArgs) {
 
     const userExercises = exercisesResponse.data.map((e: Exercise) => e.name);
 
+    const workoutData: WorkoutType = {
+      workoutId: workoutResponse.data.workoutId,
+      name: workoutResponse.data.name,
+      date: workoutResponse.data.date,
+      exercises: [],
+    };
+
     if (
       workoutResponse.data.exercises &&
       workoutResponse.data.exercises.length > 0
     ) {
-      const workoutExercises = exercisesResponse.data.filter(
+      workoutData.exercises = exercisesResponse.data.filter(
         (exercise: Exercise) =>
           workoutResponse.data.exercises.includes(exercise.exerciseId)
       );
-
-      workoutResponse.data.exercises = workoutExercises;
     }
 
     return {
-      workout: workoutResponse.data,
+      workout: workoutData,
       userExercises,
     };
   } catch (error) {
@@ -60,7 +65,10 @@ export async function clientLoader(_args: Route.LoaderArgs) {
 export default function Component({
   loaderData,
 }: {
-  loaderData: WorkoutType | null;
+  loaderData: {
+    workout: WorkoutType | null;
+    userExercises: string[];
+  };
 }) {
   return (
     <ProtectedRoute>
