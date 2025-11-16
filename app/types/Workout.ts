@@ -6,3 +6,10 @@ export type Workout = {
   exercises: Exercise[];
   date: string;
 };
+
+export type WorkoutResponse = {
+  workoutId: number;
+  name: string;
+  exercises: string[];
+  date: string;
+};

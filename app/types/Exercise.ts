@@ -22,7 +22,7 @@ export enum DistanceUnits {
 }
 
 export type Exercise = {
-  exerciseID: string;
+  exerciseId: string;
   name: string;
   exerciseType: ExerciseType;
   time?: string;

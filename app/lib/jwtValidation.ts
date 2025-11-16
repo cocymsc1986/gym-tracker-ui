@@ -10,7 +10,7 @@ const COGNITO_CLIENT_ID =
 const verifier = CognitoJwtVerifier.create({
   userPoolId: COGNITO_USER_POOL_ID,
   tokenUse: "access",
-  clientId: COGNITO_CLIENT_ID,
+  clientId: null,
 });
 
 export interface JWTPayload {
@@ -38,7 +38,9 @@ export async function validateJWT(
 ): Promise<TokenValidationResult> {
   try {
     // Verify and decode the JWT
-    const payload = (await verifier.verify(token)) as JWTPayload;
+    const payload = (await verifier.verify(token, {
+      clientId: COGNITO_CLIENT_ID,
+    })) as JWTPayload;
 
     // Check if token is expired (additional check)
     const currentTime = Math.floor(Date.now() / 1000);
