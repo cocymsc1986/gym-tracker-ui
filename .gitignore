@@ -31,3 +31,10 @@ build
 .env
 .env.local
 .env.development.local
+
+# terraform
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/*.tfvars

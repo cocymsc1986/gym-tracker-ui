@@ -1,10 +1,9 @@
-import { useFetcher, Link, useNavigate } from "react-router";
+import { useFetcher, useNavigate } from "react-router";
 import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
   CardFooter,
@@ -29,16 +28,11 @@ export function AddWorkout() {
   }, [response, navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Create your workout</CardTitle>
           <CardDescription>Enter workout details below</CardDescription>
-          <CardAction>
-            <Button variant="link" asChild>
-              <Link to="/">Back to dashboard</Link>
-            </Button>
-          </CardAction>
         </CardHeader>
         <fetcher.Form
           method="post"
@@ -88,7 +82,7 @@ export function AddWorkout() {
               </div>
             )}
           </CardContent>
-          <CardFooter className="flex-col gap-2">
+          <CardFooter className="flex-col gap-2 mt-4">
             <Button type="submit" className="w-full" disabled={busy}>
               {busy ? "Creating workout..." : "Create Workout"}
             </Button>

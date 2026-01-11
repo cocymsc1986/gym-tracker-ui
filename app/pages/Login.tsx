@@ -39,56 +39,58 @@ export function Login() {
   }, [isAuthenticated, navigate]);
 
   return (
-    <Card className="w-full max-w-sm">
-      <CardHeader>
-        <CardTitle>Login to your account</CardTitle>
-        <CardDescription>
-          Enter your email below to login to your account
-        </CardDescription>
-        <CardAction>
-          <Button variant="link" asChild>
-            <Link to="/register">Sign Up</Link>
-          </Button>
-        </CardAction>
-      </CardHeader>
-      <fetcher.Form method="post" action="/api/login">
-        <CardContent>
-          <div className="flex flex-col gap-6">
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="m@example.com"
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <div className="flex items-center">
-                <Label htmlFor="password">Password</Label>
+    <div className="flex justify-center p-4 md:p-8 w-full">
+      <Card className="w-full max-w-sm">
+        <CardHeader>
+          <CardTitle>Login to your account</CardTitle>
+          <CardDescription>
+            Enter your email below to login to your account
+          </CardDescription>
+          <CardAction>
+            <Button variant="link" asChild>
+              <Link to="/register">Sign Up</Link>
+            </Button>
+          </CardAction>
+        </CardHeader>
+        <fetcher.Form method="post" action="/api/login">
+          <CardContent>
+            <div className="flex flex-col gap-6">
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="m@example.com"
+                  required
+                />
+              </div>
+              <div className="grid">
+                <div className="flex items-center mb-2">
+                  <Label htmlFor="password">Password</Label>
+                </div>
+                <Input id="password" name="password" type="password" required />
                 <a
                   href="#"
-                  className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                  className="inline-block text-sm underline-offset-4 hover:underline mt-1"
                 >
-                  Forgot your password?
+                  Forgot password
                 </a>
               </div>
-              <Input id="password" name="password" type="password" required />
             </div>
-          </div>
-          {response && response.error && (
-            <div className="mt-4 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
-              {response.error}
-            </div>
-          )}
-        </CardContent>
-        <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full" disabled={busy}>
-            {busy ? "Logging in..." : "Login"}
-          </Button>
-        </CardFooter>
-      </fetcher.Form>
-    </Card>
+            {response && response.error && (
+              <div className="mt-4 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+                {response.error}
+              </div>
+            )}
+          </CardContent>
+          <CardFooter className="flex-col gap-2 mt-4">
+            <Button type="submit" className="w-full" disabled={busy}>
+              {busy ? "Logging in..." : "Login"}
+            </Button>
+          </CardFooter>
+        </fetcher.Form>
+      </Card>
+    </div>
   );
 }

@@ -20,9 +20,7 @@ export function Dashboard({ workouts }: DashboardProps) {
       <Card className="w-full border-none shadow-none">
         <CardHeader>
           <CardTitle>Dashboard</CardTitle>
-          <CardDescription>
-            Workout tracking data. Add as many exercises as you want.
-          </CardDescription>
+          <CardDescription>Workout tracking data.</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col md:flex-row gap-4 items-start">
           <Activities workouts={workouts} />
