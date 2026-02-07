@@ -33,6 +33,7 @@ build
 *.tfstate.*
 *.tfvars
 !*.tfvars.example
+.terraform.lock.hcl
 
 # Capacitor native platforms
 ios/

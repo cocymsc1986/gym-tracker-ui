@@ -31,7 +31,6 @@ export function AddSets() {
   return (
     <Card>
       <CardContent>
-        <Label>Sets</Label>
         {sets.map((set, index) => (
           <div key={index} className="flex items-center gap-2 mb-2">
             <Label htmlFor={`set-${index}-weight`}>Weight</Label>
@@ -97,7 +96,12 @@ export function AddSets() {
             </Button>
           </div>
         ))}
-        <Button onClick={addSet} type="button">
+        <Button
+          variant="outline"
+          className="mt-2"
+          onClick={addSet}
+          type="button"
+        >
           Add Set
         </Button>
       </CardContent>

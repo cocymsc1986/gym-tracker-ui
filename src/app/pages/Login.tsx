@@ -24,9 +24,9 @@ export function Login() {
 
   // Redirect if already authenticated
   useEffect(() => {
-    console.log('[Login] Auth state changed:', { isAuthenticated });
+    console.log("[Login] Auth state changed:", { isAuthenticated });
     if (isAuthenticated) {
-      console.log('[Login] User authenticated, redirecting to dashboard...');
+      console.log("[Login] User authenticated, redirecting to dashboard...");
       setLocation("/");
     }
   }, [isAuthenticated, setLocation]);
@@ -41,10 +41,13 @@ export function Login() {
     const password = formData.get("password") as string;
 
     try {
-      const response = await apiClient.post("/auth/signin", { email, password });
+      const response = await apiClient.post("/auth/signin", {
+        email,
+        password,
+      });
 
       if (response.status === 200) {
-        console.log('[Login] Received response:', response.data);
+        console.log("[Login] Received response:", response.data);
         // Transform API response to match expected token format
         const tokenData = {
           token: response.data.access_token,
@@ -53,9 +56,9 @@ export function Login() {
             ? Date.now() + response.data.expires_in * 1000
             : undefined,
         };
-        console.log('[Login] Setting tokens:', tokenData);
+        console.log("[Login] Setting tokens:", tokenData);
         setTokens(tokenData);
-        console.log('[Login] Tokens set, waiting for auth validation...');
+        console.log("[Login] Tokens set, waiting for auth validation...");
         // Don't redirect immediately - let the auth context handle it after validation
       } else {
         setError(response.data.error || "Login failed");
@@ -77,7 +80,7 @@ export function Login() {
         </CardDescription>
         <CardAction>
           <Button variant="link" asChild>
-            <Link href="/register">Sign Up</Link>
+            <Link to="/register">Sign Up</Link>
           </Button>
         </CardAction>
       </CardHeader>
@@ -94,17 +97,17 @@ export function Login() {
                 required
               />
             </div>
-            <div className="grid gap-2">
-              <div className="flex items-center">
+            <div className="grid">
+              <div className="flex items-center mb-2">
                 <Label htmlFor="password">Password</Label>
-                <a
-                  href="#"
-                  className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                >
-                  Forgot your password?
-                </a>
               </div>
               <Input id="password" name="password" type="password" required />
+              <a
+                href="#"
+                className="inline-block text-sm underline-offset-4 hover:underline mt-1"
+              >
+                Forgot password
+              </a>
             </div>
           </div>
           {error && (
@@ -113,7 +116,7 @@ export function Login() {
             </div>
           )}
         </CardContent>
-        <CardFooter className="flex-col gap-2">
+        <CardFooter className="flex-col gap-2 mt-4">
           <Button type="submit" className="w-full" disabled={busy}>
             {busy ? "Logging in..." : "Login"}
           </Button>
