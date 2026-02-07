@@ -63,6 +63,7 @@ export function Login() {
       } else {
         setError(response.data.error || "Login failed");
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.response?.data?.error || "An error occurred during login");
       console.error("Login error:", err);

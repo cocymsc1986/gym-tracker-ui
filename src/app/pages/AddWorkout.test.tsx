@@ -6,6 +6,7 @@ import { AddWorkout } from "./AddWorkout";
 const mockSetLocation = vi.fn();
 
 vi.mock("wouter", () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Link: ({ children, href, ...props }: any) => (
     <a href={href} {...props}>
       {children}
@@ -86,9 +87,7 @@ describe("AddWorkout", () => {
     await submitForm();
 
     await waitFor(() => {
-      expect(
-        screen.getByText("Failed to create workout")
-      ).toBeInTheDocument();
+      expect(screen.getByText("Failed to create workout")).toBeInTheDocument();
     });
   });
 });

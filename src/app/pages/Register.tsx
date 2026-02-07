@@ -30,15 +30,21 @@ export function Register() {
     const password = formData.get("password") as string;
 
     try {
-      const response = await apiClient.post("/auth/signup", { email, password });
+      const response = await apiClient.post("/auth/signup", {
+        email,
+        password,
+      });
 
       if (response.status === 201) {
         setSuccess(true);
       } else {
         setError(response.data.error || "Registration failed");
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      setError(err.response?.data?.error || "An error occurred during registration");
+      setError(
+        err.response?.data?.error || "An error occurred during registration"
+      );
       console.error("Registration error:", err);
     } finally {
       setBusy(false);

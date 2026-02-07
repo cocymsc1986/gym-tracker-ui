@@ -27,7 +27,7 @@ import { Button } from "@/components/ui/button";
 import { AddSets } from "./AddSets";
 
 import { DistanceUnits, ExerciseType, WeightUnits } from "@/types/Exercise";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Combobox } from "./ui/combobox";
 const exerciseTypes = Object.values(ExerciseType);
 const distanceUnits = Object.values(DistanceUnits);
@@ -245,6 +245,7 @@ export function AddExerciseModal({
       setShowModal(false);
       setExerciseName("");
       setSelectedType(null);
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (err: any) {
       setError(err.response?.data?.error || "An error occurred");
       console.error("Add exercise error:", err);

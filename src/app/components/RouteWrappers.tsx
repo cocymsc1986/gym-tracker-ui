@@ -3,12 +3,17 @@ import { Dashboard } from "../pages/Dashboard";
 import { Workout } from "../pages/Workout";
 import { getUserId } from "../lib/getUserId";
 import { apiClient } from "../lib/apiClient";
+import type { Workout as WorkoutType } from "@/types/Workout";
+import type { Exercise as ExerciseType } from "@/types/Exercise";
 
 /**
  * Wrapper component that fetches dashboard data
  */
 export function DashboardWithData() {
-  const [data, setData] = useState<{ workouts: any[]; exercises: any[] } | null>(null);
+  const [data, setData] = useState<{
+    workouts: WorkoutType[];
+    exercises: ExerciseType[];
+  } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -53,14 +58,22 @@ export function DashboardWithData() {
     );
   }
 
-  return <Dashboard workouts={data?.workouts || []} exercises={data?.exercises || []} />;
+  return (
+    <Dashboard
+      workouts={data?.workouts || []}
+      exercises={data?.exercises || []}
+    />
+  );
 }
 
 /**
  * Wrapper component that fetches workout detail data
  */
 export function WorkoutWithData({ workoutId }: { workoutId: string }) {
-  const [data, setData] = useState<{ workout: any; userExercises: string[] } | null>(null);
+  const [data, setData] = useState<{
+    workout: WorkoutType;
+    userExercises: string[];
+  } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -79,13 +92,15 @@ export function WorkoutWithData({ workoutId }: { workoutId: string }) {
         ]);
 
         if (workoutResponse.status === 200) {
-          const userExercises = exercisesResponse.data.map((e: any) => e.name);
+          const userExercises = exercisesResponse.data.map(
+            (e: ExerciseType) => e.name
+          );
 
           const workoutData = {
             workoutId: workoutResponse.data.workoutId,
             name: workoutResponse.data.name,
             date: workoutResponse.data.date,
-            exercises: exercisesResponse.data.filter((exercise: any) =>
+            exercises: exercisesResponse.data.filter((exercise: ExerciseType) =>
               workoutResponse.data.exercises.includes(exercise.exerciseId)
             ),
           };

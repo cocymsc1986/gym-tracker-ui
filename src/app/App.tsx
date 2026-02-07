@@ -6,16 +6,13 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 // Pages
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
-import { Dashboard } from "./pages/Dashboard";
 import { AddWorkout } from "./pages/AddWorkout";
-import { Workout } from "./pages/Workout";
 
-// Loaders - we'll handle data fetching in wrapper components
 import { DashboardWithData, WorkoutWithData } from "./components/RouteWrappers";
 
 import "./app.css";
 
-console.log('[DEBUG] App.tsx loading');
+console.log("[DEBUG] App.tsx loading");
 
 function App() {
   return (

@@ -47,6 +47,7 @@ export function AddWorkout() {
       } else {
         setError(response.data.error || "Failed to create workout");
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.response?.data?.error || "An error occurred");
       console.error("Add workout error:", err);

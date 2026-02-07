@@ -9,6 +9,7 @@ import {
 import { type Workout as WorkoutType } from "@/types/Workout";
 
 vi.mock("wouter", () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Link: ({ children, href, ...props }: any) => (
     <a href={href} {...props}>
       {children}
