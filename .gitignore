@@ -24,10 +24,16 @@ build
 *.sln
 *.sw?
 
-# react router 
-.react-router
+# env - all environment files excluded for security
+.env*
 
-# env
-.env
-.env.local
-.env.development.local
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+
+# Capacitor native platforms
+ios/
+android/
