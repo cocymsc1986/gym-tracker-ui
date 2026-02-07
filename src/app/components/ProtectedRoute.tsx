@@ -8,8 +8,6 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { isAuthenticated, isValidating } = useAuth();
 
-  console.log('[DEBUG] ProtectedRoute - isAuthenticated:', isAuthenticated, 'isValidating:', isValidating);
-
   // Show loading while validating JWT
   if (isValidating) {
     return (
@@ -24,7 +22,6 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   // Redirect to login if not authenticated
   if (!isAuthenticated) {
-    console.log('[DEBUG] ProtectedRoute - Not authenticated, redirecting to /login');
     return <Redirect to="/login" />;
   }
 

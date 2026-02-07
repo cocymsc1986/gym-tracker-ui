@@ -8,6 +8,7 @@ const mockSetTokens = vi.fn();
 let mockIsAuthenticated = false;
 
 vi.mock("wouter", () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Link: ({ children, href, ...props }: any) => (
     <a href={href} {...props}>
       {children}
