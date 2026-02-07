@@ -24,9 +24,8 @@
     "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./app/*"]
-    },
-    "rootDirs": [".", "./.react-router/types"]
+      "@/*": ["./src/app/*"]
+    }
   },
-  "include": ["app", "vite-env.d.ts", "types.d.ts", ".react-router/types"]
+  "include": ["src", "vite-env.d.ts", "types.d.ts"]
 }

@@ -57,6 +57,9 @@ The app will be available at `http://localhost:5173`
 ## Environment Variables
 
 - `VITE_API_URL` - Backend API URL (default: http://localhost:8080)
+- `VITE_CAPACITOR_API_URL` - Mobile-specific API URL (for Capacitor builds)
+- `VITE_COGNITO_USER_POOL_ID` - AWS Cognito User Pool ID
+- `VITE_COGNITO_CLIENT_ID` - AWS Cognito Client ID
 
 ## Available Scripts
 
@@ -83,6 +86,55 @@ app/
 - `/` - Dashboard (requires authentication)
 - `/login` - User login
 - `/register` - User registration
+
+## Mobile Development (Capacitor)
+
+This app supports iOS and Android via Capacitor. To set up mobile development:
+
+### 1. Find Your Development Machine IP
+
+```bash
+# Quick method (most reliable)
+ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | head -1
+
+# Or use System Settings > Network > [Your Connection]
+```
+
+### 2. Configure Environment
+
+Create a `.env.local` file (already gitignored) with your machine's IP:
+
+```bash
+VITE_CAPACITOR_API_URL=http://192.168.1.XXX:8080
+```
+
+Replace `192.168.1.XXX` with your actual IP address from step 1.
+
+### 3. Build and Run
+
+```bash
+# Build for mobile
+npm run build:mobile
+
+# Open in Xcode (iOS)
+npm run cap:open:ios
+
+# Or open in Android Studio
+npm run cap:open:android
+```
+
+### 4. Verify Connection
+
+1. Run the app in the simulator/emulator
+2. Open Safari > Develop > [Simulator] > [App] to view console logs
+3. Look for: `[API Client] Using API URL: http://[YOUR_IP]:8080`
+4. Try registration/login to verify API connectivity
+
+### Troubleshooting
+
+- **Network Error**: Verify your `.env.local` has the correct IP address
+- **Connection Refused**: Ensure the Go API server is running and listening on `:8080`
+- **No API logs**: Check that both devices are on the same network
 
 ## API Integration
 
