@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: "com.gymtracker.app",
+  appId: "com.cocymsc1986.gymtracker",
   appName: "Gym Tracker",
   webDir: "build/client",
   server: {
