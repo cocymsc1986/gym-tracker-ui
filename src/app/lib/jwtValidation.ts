@@ -6,11 +6,6 @@ const COGNITO_USER_POOL_ID =
 const COGNITO_CLIENT_ID =
   import.meta.env.VITE_COGNITO_CLIENT_ID || "your-client-id";
 
-console.log("[JWT Validation] Config:", {
-  COGNITO_USER_POOL_ID,
-  COGNITO_CLIENT_ID,
-});
-
 // Create the verifier instance
 const verifier = CognitoJwtVerifier.create({
   userPoolId: COGNITO_USER_POOL_ID,
