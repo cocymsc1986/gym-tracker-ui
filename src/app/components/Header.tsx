@@ -1,12 +1,9 @@
-import { Link, useLocation } from "wouter";
+import { Link } from "wouter";
 import { useAuth } from "@/lib/authContext";
 import { Button } from "@/components/ui/button";
 
 export function Header() {
   const { logout, isAuthenticated } = useAuth();
-  const location = useLocation();
-
-  const isLoginPage = location.pathname === "/login";
 
   return (
     <header className="border-b bg-white">
@@ -16,7 +13,7 @@ export function Header() {
             <h1 className="text-xl font-bold">Gym Tracker</h1>
           </div>
           <div className="flex items-center gap-4">
-            {isAuthenticated ? (
+            {isAuthenticated && (
               <>
                 <Button variant="link" size="sm">
                   <Link href="/">Dashboard</Link>
@@ -28,11 +25,7 @@ export function Header() {
                   Logout
                 </Button>
               </>
-            ) : !isLoginPage ? (
-              <Button asChild variant="default" size="sm">
-                <Link href="/login">Login</Link>
-              </Button>
-            ) : null}
+            )}
           </div>
         </div>
       </div>

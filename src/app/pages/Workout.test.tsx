@@ -19,6 +19,17 @@ vi.mock("wouter", () => ({
   useParams: () => ({}),
 }));
 
+vi.mock("@/lib/getUserId", () => ({
+  getUserId: () => "test-user-id",
+}));
+
+vi.mock("@/lib/apiClient", () => ({
+  apiClient: {
+    post: vi.fn(),
+    get: vi.fn(),
+  },
+}));
+
 const mockExercises: Exercise[] = [
   {
     exerciseId: "1",

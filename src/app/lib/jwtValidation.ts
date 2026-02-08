@@ -6,8 +6,6 @@ const COGNITO_USER_POOL_ID =
 const COGNITO_CLIENT_ID =
   import.meta.env.VITE_COGNITO_CLIENT_ID || "your-client-id";
 
-console.log('[JWT Validation] Config:', { COGNITO_USER_POOL_ID, COGNITO_CLIENT_ID });
-
 // Create the verifier instance
 const verifier = CognitoJwtVerifier.create({
   userPoolId: COGNITO_USER_POOL_ID,
@@ -40,7 +38,10 @@ export async function validateJWT(
 ): Promise<TokenValidationResult> {
   try {
     // Verify and decode the JWT
-    const payload = (await verifier.verify(token)) as JWTPayload;
+    const payload = (await verifier.verify(
+      token,
+      COGNITO_CLIENT_ID
+    )) as JWTPayload;
 
     // Check if token is expired (additional check)
     const currentTime = Math.floor(Date.now() / 1000);

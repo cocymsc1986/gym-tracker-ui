@@ -6,6 +6,17 @@ vi.mock("wouter", () => ({
   useParams: () => ({ id: "123" }),
 }));
 
+vi.mock("@/lib/getUserId", () => ({
+  getUserId: () => "test-user-id",
+}));
+
+vi.mock("@/lib/apiClient", () => ({
+  apiClient: {
+    post: vi.fn(),
+    get: vi.fn(),
+  },
+}));
+
 const mockSetShowModal = vi.fn();
 
 const renderModal = (userExercises: string[] = []) => {
