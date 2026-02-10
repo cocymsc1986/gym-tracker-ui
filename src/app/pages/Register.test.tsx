@@ -20,6 +20,14 @@ vi.mock("@/lib/apiClient", () => ({
 
 import { apiClient } from "@/lib/apiClient";
 
+const submitRegistration = async () => {
+  await userEvent.type(screen.getByLabelText(/email/i), "test@example.com");
+  await userEvent.type(screen.getByLabelText(/password/i), "password123");
+  await userEvent.click(
+    screen.getByRole("button", { name: /Create Account/i })
+  );
+};
+
 describe("Register", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -38,34 +46,109 @@ describe("Register", () => {
     });
 
     render(<Register />);
-
-    await userEvent.type(screen.getByLabelText(/email/i), "test@example.com");
-    await userEvent.type(screen.getByLabelText(/password/i), "password123");
-    await userEvent.click(
-      screen.getByRole("button", { name: /Create Account/i })
-    );
+    await submitRegistration();
 
     await waitFor(() => {
       expect(screen.getByText("Invalid email")).toBeInTheDocument();
     });
   });
 
-  it("shows registration successful message when response is successful", async () => {
+  it("shows confirmation code screen after successful signup", async () => {
     vi.mocked(apiClient.post).mockResolvedValueOnce({
       status: 201,
       data: { message: "Check your email" },
     });
 
     render(<Register />);
+    await submitRegistration();
 
-    await userEvent.type(screen.getByLabelText(/email/i), "test@example.com");
-    await userEvent.type(screen.getByLabelText(/password/i), "password123");
+    await waitFor(() => {
+      expect(screen.getByText("Confirm your account")).toBeInTheDocument();
+      expect(
+        screen.getByText(/Enter the 6-digit code sent to test@example.com/)
+      ).toBeInTheDocument();
+      expect(screen.getByLabelText(/Confirmation Code/i)).toBeInTheDocument();
+    });
+  });
+
+  it("submits confirmation code with correct payload", async () => {
+    vi.mocked(apiClient.post)
+      .mockResolvedValueOnce({ status: 201, data: {} })
+      .mockResolvedValueOnce({ status: 200, data: {} });
+
+    render(<Register />);
+    await submitRegistration();
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Confirmation Code/i)).toBeInTheDocument();
+    });
+
+    await userEvent.type(
+      screen.getByLabelText(/Confirmation Code/i),
+      "123456"
+    );
     await userEvent.click(
-      screen.getByRole("button", { name: /Create Account/i })
+      screen.getByRole("button", { name: /Confirm Account/i })
+    );
+
+    await waitFor(() => {
+      expect(apiClient.post).toHaveBeenCalledWith("/auth/confirm", {
+        Email: "test@example.com",
+        Code: "123456",
+      });
+    });
+  });
+
+  it("shows success message after confirmation", async () => {
+    vi.mocked(apiClient.post)
+      .mockResolvedValueOnce({ status: 201, data: {} })
+      .mockResolvedValueOnce({ status: 200, data: {} });
+
+    render(<Register />);
+    await submitRegistration();
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Confirmation Code/i)).toBeInTheDocument();
+    });
+
+    await userEvent.type(
+      screen.getByLabelText(/Confirmation Code/i),
+      "123456"
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: /Confirm Account/i })
     );
 
     await waitFor(() => {
       expect(screen.getByText("Registration Successful")).toBeInTheDocument();
+      expect(screen.getByText("Go to Login")).toBeInTheDocument();
+    });
+  });
+
+  it("displays error when confirmation fails", async () => {
+    vi.mocked(apiClient.post)
+      .mockResolvedValueOnce({ status: 201, data: {} })
+      .mockRejectedValueOnce({
+        response: { data: { error: "Invalid code" } },
+      });
+
+    render(<Register />);
+    await submitRegistration();
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Confirmation Code/i)).toBeInTheDocument();
+    });
+
+    await userEvent.type(
+      screen.getByLabelText(/Confirmation Code/i),
+      "000000"
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: /Confirm Account/i })
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Invalid code")).toBeInTheDocument();
     });
   });
 });
