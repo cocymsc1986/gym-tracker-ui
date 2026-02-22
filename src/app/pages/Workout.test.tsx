@@ -76,7 +76,7 @@ const mockWorkout: WorkoutType = {
 describe("Workout", () => {
   it("renders exercises grouped by exercise type", () => {
     render(
-      <Workout loaderData={{ workout: mockWorkout, userExercises: [] }} />
+      <Workout loaderData={{ workout: mockWorkout, userExercises: [] }} onDeleteExercise={vi.fn()} onRefresh={vi.fn()} />
     );
 
     expect(screen.getByText("Weights")).toBeInTheDocument();
@@ -89,7 +89,7 @@ describe("Workout", () => {
   });
 
   it("displays loading state when no workout data", () => {
-    render(<Workout loaderData={{ workout: null, userExercises: [] }} />);
+    render(<Workout loaderData={{ workout: null, userExercises: [] }} onDeleteExercise={vi.fn()} onRefresh={vi.fn()} />);
 
     expect(screen.getByText("Loading...")).toBeInTheDocument();
   });
@@ -105,6 +105,8 @@ describe("Workout", () => {
     render(
       <Workout
         loaderData={{ workout: workoutWithoutExercises, userExercises: [] }}
+        onDeleteExercise={vi.fn()}
+        onRefresh={vi.fn()}
       />
     );
 
