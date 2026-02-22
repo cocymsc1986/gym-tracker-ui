@@ -6,10 +6,10 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isAuthenticated, isValidating } = useAuth();
+  const { isAuthenticated, isValidating, isInitializing } = useAuth();
 
-  // Show loading while validating JWT
-  if (isValidating) {
+  // Show loading while restoring auth state from storage or validating JWT
+  if (isInitializing || isValidating) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
