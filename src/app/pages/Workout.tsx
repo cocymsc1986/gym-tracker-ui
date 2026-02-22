@@ -24,7 +24,7 @@ import { AddExerciseModal } from "@/components/AddExerciseModal";
 import type { Workout } from "@/types/Workout";
 
 function buildColumns(
-  onDeleteExercise: (exerciseId: string) => Promise<void>
+  onDeleteExercise: (exerciseId: string) => Promise<void>,
 ): ColumnDef<Exercise>[] {
   return [
     {
@@ -69,12 +69,14 @@ function buildColumns(
 export function Workout({
   loaderData,
   onDeleteExercise,
+  onRefresh,
 }: {
   loaderData: {
     workout: Workout | null;
     userExercises: string[];
   };
   onDeleteExercise: (exerciseId: string) => Promise<void>;
+  onRefresh: () => void;
 }) {
   const workout = loaderData?.workout;
   const userExercises = loaderData?.userExercises;
@@ -120,6 +122,7 @@ export function Workout({
             showModal={showModal}
             setShowModal={setShowModal}
             userExercises={userExercises}
+            onExerciseAdded={onRefresh}
           />
         )}
       </div>

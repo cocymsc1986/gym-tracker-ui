@@ -21,6 +21,7 @@ interface AuthContextType {
   setTokens: (tokens: TokenData | null) => void;
   logout: () => void;
   isValidating: boolean;
+  isInitializing: boolean;
   userPayload: JWTPayload | null;
 }
 
@@ -32,6 +33,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   console.log('[DEBUG] AuthProvider rendering');
   const [tokens, setTokensState] = useState<TokenData | null>(null);
   const [isValidating, setIsValidating] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
   const [userPayload, setUserPayload] = useState<JWTPayload | null>(null);
   const lastValidatedToken = useRef<string | null>(null);
 
@@ -43,10 +45,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const parsed = JSON.parse(storedTokens) as TokenData;
         setTokensState(parsed);
+        // Keep isInitializing = true until JWT validation completes
       } catch (error) {
         console.error("Failed to parse stored tokens:", error);
         localStorage.removeItem(TOKEN_STORAGE_KEY);
+        setIsInitializing(false);
       }
+    } else {
+      setIsInitializing(false);
     }
   }, []);
 
@@ -98,6 +104,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           localStorage.removeItem(TOKEN_STORAGE_KEY);
         } finally {
           setIsValidating(false);
+          setIsInitializing(false);
         }
       } else if (!tokens) {
         setUserPayload(null);
@@ -118,6 +125,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setTokens,
         logout,
         isValidating,
+        isInitializing,
         userPayload,
       }}
     >

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Dashboard } from "../pages/Dashboard";
 import { Workout } from "../pages/Workout";
 import { getUserId } from "../lib/getUserId";
@@ -58,7 +58,7 @@ export function DashboardWithData() {
             ...prev,
             workouts: prev.workouts.filter((w) => w.workoutId !== workoutId),
           }
-        : prev
+        : prev,
     );
   };
 
@@ -92,45 +92,43 @@ export function WorkoutWithData({ workoutId }: { workoutId: string }) {
   } | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function loadData() {
-      const userId = getUserId();
-      if (!userId) {
-        console.warn("User ID not found or invalid token");
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const [workoutResponse, exercisesResponse] = await Promise.all([
-          apiClient.get(`/workouts/${userId}/${workoutId}`),
-          apiClient.get(`/exercises/${userId}`),
-        ]);
-
-        if (workoutResponse.status === 200) {
-          const userExercises = exercisesResponse.data.map(
-            (e: ExerciseType) => e.name
-          );
-
-          const workoutData = {
-            workoutId: workoutResponse.data.workoutId,
-            name: workoutResponse.data.name,
-            date: workoutResponse.data.date,
-            exercises: exercisesResponse.data.filter((exercise: ExerciseType) =>
-              workoutResponse.data.exercises.includes(exercise.exerciseId)
-            ),
-          };
-
-          setData({ workout: workoutData, userExercises });
-        }
-      } catch (error) {
-        console.error("Error fetching workout data:", error);
-      } finally {
-        setLoading(false);
-      }
+  const loadData = useCallback(async () => {
+    const userId = getUserId();
+    if (!userId) {
+      console.warn("User ID not found or invalid token");
+      setLoading(false);
+      return;
     }
 
-    loadData();
+    try {
+      const [workoutResponse, exercisesResponse] = await Promise.all([
+        apiClient.get(`/workouts/${userId}/${workoutId}`),
+        apiClient.get(`/exercises/${userId}`),
+      ]);
+
+      if (workoutResponse.status === 200) {
+        const userExercises = exercisesResponse.data.map(
+          (e: ExerciseType) => e.name,
+        );
+
+        const workoutData = {
+          workoutId: workoutResponse.data.workoutId,
+          name: workoutResponse.data.name,
+          date: workoutResponse.data.date,
+          exercises: exercisesResponse.data.filter((exercise: ExerciseType) =>
+            (workoutResponse.data.exercises ?? []).includes(
+              exercise.exerciseId,
+            ),
+          ),
+        };
+
+        setData({ workout: workoutData, userExercises });
+      }
+    } catch (error) {
+      console.error("Error fetching workout data:", error);
+    } finally {
+      setLoading(false);
+    }
   }, [workoutId]);
 
   const handleDeleteExercise = async (exerciseId: string) => {
@@ -138,7 +136,7 @@ export function WorkoutWithData({ workoutId }: { workoutId: string }) {
     if (!userId) return;
 
     await apiClient.delete(
-      `/workouts/${userId}/${workoutId}/exercises/${exerciseId}`
+      `/workouts/${userId}/${workoutId}/exercises/${exerciseId}`,
     );
     await apiClient.delete(`/exercises/${userId}/${exerciseId}`);
     setData((prev) =>
@@ -148,13 +146,17 @@ export function WorkoutWithData({ workoutId }: { workoutId: string }) {
             workout: {
               ...prev.workout,
               exercises: prev.workout.exercises.filter(
-                (e) => e.exerciseId !== exerciseId
+                (e) => e.exerciseId !== exerciseId,
               ),
             },
           }
-        : prev
+        : prev,
     );
   };
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   if (loading) {
     return (
@@ -171,6 +173,7 @@ export function WorkoutWithData({ workoutId }: { workoutId: string }) {
     <Workout
       loaderData={data || { workout: null, userExercises: [] }}
       onDeleteExercise={handleDeleteExercise}
+      onRefresh={loadData}
     />
   );
 }
