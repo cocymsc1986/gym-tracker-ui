@@ -147,6 +147,9 @@ export function WorkoutWithData({ workoutId }: { workoutId: string }) {
     const userId = getUserId();
     if (!userId) return;
 
+    await apiClient.delete(
+      `/workouts/${userId}/${workoutId}/exercises/${exerciseId}`,
+    );
     await apiClient.delete(`/exercises/${userId}/${exerciseId}`);
     setData((prev) =>
       prev
