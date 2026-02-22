@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { MoreHorizontal, Trash2 } from "lucide-react";
+import { MoreVertical, Trash2 } from "lucide-react";
 import { type ColumnDef } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
@@ -45,7 +45,7 @@ function buildColumns(
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <MoreHorizontal className="h-4 w-4" />
+                  <MoreVertical className="h-4 w-4" />
                   <span className="sr-only">Exercise options</span>
                 </Button>
               </DropdownMenuTrigger>
