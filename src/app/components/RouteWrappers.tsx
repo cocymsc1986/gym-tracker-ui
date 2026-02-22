@@ -51,12 +51,24 @@ export function DashboardWithData() {
     const userId = getUserId();
     if (!userId) return;
 
+    const workout = data?.workouts.find((w) => w.workoutId === workoutId);
+    const exerciseIds = (workout?.exercises ?? []) as unknown as string[];
+
     await apiClient.delete(`/workouts/${userId}/${workoutId}`);
+    await Promise.all(
+      exerciseIds.map((exerciseId) =>
+        apiClient.delete(`/exercises/${userId}/${exerciseId}`)
+      )
+    );
+
     setData((prev) =>
       prev
         ? {
             ...prev,
             workouts: prev.workouts.filter((w) => w.workoutId !== workoutId),
+            exercises: prev.exercises.filter(
+              (e) => !exerciseIds.includes(e.exerciseId)
+            ),
           }
         : prev,
     );
