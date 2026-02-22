@@ -29,11 +29,13 @@ const columns: ColumnDef<Exercise>[] = [
 
 export function Workout({
   loaderData,
+  onRefresh,
 }: {
   loaderData: {
     workout: Workout | null;
     userExercises: string[];
   };
+  onRefresh: () => void;
 }) {
   const workout = loaderData?.workout;
   const userExercises = loaderData?.userExercises;
@@ -76,6 +78,7 @@ export function Workout({
             showModal={showModal}
             setShowModal={setShowModal}
             userExercises={userExercises}
+            onExerciseAdded={onRefresh}
           />
         )}
       </div>

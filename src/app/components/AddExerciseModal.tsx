@@ -159,10 +159,12 @@ export function AddExerciseModal({
   showModal,
   setShowModal,
   userExercises,
+  onExerciseAdded,
 }: {
   showModal: boolean;
   setShowModal: (open: boolean) => void;
   userExercises: string[];
+  onExerciseAdded?: () => void;
 }) {
   const [selectedType, setSelectedType] = useState<ExerciseType | null>(null);
   const [exerciseName, setExerciseName] = useState("");
@@ -245,6 +247,7 @@ export function AddExerciseModal({
       setShowModal(false);
       setExerciseName("");
       setSelectedType(null);
+      onExerciseAdded?.();
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (err: any) {
       setError(err.response?.data?.error || "An error occurred");
