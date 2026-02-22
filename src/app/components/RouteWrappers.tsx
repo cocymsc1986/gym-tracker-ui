@@ -47,6 +47,21 @@ export function DashboardWithData() {
     loadData();
   }, []);
 
+  const handleDeleteWorkout = async (workoutId: number) => {
+    const userId = getUserId();
+    if (!userId) return;
+
+    await apiClient.delete(`/workouts/${userId}/${workoutId}`);
+    setData((prev) =>
+      prev
+        ? {
+            ...prev,
+            workouts: prev.workouts.filter((w) => w.workoutId !== workoutId),
+          }
+        : prev
+    );
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -62,6 +77,7 @@ export function DashboardWithData() {
     <Dashboard
       workouts={data?.workouts || []}
       exercises={data?.exercises || []}
+      onDeleteWorkout={handleDeleteWorkout}
     />
   );
 }
@@ -117,6 +133,28 @@ export function WorkoutWithData({ workoutId }: { workoutId: string }) {
     loadData();
   }, [workoutId]);
 
+  const handleDeleteExercise = async (exerciseId: string) => {
+    const userId = getUserId();
+    if (!userId) return;
+
+    await apiClient.delete(
+      `/workouts/${userId}/${workoutId}/exercises/${exerciseId}`
+    );
+    setData((prev) =>
+      prev
+        ? {
+            ...prev,
+            workout: {
+              ...prev.workout,
+              exercises: prev.workout.exercises.filter(
+                (e) => e.exerciseId !== exerciseId
+              ),
+            },
+          }
+        : prev
+    );
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -128,5 +166,10 @@ export function WorkoutWithData({ workoutId }: { workoutId: string }) {
     );
   }
 
-  return <Workout loaderData={data || { workout: null, userExercises: [] }} />;
+  return (
+    <Workout
+      loaderData={data || { workout: null, userExercises: [] }}
+      onDeleteExercise={handleDeleteExercise}
+    />
+  );
 }

@@ -9,9 +9,10 @@ import { ProgressChart } from "@/components/ProgressChart";
 interface DashboardProps {
   workouts: Workout[];
   exercises: Exercise[];
+  onDeleteWorkout: (workoutId: number) => Promise<void>;
 }
 
-export function Dashboard({ workouts, exercises }: DashboardProps) {
+export function Dashboard({ workouts, exercises, onDeleteWorkout }: DashboardProps) {
   return (
     <div className="min-h-screen flex justify-center p-4 md:p-8 w-full">
       <Card className="w-full border-none shadow-none">
@@ -21,7 +22,7 @@ export function Dashboard({ workouts, exercises }: DashboardProps) {
         <CardContent className="flex flex-col gap-4">
           <ProgressChart workouts={workouts} exercises={exercises} />
           <div className="flex flex-col md:flex-row gap-4 items-start">
-            <Activities workouts={workouts} />
+            <Activities workouts={workouts} onDeleteWorkout={onDeleteWorkout} />
             <Tracker workouts={workouts} />
           </div>
         </CardContent>
