@@ -100,7 +100,7 @@ export function WorkoutWithData({ workoutId }: { workoutId: string }) {
           name: workoutResponse.data.name,
           date: workoutResponse.data.date,
           exercises: exercisesResponse.data.filter((exercise: ExerciseType) =>
-            workoutResponse.data.exercises.includes(exercise.exerciseId)
+            (workoutResponse.data.exercises ?? []).includes(exercise.exerciseId)
           ),
         };
 
