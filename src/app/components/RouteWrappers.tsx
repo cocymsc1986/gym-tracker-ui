@@ -57,8 +57,8 @@ export function DashboardWithData() {
     await apiClient.delete(`/workouts/${userId}/${workoutId}`);
     await Promise.all(
       exerciseIds.map((exerciseId) =>
-        apiClient.delete(`/exercises/${exerciseId}`)
-      )
+        apiClient.delete(`/exercises/${userId}/${exerciseId}`),
+      ),
     );
 
     setData((prev) =>
@@ -67,7 +67,7 @@ export function DashboardWithData() {
             ...prev,
             workouts: prev.workouts.filter((w) => w.workoutId !== workoutId),
             exercises: prev.exercises.filter(
-              (e) => !exerciseIds.includes(e.exerciseId)
+              (e) => !exerciseIds.includes(e.exerciseId),
             ),
           }
         : prev,
@@ -150,7 +150,7 @@ export function WorkoutWithData({ workoutId }: { workoutId: string }) {
     await apiClient.delete(
       `/workouts/${userId}/${workoutId}/exercises/${exerciseId}`,
     );
-    await apiClient.delete(`/exercises/${exerciseId}`);
+    await apiClient.delete(`/exercises/${userId}/${exerciseId}`);
     setData((prev) =>
       prev
         ? {
