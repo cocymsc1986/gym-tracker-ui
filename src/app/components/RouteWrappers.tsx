@@ -47,6 +47,33 @@ export function DashboardWithData() {
     loadData();
   }, []);
 
+  const handleDeleteWorkout = async (workoutId: number) => {
+    const userId = getUserId();
+    if (!userId) return;
+
+    const workout = data?.workouts.find((w) => w.workoutId === workoutId);
+    const exerciseIds = (workout?.exercises ?? []) as unknown as string[];
+
+    await apiClient.delete(`/workouts/${userId}/${workoutId}`);
+    await Promise.all(
+      exerciseIds.map((exerciseId) =>
+        apiClient.delete(`/exercises/${userId}/${exerciseId}`),
+      ),
+    );
+
+    setData((prev) =>
+      prev
+        ? {
+            ...prev,
+            workouts: prev.workouts.filter((w) => w.workoutId !== workoutId),
+            exercises: prev.exercises.filter(
+              (e) => !exerciseIds.includes(e.exerciseId),
+            ),
+          }
+        : prev,
+    );
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -62,6 +89,7 @@ export function DashboardWithData() {
     <Dashboard
       workouts={data?.workouts || []}
       exercises={data?.exercises || []}
+      onDeleteWorkout={handleDeleteWorkout}
     />
   );
 }
@@ -92,7 +120,7 @@ export function WorkoutWithData({ workoutId }: { workoutId: string }) {
 
       if (workoutResponse.status === 200) {
         const userExercises = exercisesResponse.data.map(
-          (e: ExerciseType) => e.name
+          (e: ExerciseType) => e.name,
         );
 
         const workoutData = {
@@ -100,7 +128,9 @@ export function WorkoutWithData({ workoutId }: { workoutId: string }) {
           name: workoutResponse.data.name,
           date: workoutResponse.data.date,
           exercises: exercisesResponse.data.filter((exercise: ExerciseType) =>
-            (workoutResponse.data.exercises ?? []).includes(exercise.exerciseId)
+            (workoutResponse.data.exercises ?? []).includes(
+              exercise.exerciseId,
+            ),
           ),
         };
 
@@ -112,6 +142,29 @@ export function WorkoutWithData({ workoutId }: { workoutId: string }) {
       setLoading(false);
     }
   }, [workoutId]);
+
+  const handleDeleteExercise = async (exerciseId: string) => {
+    const userId = getUserId();
+    if (!userId) return;
+
+    await apiClient.delete(
+      `/workouts/${userId}/${workoutId}/exercises/${exerciseId}`,
+    );
+    await apiClient.delete(`/exercises/${userId}/${exerciseId}`);
+    setData((prev) =>
+      prev
+        ? {
+            ...prev,
+            workout: {
+              ...prev.workout,
+              exercises: prev.workout.exercises.filter(
+                (e) => e.exerciseId !== exerciseId,
+              ),
+            },
+          }
+        : prev,
+    );
+  };
 
   useEffect(() => {
     loadData();
@@ -128,5 +181,11 @@ export function WorkoutWithData({ workoutId }: { workoutId: string }) {
     );
   }
 
-  return <Workout loaderData={data || { workout: null, userExercises: [] }} onRefresh={loadData} />;
+  return (
+    <Workout
+      loaderData={data || { workout: null, userExercises: [] }}
+      onDeleteExercise={handleDeleteExercise}
+      onRefresh={loadData}
+    />
+  );
 }
