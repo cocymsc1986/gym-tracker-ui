@@ -2,15 +2,6 @@ import { Link, useLocation } from "wouter";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/lib/authContext";
@@ -22,13 +13,8 @@ export function Login() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Redirect if already authenticated
   useEffect(() => {
-    console.log("[Login] Auth state changed:", { isAuthenticated });
-    if (isAuthenticated) {
-      console.log("[Login] User authenticated, redirecting to dashboard...");
-      setLocation("/");
-    }
+    if (isAuthenticated) setLocation("/");
   }, [isAuthenticated, setLocation]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -41,14 +27,9 @@ export function Login() {
     const password = formData.get("password") as string;
 
     try {
-      const response = await apiClient.post("/auth/signin", {
-        email,
-        password,
-      });
+      const response = await apiClient.post("/auth/signin", { email, password });
 
       if (response.status === 200) {
-        console.log("[Login] Received response:", response.data);
-        // Transform API response to match expected token format
         const tokenData = {
           token: response.data.access_token,
           refreshToken: response.data.refresh_token,
@@ -56,73 +37,151 @@ export function Login() {
             ? Date.now() + response.data.expires_in * 1000
             : undefined,
         };
-        console.log("[Login] Setting tokens:", tokenData);
         setTokens(tokenData);
-        console.log("[Login] Tokens set, waiting for auth validation...");
-        // Don't redirect immediately - let the auth context handle it after validation
       } else {
         setError(response.data.error || "Login failed");
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.response?.data?.error || "An error occurred during login");
-      console.error("Login error:", err);
     } finally {
       setBusy(false);
     }
   };
 
   return (
-    <Card className="w-full max-w-sm">
-      <CardHeader>
-        <CardTitle>Login to your account</CardTitle>
-        <CardDescription>
-          Enter your email below to login to your account
-        </CardDescription>
-        <CardAction>
-          <Button variant="link" asChild>
-            <Link to="/register">Sign Up</Link>
-          </Button>
-        </CardAction>
-      </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent>
-          <div className="flex flex-col gap-6">
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
+    <div className="min-h-screen flex">
+      <BrandPanel />
+
+      <section className="flex-1 flex flex-col justify-center items-center px-8 md:px-24 bg-background">
+        <div className="w-full max-w-md">
+          {/* Mobile logo */}
+          <div className="md:hidden mb-12 flex justify-center">
+            <span className="font-headline font-black italic tracking-tighter text-4xl text-primary-dark">
+              KINETIC
+            </span>
+          </div>
+
+          <div className="mb-10">
+            <h2 className="font-headline font-bold text-4xl text-foreground tracking-tight mb-2">
+              Welcome back
+            </h2>
+            <p className="text-muted-foreground font-medium">
+              Enter your credentials to access your dashboard.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">
+                Email Address
+              </Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
-                placeholder="m@example.com"
+                placeholder="name@example.com"
                 required
               />
             </div>
-            <div className="grid">
-              <div className="flex items-center mb-2">
-                <Label htmlFor="password">Password</Label>
+
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-center px-1">
+                <Label htmlFor="password" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  Password
+                </Label>
+                <a
+                  href="#"
+                  className="text-[10px] font-bold uppercase tracking-widest text-primary-dark hover:opacity-70 transition-opacity"
+                >
+                  Forgot?
+                </a>
               </div>
-              <Input id="password" name="password" type="password" required />
-              <a
-                href="#"
-                className="inline-block text-sm underline-offset-4 hover:underline mt-1"
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+
+            {error && (
+              <p className="text-sm text-destructive px-1">{error}</p>
+            )}
+
+            <div className="pt-2 space-y-4">
+              <Button
+                type="submit"
+                className="w-full py-4 font-headline font-extrabold text-sm uppercase tracking-widest"
+                disabled={busy}
               >
-                Forgot password
-              </a>
+                {busy ? "Starting session..." : "Start Session ⚡"}
+              </Button>
+
+              <OrDivider />
+
+              <div className="grid grid-cols-2 gap-3">
+                <Button type="button" variant="secondary" className="text-xs font-bold uppercase tracking-wider">
+                  Google
+                </Button>
+                <Button type="button" variant="secondary" className="text-xs font-bold uppercase tracking-wider">
+                  Apple
+                </Button>
+              </div>
             </div>
+          </form>
+
+          <div className="mt-12 text-center">
+            <p className="text-muted-foreground text-sm">
+              New to the lab?{" "}
+              <Link
+                to="/register"
+                className="text-foreground font-bold underline decoration-primary decoration-4 underline-offset-4 hover:decoration-primary-dark transition-all"
+              >
+                Register an account
+              </Link>
+            </p>
           </div>
-          {error && (
-            <div className="mt-4 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
-              {error}
-            </div>
-          )}
-        </CardContent>
-        <CardFooter className="flex-col gap-2 mt-4">
-          <Button type="submit" className="w-full" disabled={busy}>
-            {busy ? "Logging in..." : "Login"}
-          </Button>
-        </CardFooter>
-      </form>
-    </Card>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function BrandPanel() {
+  return (
+    <section className="hidden md:flex md:w-1/2 bg-primary-dark flex-col justify-between p-16 relative overflow-hidden">
+      <h1 className="font-headline font-black italic tracking-tighter text-5xl text-primary z-10">
+        KINETIC
+      </h1>
+
+      <p className="font-headline font-bold text-white text-7xl leading-none tracking-tight z-10">
+        PRECISION <br /> IN EVERY <br />
+        <span className="text-primary">REP.</span>
+      </p>
+
+      <span className="font-sans font-bold text-primary tracking-[0.2em] uppercase text-xs z-10">
+        Performance Tracking System v2.0
+      </span>
+
+      {/* Decorative ring */}
+      <div className="absolute -right-20 bottom-0 opacity-20 w-96 h-96 border-[40px] border-primary rounded-full" />
+    </section>
+  );
+}
+
+function OrDivider() {
+  return (
+    <div className="relative py-2">
+      <div className="absolute inset-0 flex items-center">
+        <div className="w-full border-t border-accent" />
+      </div>
+      <div className="relative flex justify-center">
+        <span className="bg-background px-4 text-[10px] font-bold uppercase tracking-widest text-outline">
+          or continue with
+        </span>
+      </div>
+    </div>
   );
 }
