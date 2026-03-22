@@ -2,15 +2,6 @@ import { Link } from "wouter";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { apiClient } from "@/lib/apiClient";
@@ -46,10 +37,7 @@ export function Register() {
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      setError(
-        err.response?.data?.error || "An error occurred during registration"
-      );
-      console.error("Registration error:", err);
+      setError(err.response?.data?.error || "An error occurred during registration");
     } finally {
       setBusy(false);
     }
@@ -64,142 +52,193 @@ export function Register() {
     const code = formData.get("code") as string;
 
     try {
-      await apiClient.post("/auth/confirm", {
-        Email: email,
-        Code: code,
-      });
-
+      await apiClient.post("/auth/confirm", { Email: email, Code: code });
       setStep("success");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      setError(
-        err.response?.data?.error || "An error occurred during confirmation"
-      );
-      console.error("Confirmation error:", err);
+      setError(err.response?.data?.error || "An error occurred during confirmation");
     } finally {
       setBusy(false);
     }
   };
 
-  if (step === "success") {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <Card className="w-full max-w-sm">
-          <CardHeader>
-            <CardTitle>Registration Successful</CardTitle>
-            <CardDescription>
-              Your account has been confirmed
-            </CardDescription>
-          </CardHeader>
-          <CardFooter>
-            <Button asChild className="w-full">
-              <Link href="/login">Go to Login</Link>
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
-    );
-  }
-
-  if (step === "confirm") {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <Card className="w-full max-w-sm">
-          <CardHeader>
-            <CardTitle>Confirm your account</CardTitle>
-            <CardDescription>
-              Enter the 6-digit code sent to {email}
-            </CardDescription>
-          </CardHeader>
-          <form onSubmit={handleConfirm}>
-            <CardContent>
-              <div className="grid gap-2">
-                <Label htmlFor="code">Confirmation Code</Label>
-                <Input
-                  id="code"
-                  name="code"
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]{6}"
-                  maxLength={6}
-                  placeholder="Enter 6-digit code"
-                  autoComplete="one-time-code"
-                  required
-                  onChange={() => setError(null)}
-                />
-              </div>
-              {error && (
-                <div className="mt-4 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
-                  {error}
-                </div>
-              )}
-            </CardContent>
-            <CardFooter className="flex-col gap-2">
-              <Button type="submit" className="w-full" disabled={busy}>
-                {busy ? "Confirming..." : "Confirm Account"}
-              </Button>
-            </CardFooter>
-          </form>
-        </Card>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Create your account</CardTitle>
-          <CardDescription>
-            Enter your details below to create your account
-          </CardDescription>
-          <CardAction>
-            <Button variant="link" asChild>
-              <Link href="/login">Sign In</Link>
-            </Button>
-          </CardAction>
-        </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="text"
-                  placeholder="Enter your email"
-                  autoComplete="email"
-                  required
-                  onChange={() => setError(null)}
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="new-password"
-                  placeholder="Enter your password"
-                  required
-                  onChange={() => setError(null)}
-                />
-              </div>
-            </div>
-            {error && (
-              <div className="mt-4 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
-                {error}
-              </div>
-            )}
-          </CardContent>
-          <CardFooter className="flex-col gap-2">
-            <Button type="submit" className="w-full" disabled={busy}>
-              {busy ? "Creating account..." : "Create Account"}
-            </Button>
-          </CardFooter>
-        </form>
-      </Card>
+    <div className="min-h-screen flex flex-col justify-center items-center px-8 bg-background">
+      <div className="w-full max-w-md">
+        <div className="mb-12 flex justify-center">
+          <span className="font-headline font-black italic tracking-tighter text-4xl text-primary-dark">
+            KINETIC
+          </span>
+        </div>
+
+        {step === "success" && <SuccessStep />}
+        {step === "confirm" && (
+          <ConfirmStep email={email} busy={busy} error={error} onSubmit={handleConfirm} onErrorClear={() => setError(null)} />
+        )}
+        {step === "register" && (
+          <RegisterStep busy={busy} error={error} onSubmit={handleSubmit} onErrorClear={() => setError(null)} />
+        )}
+      </div>
     </div>
+  );
+}
+
+function RegisterStep({
+  busy,
+  error,
+  onSubmit,
+  onErrorClear,
+}: {
+  busy: boolean;
+  error: string | null;
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  onErrorClear: () => void;
+}) {
+  return (
+    <>
+      <div className="mb-10">
+        <h2 className="font-headline font-bold text-4xl text-foreground tracking-tight mb-2">
+          Join the lab
+        </h2>
+        <p className="text-muted-foreground font-medium">
+          Create your account and start tracking your performance.
+        </p>
+      </div>
+
+      <form onSubmit={onSubmit} className="space-y-5">
+        <div className="space-y-1.5">
+          <Label htmlFor="email" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">
+            Email Address
+          </Label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="name@example.com"
+            autoComplete="email"
+            required
+            onChange={onErrorClear}
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="password" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">
+            Password
+          </Label>
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Create a strong password"
+            autoComplete="new-password"
+            required
+            onChange={onErrorClear}
+          />
+        </div>
+
+        {error && <p className="text-sm text-destructive px-1">{error}</p>}
+
+        <div className="pt-2">
+          <Button
+            type="submit"
+            className="w-full py-4 font-headline font-extrabold text-sm uppercase tracking-widest"
+            disabled={busy}
+          >
+            {busy ? "Creating account..." : "Create Account ⚡"}
+          </Button>
+        </div>
+      </form>
+
+      <div className="mt-12 text-center">
+        <p className="text-muted-foreground text-sm">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="text-foreground font-bold underline decoration-primary decoration-4 underline-offset-4 hover:decoration-primary-dark transition-all"
+          >
+            Sign in
+          </Link>
+        </p>
+      </div>
+    </>
+  );
+}
+
+function ConfirmStep({
+  email,
+  busy,
+  error,
+  onSubmit,
+  onErrorClear,
+}: {
+  email: string;
+  busy: boolean;
+  error: string | null;
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  onErrorClear: () => void;
+}) {
+  return (
+    <>
+      <div className="mb-10">
+        <h2 className="font-headline font-bold text-4xl text-foreground tracking-tight mb-2">
+          Check your inbox
+        </h2>
+        <p className="text-muted-foreground font-medium">
+          We sent a 6-digit code to{" "}
+          <span className="text-foreground font-semibold">{email}</span>
+        </p>
+      </div>
+
+      <form onSubmit={onSubmit} className="space-y-5">
+        <div className="space-y-1.5">
+          <Label htmlFor="code" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">
+            Confirmation Code
+          </Label>
+          <Input
+            id="code"
+            name="code"
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]{6}"
+            maxLength={6}
+            placeholder="Enter 6-digit code"
+            autoComplete="one-time-code"
+            required
+            onChange={onErrorClear}
+          />
+        </div>
+
+        {error && <p className="text-sm text-destructive px-1">{error}</p>}
+
+        <div className="pt-2">
+          <Button
+            type="submit"
+            className="w-full py-4 font-headline font-extrabold text-sm uppercase tracking-widest"
+            disabled={busy}
+          >
+            {busy ? "Confirming..." : "Confirm Account"}
+          </Button>
+        </div>
+      </form>
+    </>
+  );
+}
+
+function SuccessStep() {
+  return (
+    <>
+      <div className="mb-10">
+        <h2 className="font-headline font-bold text-4xl text-foreground tracking-tight mb-2">
+          You're in.
+        </h2>
+        <p className="text-muted-foreground font-medium">
+          Your account is confirmed. Time to get to work.
+        </p>
+      </div>
+
+      <Button asChild className="w-full py-4 font-headline font-extrabold text-sm uppercase tracking-widest">
+        <Link to="/login">Start Session ⚡</Link>
+      </Button>
+    </>
   );
 }
