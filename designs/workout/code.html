@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&amp;family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary-container": "#545c00",
+              "tertiary-fixed": "#fdcc33",
+              "on-secondary-fixed": "#403f3f",
+              "background": "#f9f6f5",
+              "outline-variant": "#afadac",
+              "on-tertiary-container": "#594500",
+              "tertiary-fixed-dim": "#edbe23",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary": "#fff1d6",
+              "secondary-container": "#e5e2e1",
+              "secondary-dim": "#504f4f",
+              "on-tertiary-fixed": "#423200",
+              "primary-fixed-dim": "#d6e807",
+              "surface": "#f9f6f5",
+              "error": "#b02500",
+              "surface-dim": "#d6d4d3",
+              "primary-container": "#e4f725",
+              "surface-tint": "#586000",
+              "primary-dim": "#4d5400",
+              "secondary-fixed-dim": "#d6d4d3",
+              "surface-container-high": "#e4e2e1",
+              "on-background": "#2f2f2e",
+              "surface-variant": "#dfdcdc",
+              "error-container": "#f95630",
+              "inverse-surface": "#0e0e0e",
+              "primary-fixed": "#e4f725",
+              "inverse-primary": "#eafd2d",
+              "outline": "#787676",
+              "on-surface-variant": "#5c5b5b",
+              "on-error": "#ffefec",
+              "on-primary-fixed-variant": "#5e6600",
+              "secondary-fixed": "#e5e2e1",
+              "secondary": "#5c5b5b",
+              "on-primary-fixed": "#424800",
+              "on-secondary-container": "#525151",
+              "surface-container-highest": "#dfdcdc",
+              "on-secondary": "#f5f2f1",
+              "on-primary": "#ecff2f",
+              "surface-container": "#eae7e7",
+              "error-dim": "#b92902",
+              "tertiary": "#715800",
+              "inverse-on-surface": "#9e9c9c",
+              "on-error-container": "#520c00",
+              "tertiary-container": "#fdcc33",
+              "tertiary-dim": "#634d00",
+              "primary": "#586000",
+              "surface-container-low": "#f3f0ef",
+              "on-surface": "#2f2f2e",
+              "on-secondary-fixed-variant": "#5c5b5b",
+              "surface-bright": "#f9f6f5",
+              "on-tertiary-fixed-variant": "#644e00"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        body {
+            background-color: #f9f6f5;
+            color: #2f2f2e;
+            font-family: 'Manrope', sans-serif;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- TopAppBar -->
+<nav class="fixed top-0 z-50 w-full bg-[#f9f6f5] dark:bg-slate-950 flex justify-between items-center px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User profile avatar close up" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8MikJqiuqzaKlXP2_N-AzySCOiRdJgPtPZv5S_6mWCVn1n-xAVtMZnDePzv_9E_wOoXJitDRzL1LKWmPEpEd3FadeJ74g1J2ylq92FiPCMtCaapdqB5AF4YR5VRICwfMXMjGyxKCcjpoQbLE3JzdkyN_33LaEndk9oqq8jQuLECLGHFZmknuDsEW0jx-C5X0vrz5qUKyGwtBqaP4GteRVCtRu9CVJLMzlITbT0EQlQXVk5bUk5YRh6877eBQYwxx3odS1u-eDXVM"/>
+</div>
+<span class="text-2xl font-black italic tracking-tighter text-[#586000] dark:text-[#e4f725] font-['Space_Grotesk']">KINETIC</span>
+</div>
+<button class="text-slate-500 dark:text-slate-400 hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</nav>
+<div class="bg-[#dfdcdc] dark:bg-slate-800 h-[1px] w-full mt-[72px]"></div>
+<!-- Main Content Canvas -->
+<main class="px-6 py-8 max-w-4xl mx-auto">
+<!-- Header Section with Asymmetry -->
+<header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="max-w-md">
+<h1 class="font-headline font-extrabold text-5xl md:text-7xl tracking-tighter leading-none mb-4 uppercase">
+                    WORK<br/><span class="text-primary">OUTS</span>
+</h1>
+<p class="font-body text-secondary text-lg leading-relaxed">
+                    Track your velocity. Analyze your power. Push beyond the baseline.
+                </p>
+</div>
+<div class="flex flex-col items-start md:items-end">
+<span class="font-label text-[10px] uppercase tracking-[0.2em] text-outline mb-2">Weekly Volume</span>
+<div class="font-headline font-bold text-4xl text-on-surface">14.2k <span class="text-sm font-medium text-secondary">KG</span></div>
+</div>
+</header>
+<!-- Action Bar: Add Workout -->
+<div class="mb-10">
+<button class="group w-full md:w-auto bg-primary-container hover:bg-primary-container/90 text-on-primary-container px-8 py-4 rounded-xl flex items-center justify-center gap-3 transition-all active:scale-95 shadow-lg shadow-primary/10">
+<span class="material-symbols-outlined font-bold" data-icon="add">add</span>
+<span class="font-headline font-bold uppercase tracking-wider">Add Workout</span>
+</button>
+</div>
+<!-- Section: Planned Workouts (Editorial Bento Style) -->
+<section class="mb-12">
+<div class="flex items-center gap-4 mb-6">
+<h2 class="font-headline font-bold text-xl uppercase tracking-widest text-primary">Next Sessions</h2>
+<div class="h-[2px] flex-grow bg-surface-container-highest"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Planned Card 1 -->
+<div class="bg-surface-container-low p-6 rounded-xl flex flex-col justify-between min-h-[160px] relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-7xl" data-icon="event">event</span>
+</div>
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label text-[10px] uppercase tracking-widest text-secondary">Tuesday, 08:00 AM</span>
+</div>
+<h3 class="font-headline font-bold text-2xl uppercase leading-tight">Hypertrophy:<br/>Back &amp; Biceps</h3>
+</div>
+<div class="flex items-center gap-4 mt-4">
+<div class="flex items-center gap-1 text-secondary">
+<span class="material-symbols-outlined text-sm" data-icon="timer">timer</span>
+<span class="font-body text-xs font-bold">75m</span>
+</div>
+<div class="flex items-center gap-1 text-secondary">
+<span class="material-symbols-outlined text-sm" data-icon="fitness_center">fitness_center</span>
+<span class="font-body text-xs font-bold">8 Exercises</span>
+</div>
+</div>
+</div>
+<!-- Planned Card 2 (Empty/Focus state) -->
+<div class="bg-surface-container-highest border-2 border-dashed border-outline-variant p-6 rounded-xl flex flex-col items-center justify-center text-center min-h-[160px] hover:border-primary transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors mb-2" data-icon="calendar_add_on">calendar_add_on</span>
+<span class="font-label text-[10px] uppercase tracking-widest text-secondary group-hover:text-on-surface">Schedule another session</span>
+</div>
+</div>
+</section>
+<!-- Section: Recent History (List without dividers) -->
+<section>
+<div class="flex items-center gap-4 mb-8">
+<h2 class="font-headline font-bold text-xl uppercase tracking-widest text-on-surface">Recent Logs</h2>
+<div class="h-[2px] flex-grow bg-surface-container-highest"></div>
+</div>
+<div class="space-y-4">
+<!-- Log Item 1 (Active/Highlight State) -->
+<div class="bg-primary-container text-on-primary-container p-6 rounded-xl flex items-center justify-between group shadow-xl shadow-primary/5">
+<div class="flex flex-col">
+<span class="font-label text-[10px] uppercase tracking-[0.2em] mb-1 opacity-70">Yesterday, 18:30</span>
+<h4 class="font-headline font-extrabold text-2xl uppercase italic">Leg Day: Power Focus</h4>
+<div class="flex items-center gap-4 mt-2">
+<span class="font-body text-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-base" data-icon="schedule">schedule</span> 92m
+                            </span>
+<span class="font-body text-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-base" data-icon="bolt">bolt</span> 4,200kg
+                            </span>
+</div>
+</div>
+<div class="bg-on-primary-container text-primary-container w-12 h-12 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<!-- Log Item 2 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl flex items-center justify-between hover:bg-surface-container-low transition-colors group">
+<div class="flex flex-col">
+<span class="font-label text-[10px] uppercase tracking-[0.2em] mb-1 text-secondary">Oct 22, 07:15</span>
+<h4 class="font-headline font-bold text-2xl uppercase text-on-surface">Full Body Metabolic</h4>
+<div class="flex items-center gap-4 mt-2">
+<span class="font-body text-sm text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-base" data-icon="schedule">schedule</span> 45m
+                            </span>
+<span class="font-body text-sm text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-base" data-icon="bolt">bolt</span> 1,850kg
+                            </span>
+</div>
+</div>
+<div class="text-secondary w-12 h-12 rounded-lg flex items-center justify-center group-hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<!-- Log Item 3 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl flex items-center justify-between hover:bg-surface-container-low transition-colors group">
+<div class="flex flex-col">
+<span class="font-label text-[10px] uppercase tracking-[0.2em] mb-1 text-secondary">Oct 20, 19:45</span>
+<h4 class="font-headline font-bold text-2xl uppercase text-on-surface">Upper Body Volume</h4>
+<div class="flex items-center gap-4 mt-2">
+<span class="font-body text-sm text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-base" data-icon="schedule">schedule</span> 68m
+                            </span>
+<span class="font-body text-sm text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-base" data-icon="bolt">bolt</span> 3,120kg
+                            </span>
+</div>
+</div>
+<div class="text-secondary w-12 h-12 rounded-lg flex items-center justify-center group-hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<!-- Log Item 4 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl flex items-center justify-between hover:bg-surface-container-low transition-colors group opacity-60">
+<div class="flex flex-col">
+<span class="font-label text-[10px] uppercase tracking-[0.2em] mb-1 text-secondary">Oct 18, 06:00</span>
+<h4 class="font-headline font-bold text-2xl uppercase text-on-surface">Mobility &amp; Core</h4>
+<div class="flex items-center gap-4 mt-2">
+<span class="font-body text-sm text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-base" data-icon="schedule">schedule</span> 30m
+                            </span>
+<span class="font-body text-sm text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-base" data-icon="bolt">bolt</span> -- kg
+                            </span>
+</div>
+</div>
+<div class="text-secondary w-12 h-12 rounded-lg flex items-center justify-center group-hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- More History Link -->
+<div class="mt-8 text-center">
+<button class="font-headline font-bold text-sm uppercase tracking-widest text-primary border-b-2 border-primary-container pb-1 hover:text-on-background hover:border-on-background transition-all">
+                    View Complete History
+                </button>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-2 bg-[#f9f6f5] dark:bg-slate-900 z-50 rounded-t-xl shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+<!-- Dashboard -->
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-6 py-2 hover:text-[#586000] dark:hover:text-[#e4f725]" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-widest mt-1">Dashboard</span>
+</a>
+<!-- Workouts (ACTIVE) -->
+<a class="flex flex-col items-center justify-center bg-[#e4f725] dark:bg-[#586000] text-black dark:text-white rounded-xl px-6 py-2 transition-all duration-300 active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="fitness_center">fitness_center</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-widest mt-1">Workouts</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-6 py-2 hover:text-[#586000] dark:hover:text-[#e4f725]" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-widest mt-1">Profile</span>
+</a>
+</nav>
+</body></html>
