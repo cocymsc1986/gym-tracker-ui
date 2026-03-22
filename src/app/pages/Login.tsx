@@ -113,7 +113,8 @@ export function Login() {
             <div className="pt-2">
               <Button
                 type="submit"
-                className="w-full py-4 font-headline font-extrabold text-sm uppercase tracking-widest"
+                size="lg"
+                className="w-full font-headline font-extrabold text-sm uppercase tracking-widest"
                 disabled={busy}
               >
                 {busy ? "Starting session..." : "Start Session ⚡"}

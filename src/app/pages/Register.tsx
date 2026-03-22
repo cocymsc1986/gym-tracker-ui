@@ -141,7 +141,7 @@ function RegisterStep({
         <div className="pt-2">
           <Button
             type="submit"
-            className="w-full py-4 font-headline font-extrabold text-sm uppercase tracking-widest"
+            size="lg" className="w-full font-headline font-extrabold text-sm uppercase tracking-widest"
             disabled={busy}
           >
             {busy ? "Creating account..." : "Create Account ⚡"}
@@ -213,7 +213,7 @@ function ConfirmStep({
         <div className="pt-2">
           <Button
             type="submit"
-            className="w-full py-4 font-headline font-extrabold text-sm uppercase tracking-widest"
+            size="lg" className="w-full font-headline font-extrabold text-sm uppercase tracking-widest"
             disabled={busy}
           >
             {busy ? "Confirming..." : "Confirm Account"}
@@ -236,7 +236,7 @@ function SuccessStep() {
         </p>
       </div>
 
-      <Button asChild className="w-full py-4 font-headline font-extrabold text-sm uppercase tracking-widest">
+      <Button asChild size="lg" className="w-full font-headline font-extrabold text-sm uppercase tracking-widest">
         <Link to="/login">Start Session ⚡</Link>
       </Button>
     </>

@@ -9,7 +9,7 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
       data-slot="input"
       className={cn(
         // Kinetic: borderless surface style — background defines the field, not a border
-        "flex w-full min-w-0 rounded-xl bg-input px-4 py-3 text-base text-foreground",
+        "flex w-full min-w-0 rounded-lg bg-input px-4 py-3 text-base text-foreground",
         "placeholder:text-muted-foreground/60",
         "transition-colors duration-200",
         "focus:outline-none focus:bg-accent",
