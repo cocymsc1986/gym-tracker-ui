@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Dashboard } from "../pages/Dashboard";
 import { Workout } from "../pages/Workout";
+import { Workouts } from "../pages/Workouts";
 import { getUserId } from "../lib/getUserId";
 import { apiClient } from "../lib/apiClient";
 import type { Workout as WorkoutType } from "@/types/Workout";
@@ -92,6 +93,62 @@ export function DashboardWithData() {
       onDeleteWorkout={handleDeleteWorkout}
     />
   );
+}
+
+/**
+ * Wrapper component that fetches workouts list data
+ */
+export function WorkoutsWithData() {
+  const [workouts, setWorkouts] = useState<WorkoutType[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      const userId = getUserId();
+      if (!userId) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const response = await apiClient.get(`/workouts/${userId}`);
+        if (response.status === 200) {
+          setWorkouts(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching workouts:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
+  const handleDeleteWorkout = async (workoutId: number) => {
+    const userId = getUserId();
+    if (!userId) return;
+
+    const workout = workouts.find((w) => w.workoutId === workoutId);
+    const exerciseIds = (workout?.exercises ?? []) as unknown as string[];
+
+    await apiClient.delete(`/workouts/${userId}/${workoutId}`);
+    await Promise.all(
+      exerciseIds.map((exerciseId) =>
+        apiClient.delete(`/exercises/${userId}/${exerciseId}`),
+      ),
+    );
+
+    setWorkouts((prev) => prev.filter((w) => w.workoutId !== workoutId));
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-dark mx-auto" />
+      </div>
+    );
+  }
+
+  return <Workouts workouts={workouts} onDeleteWorkout={handleDeleteWorkout} />;
 }
 
 /**
