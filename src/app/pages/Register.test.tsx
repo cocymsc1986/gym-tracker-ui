@@ -63,9 +63,9 @@ describe("Register", () => {
     await submitRegistration();
 
     await waitFor(() => {
-      expect(screen.getByText("Confirm your account")).toBeInTheDocument();
+      expect(screen.getByText("Check your inbox")).toBeInTheDocument();
       expect(
-        screen.getByText(/Enter the 6-digit code sent to test@example.com/)
+        screen.getByText(/We sent a 6-digit code to/)
       ).toBeInTheDocument();
       expect(screen.getByLabelText(/Confirmation Code/i)).toBeInTheDocument();
     });
@@ -120,8 +120,8 @@ describe("Register", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText("Registration Successful")).toBeInTheDocument();
-      expect(screen.getByText("Go to Login")).toBeInTheDocument();
+      expect(screen.getByText("You're in.")).toBeInTheDocument();
+      expect(screen.getByText("Start Session ⚡")).toBeInTheDocument();
     });
   });
 
