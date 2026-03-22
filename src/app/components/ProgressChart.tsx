@@ -19,7 +19,13 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+} from "recharts";
 
 interface ProgressChartProps {
   workouts: Workout[] | null | undefined;
@@ -60,7 +66,6 @@ function transformExerciseData(
     return { data: [], metrics: [], exerciseType: ExerciseType.OTHER };
   }
 
-  // Create exercise lookup map
   const exerciseMap = new Map<string, Exercise>();
   exercises.forEach((exercise) => {
     if (exercise && exercise.exerciseId) {
@@ -68,17 +73,12 @@ function transformExerciseData(
     }
   });
 
-  // Sort workouts by date
   const sortedWorkouts = [...workouts].sort(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 
-  // Find all matching exercises across workouts (case-insensitive)
   const lowerExerciseName = exerciseName.toLowerCase();
-  const exercisesByDate: Array<{
-    date: string;
-    exercise: Exercise;
-  }> = [];
+  const exercisesByDate: Array<{ date: string; exercise: Exercise }> = [];
 
   sortedWorkouts.forEach((workout) => {
     if (workout.exercises && Array.isArray(workout.exercises)) {
@@ -110,8 +110,6 @@ function transformExerciseData(
   }
 
   const exerciseType = exercisesByDate[0].exercise.exerciseType;
-
-  // Group by date and aggregate
   const dataByDate = new Map<string, ChartDataPoint>();
 
   exercisesByDate.forEach(({ date, exercise }) => {
@@ -134,12 +132,10 @@ function transformExerciseData(
           const totalReps = exercise.sets.reduce((sum, s) => sum + s.reps, 0);
           const setsCount = exercise.sets.length;
 
-          // Use max weight across all instances on this date
           dataPoint["Weight"] = Math.max(
             (dataPoint["Weight"] as number) || 0,
             maxWeight
           );
-          // Sum reps and sets
           dataPoint["Reps"] = ((dataPoint["Reps"] as number) || 0) + totalReps;
           dataPoint["Sets"] = ((dataPoint["Sets"] as number) || 0) + setsCount;
         }
@@ -184,24 +180,20 @@ function transformExerciseData(
     }
   });
 
-  // Convert to array and sort by date
   const chartData = Array.from(dataByDate.entries())
     .sort(([dateA], [dateB]) => {
       return new Date(dateA).getTime() - new Date(dateB).getTime();
     })
     .map(([_, point]) => point);
 
-  // Determine metrics based on exercise type
   let metrics: string[] = [];
   if (exerciseType === ExerciseType.WEIGHTS) {
     metrics = ["Weight", "Reps", "Sets"];
   } else if (exerciseType === ExerciseType.CARDIO) {
-    metrics = [];
     if (chartData.some((d) => d["Time (min)"])) metrics.push("Time (min)");
     if (chartData.some((d) => d["Distance"])) metrics.push("Distance");
     if (chartData.some((d) => d["Speed"])) metrics.push("Speed");
   } else {
-    metrics = [];
     if (chartData.some((d) => d["Time (s)"])) metrics.push("Time (s)");
     if (chartData.some((d) => d["Distance"])) metrics.push("Distance");
   }
@@ -209,45 +201,22 @@ function transformExerciseData(
   return { data: chartData, metrics, exerciseType };
 }
 
-// Chart configuration with hex colors
-const chartConfig = {
-  Weight: {
-    label: "Weight (kg)",
-    color: "#3b82f6", // blue
-  },
-  Reps: {
-    label: "Reps",
-    color: "#10b981", // green
-  },
-  Sets: {
-    label: "Sets",
-    color: "#f59e0b", // orange
-  },
-  "Time (min)": {
-    label: "Time (min)",
-    color: "#3b82f6", // blue
-  },
-  "Time (s)": {
-    label: "Time (s)",
-    color: "#3b82f6", // blue
-  },
-  Distance: {
-    label: "Distance",
-    color: "#10b981", // green
-  },
-  Speed: {
-    label: "Speed",
-    color: "#f59e0b", // orange
-  },
-};
-
-const COLORS = [
-  "#3b82f6", // blue
-  "#10b981", // green
-  "#f59e0b", // orange
-  "#ef4444", // red
-  "#8b5cf6", // purple
+// Kinetic palette for chart series
+const KINETIC_COLORS = [
+  "#586000", // primary-dark (olive) — primary series
+  "#e4f725", // primary (yellow)     — secondary series
+  "#afadac", // outline-variant      — tertiary series
 ];
+
+const chartConfig = {
+  Weight:       { label: "Weight (kg)", color: "#586000" },
+  Reps:         { label: "Reps",        color: "#e4f725" },
+  Sets:         { label: "Sets",        color: "#afadac" },
+  "Time (min)": { label: "Time (min)",  color: "#586000" },
+  "Time (s)":   { label: "Time (s)",    color: "#586000" },
+  Distance:     { label: "Distance",    color: "#e4f725" },
+  Speed:        { label: "Speed",       color: "#afadac" },
+};
 
 export function ProgressChart({ workouts, exercises }: ProgressChartProps) {
   const [isLoading, setIsLoading] = useState(true);
@@ -266,12 +235,9 @@ export function ProgressChart({ workouts, exercises }: ProgressChartProps) {
     [workouts, exercises, selectedExercise]
   );
 
-  // Handle loading state - show loader briefly when data changes
   useEffect(() => {
     setIsLoading(true);
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 150);
+    const timer = setTimeout(() => setIsLoading(false), 150);
     return () => clearTimeout(timer);
   }, [selectedExercise, data]);
 
@@ -320,61 +286,96 @@ export function ProgressChart({ workouts, exercises }: ProgressChartProps) {
           </Select>
         </div>
       </CardHeader>
+
       <CardContent>
         {isLoading ? (
-          <div className="h-[400px] w-full flex items-center justify-center">
-            <div className="flex flex-col items-center gap-2">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-              <p className="text-muted-foreground text-sm">Loading chart...</p>
-            </div>
+          <div className="h-[300px] w-full flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-dark" />
           </div>
         ) : data.length === 0 ? (
           <p className="text-muted-foreground text-sm">
             No data available for this exercise.
           </p>
         ) : (
-          <ChartContainer config={chartConfig} className="h-[400px] w-full">
-            <LineChart
+          <ChartContainer config={chartConfig} className="h-[300px] w-full">
+            <AreaChart
               data={data}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
             >
-              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+              <defs>
+                {metrics.map((metric, index) => {
+                  const color =
+                    KINETIC_COLORS[index % KINETIC_COLORS.length];
+                  return (
+                    <linearGradient
+                      key={metric}
+                      id={`gradient-${metric}`}
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop
+                        offset="0%"
+                        stopColor={color}
+                        stopOpacity={0.2}
+                      />
+                      <stop
+                        offset="100%"
+                        stopColor={color}
+                        stopOpacity={0}
+                      />
+                    </linearGradient>
+                  );
+                })}
+              </defs>
+
+              <CartesianGrid
+                vertical={false}
+                stroke="#eae7e7"
+                strokeDasharray="0"
+              />
               <XAxis
                 dataKey="date"
-                className="text-xs"
-                tick={{ fill: "hsl(var(--muted-foreground))" }}
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: "#5c5b5b", fontSize: 10, fontFamily: "Manrope" }}
+                dy={8}
               />
               <YAxis
-                className="text-xs"
-                tick={{ fill: "hsl(var(--muted-foreground))" }}
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: "#5c5b5b", fontSize: 10, fontFamily: "Manrope" }}
               />
-              <ChartTooltip content={<ChartTooltipContent />} />
-              <Legend />
+              <ChartTooltip
+                content={<ChartTooltipContent />}
+                cursor={{ stroke: "#dfdcdc", strokeWidth: 1 }}
+              />
+
               {metrics.map((metric, index) => {
-                const color = COLORS[index % COLORS.length];
-                const configColor =
-                  chartConfig[metric as keyof typeof chartConfig]?.color ||
-                  color;
+                const color =
+                  KINETIC_COLORS[index % KINETIC_COLORS.length];
                 return (
-                  <Line
+                  <Area
                     key={metric}
                     type="monotone"
                     dataKey={metric}
-                    stroke={configColor}
+                    stroke={color}
                     strokeWidth={3}
-                    dot={{
-                      fill: configColor,
-                      r: 5,
+                    fill={`url(#gradient-${metric})`}
+                    dot={{ fill: color, r: 4, strokeWidth: 0 }}
+                    activeDot={{
+                      fill: "#e4f725",
+                      r: 6,
+                      stroke: "#586000",
                       strokeWidth: 2,
-                      stroke: configColor,
                     }}
-                    activeDot={{ r: 7 }}
-                    connectNulls={true}
+                    connectNulls
                     isAnimationActive={false}
                   />
                 );
               })}
-            </LineChart>
+            </AreaChart>
           </ChartContainer>
         )}
       </CardContent>
