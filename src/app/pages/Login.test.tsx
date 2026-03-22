@@ -54,7 +54,7 @@ describe("Login", () => {
 
     await userEvent.type(screen.getByLabelText(/email/i), "test@example.com");
     await userEvent.type(screen.getByLabelText(/password/i), "password123");
-    await userEvent.click(screen.getByRole("button", { name: /login/i }));
+    await userEvent.click(screen.getByRole("button", { name: /start session/i }));
 
     await waitFor(() => {
       expect(screen.getByText("Invalid credentials")).toBeInTheDocument();
@@ -75,7 +75,7 @@ describe("Login", () => {
 
     await userEvent.type(screen.getByLabelText(/email/i), "test@example.com");
     await userEvent.type(screen.getByLabelText(/password/i), "password123");
-    await userEvent.click(screen.getByRole("button", { name: /login/i }));
+    await userEvent.click(screen.getByRole("button", { name: /start session/i }));
 
     await waitFor(() => {
       expect(mockSetTokens).toHaveBeenCalledWith(

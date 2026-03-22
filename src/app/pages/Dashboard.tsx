@@ -1,6 +1,5 @@
 import { type Workout } from "@/types/Workout";
 import { type Exercise } from "@/types/Exercise";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { Activities } from "@/components/Activities";
 import { Tracker } from "@/components/Tracker";
@@ -14,19 +13,31 @@ interface DashboardProps {
 
 export function Dashboard({ workouts, exercises, onDeleteWorkout }: DashboardProps) {
   return (
-    <div className="min-h-screen flex justify-center p-4 md:p-8 w-full">
-      <Card className="w-full border-none shadow-none">
-        <CardHeader>
-          <CardTitle>Welcome!</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <ProgressChart workouts={workouts} exercises={exercises} />
-          <div className="flex flex-col md:flex-row gap-4 items-start">
-            <Activities workouts={workouts} onDeleteWorkout={onDeleteWorkout} />
+    <div className="min-h-screen bg-background">
+      <div className="max-w-4xl mx-auto px-6 py-8">
+        {/* Hero */}
+        <section className="mb-10">
+          <span className="font-headline font-bold tracking-widest uppercase text-xs text-primary-dark mb-2 block">
+            Performance Overview
+          </span>
+          <h2 className="font-headline text-5xl md:text-6xl font-bold tracking-tight text-foreground">
+            DASHBOARD
+          </h2>
+        </section>
+
+        {/* Bento grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <section className="md:col-span-1">
             <Tracker workouts={workouts} />
-          </div>
-        </CardContent>
-      </Card>
+          </section>
+          <section className="md:col-span-2">
+            <ProgressChart workouts={workouts} exercises={exercises} />
+          </section>
+        </div>
+
+        {/* Recent Sessions */}
+        <Activities workouts={workouts} onDeleteWorkout={onDeleteWorkout} />
+      </div>
     </div>
   );
 }

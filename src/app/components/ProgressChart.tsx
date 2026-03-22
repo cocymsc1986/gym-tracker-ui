@@ -278,12 +278,14 @@ export function ProgressChart({ workouts, exercises }: ProgressChartProps) {
 
   if (exerciseNames.length === 0) {
     return (
-      <Card className="w-full md:w-1/2">
+      <Card className="w-full h-full">
         <CardHeader>
-          <CardTitle>Progress Chart</CardTitle>
-          <CardDescription>
-            Track your exercise progress over time
-          </CardDescription>
+          <span className="font-headline font-bold tracking-widest uppercase text-xs text-primary-dark">
+            Exercise Progress
+          </span>
+          <CardTitle className="font-headline font-bold text-2xl tracking-tight">
+            PROGRESS CHART
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground text-sm">
@@ -296,13 +298,15 @@ export function ProgressChart({ workouts, exercises }: ProgressChartProps) {
   }
 
   return (
-    <Card className="w-full">
+    <Card className="w-full h-full">
       <CardHeader>
-        <CardTitle>Progress Chart</CardTitle>
-        <CardDescription>
-          Track your exercise progress over time
-        </CardDescription>
-        <div className="pt-4">
+        <span className="font-headline font-bold tracking-widest uppercase text-xs text-primary-dark">
+          Exercise Progress
+        </span>
+        <CardTitle className="font-headline font-bold text-2xl tracking-tight">
+          {selectedExercise.toUpperCase()}
+        </CardTitle>
+        <div className="pt-2">
           <Select value={selectedExercise} onValueChange={setSelectedExercise}>
             <SelectTrigger className="w-[280px]">
               <SelectValue placeholder="Select an exercise" />

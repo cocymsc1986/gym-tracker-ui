@@ -110,7 +110,7 @@ export function Login() {
               <p className="text-sm text-destructive px-1">{error}</p>
             )}
 
-            <div className="pt-2 space-y-4">
+            <div className="pt-2">
               <Button
                 type="submit"
                 className="w-full py-4 font-headline font-extrabold text-sm uppercase tracking-widest"
@@ -118,17 +118,6 @@ export function Login() {
               >
                 {busy ? "Starting session..." : "Start Session ⚡"}
               </Button>
-
-              <OrDivider />
-
-              <div className="grid grid-cols-2 gap-3">
-                <Button type="button" variant="secondary" className="text-xs font-bold uppercase tracking-wider">
-                  Google
-                </Button>
-                <Button type="button" variant="secondary" className="text-xs font-bold uppercase tracking-wider">
-                  Apple
-                </Button>
-              </div>
             </div>
           </form>
 
@@ -171,17 +160,3 @@ function BrandPanel() {
   );
 }
 
-function OrDivider() {
-  return (
-    <div className="relative py-2">
-      <div className="absolute inset-0 flex items-center">
-        <div className="w-full border-t border-accent" />
-      </div>
-      <div className="relative flex justify-center">
-        <span className="bg-background px-4 text-[10px] font-bold uppercase tracking-widest text-outline">
-          or continue with
-        </span>
-      </div>
-    </div>
-  );
-}
