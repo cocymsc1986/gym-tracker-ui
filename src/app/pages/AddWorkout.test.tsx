@@ -31,7 +31,7 @@ const submitForm = async () => {
   await userEvent.type(screen.getByLabelText(/name/i), "Morning Workout");
   await userEvent.type(screen.getByLabelText(/date/i), "2023-10-01");
   await userEvent.click(
-    screen.getByRole("button", { name: /Create Workout/i })
+    screen.getByRole("button", { name: /Add Workout/i })
   );
 };
 

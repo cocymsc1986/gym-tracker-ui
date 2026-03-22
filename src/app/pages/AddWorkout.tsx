@@ -1,15 +1,7 @@
-import { useLocation } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { apiClient } from "@/lib/apiClient";
@@ -57,52 +49,88 @@ export function AddWorkout() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Create your workout</CardTitle>
-          <CardDescription>Enter workout details below</CardDescription>
-        </CardHeader>
+    <div className="min-h-screen bg-background pb-24">
+      <div className="max-w-4xl mx-auto px-6 py-8">
+
+        {/* Hero */}
+        <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <h1 className="font-headline font-extrabold text-5xl md:text-7xl tracking-tighter leading-none mb-4 uppercase">
+              WORK<br />
+              <span className="text-primary-dark">OUTS</span>
+            </h1>
+            <p className="font-sans text-muted-foreground text-lg leading-relaxed">
+              Track your velocity. Analyse your power. Push beyond the baseline.
+            </p>
+          </div>
+          <Button
+            variant="link"
+            asChild
+            className="text-primary-dark font-bold text-xs uppercase tracking-widest underline p-0 h-auto self-start md:self-auto"
+          >
+            <Link href="/">&larr; Dashboard</Link>
+          </Button>
+        </header>
+
+        {/* Form */}
         <form onSubmit={handleSubmit} data-testid="add-workout-form">
-          <CardContent>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-2">
-                <Label htmlFor="workout-name">Name</Label>
-                <Input
-                  id="workout-name"
-                  name="workout-name"
-                  type="text"
-                  placeholder="Enter a workout name (optional)"
-                  autoComplete="workout-name"
-                  required
-                  onChange={() => setError(null)}
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="workout-date">Date</Label>
-                <Input
-                  id="workout-date"
-                  name="workout-date"
-                  type="date"
-                  autoComplete="workout-date"
-                  required
-                  onChange={() => setError(null)}
-                />
-              </div>
+          <div className="space-y-6 max-w-lg">
+
+            <div className="space-y-2">
+              <Label
+                htmlFor="workout-name"
+                className="font-sans text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold"
+              >
+                Session Name
+              </Label>
+              <Input
+                id="workout-name"
+                name="workout-name"
+                type="text"
+                placeholder="e.g. Leg Day: Power Focus"
+                autoComplete="off"
+                required
+                onChange={() => setError(null)}
+                className="bg-surface-high border-0 focus-visible:ring-0 focus-visible:bg-surface-highest font-sans placeholder:text-muted-foreground/50 h-12 rounded-xl"
+              />
             </div>
+
+            <div className="space-y-2">
+              <Label
+                htmlFor="workout-date"
+                className="font-sans text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold"
+              >
+                Date
+              </Label>
+              <Input
+                id="workout-date"
+                name="workout-date"
+                type="date"
+                autoComplete="off"
+                required
+                onChange={() => setError(null)}
+                className="bg-surface-high border-0 focus-visible:ring-0 focus-visible:bg-surface-highest font-sans h-12 rounded-xl"
+              />
+            </div>
+
             {error && (
-              <div className="mt-4 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+              <div className="p-4 text-sm font-sans bg-destructive/10 text-destructive rounded-xl">
                 {error}
               </div>
             )}
-          </CardContent>
-          <CardFooter className="flex-col gap-2 mt-4">
-            <Button type="submit" className="w-full" disabled={busy}>
-              {busy ? "Creating workout..." : "Create Workout"}
-            </Button>
-          </CardFooter>
+
+            <div className="pt-2">
+              <Button
+                type="submit"
+                disabled={busy}
+                className="group bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 h-auto rounded-xl font-headline font-bold uppercase tracking-wider transition-all active:scale-95 shadow-lg"
+              >
+                {busy ? "Creating..." : "Add Workout"}
+              </Button>
+            </div>
+          </div>
         </form>
-      </Card>
+      </div>
     </div>
   );
 }

@@ -300,11 +300,11 @@ export function AddExerciseModal({
               {selectedType ? (
                 exerciseTypeMap[selectedType]
               ) : (
-                <div className="text-gray-500">Select an exercise type</div>
+                <div className="font-body text-sm text-secondary">Select an exercise type</div>
               )}
             </div>
             {error && (
-              <div className="mt-4 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+              <div className="mt-4 p-4 text-sm font-body bg-error/10 text-error rounded-xl">
                 {error}
               </div>
             )}

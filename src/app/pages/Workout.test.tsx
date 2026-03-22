@@ -91,7 +91,7 @@ describe("Workout", () => {
   it("displays loading state when no workout data", () => {
     render(<Workout loaderData={{ workout: null, userExercises: [] }} onDeleteExercise={vi.fn()} onRefresh={vi.fn()} />);
 
-    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
   });
 
   it("renders workout without exercises", () => {
@@ -110,7 +110,7 @@ describe("Workout", () => {
       />
     );
 
-    expect(screen.getByText("Empty Workout")).toBeInTheDocument();
+    expect(screen.getByText("Empty Workout", { exact: false })).toBeInTheDocument();
     expect(screen.queryByText("Weights")).not.toBeInTheDocument();
   });
 });

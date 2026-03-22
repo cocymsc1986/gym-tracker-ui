@@ -8,7 +8,7 @@ import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
 import { AddWorkout } from "./pages/AddWorkout";
 
-import { DashboardWithData, WorkoutWithData } from "./components/RouteWrappers";
+import { DashboardWithData, WorkoutWithData, WorkoutsWithData } from "./components/RouteWrappers";
 
 import "./app.css";
 
@@ -28,6 +28,12 @@ function App() {
           <Route path="/">
             <ProtectedRoute>
               <DashboardWithData />
+            </ProtectedRoute>
+          </Route>
+
+          <Route path="/workouts">
+            <ProtectedRoute>
+              <WorkoutsWithData />
             </ProtectedRoute>
           </Route>
 
