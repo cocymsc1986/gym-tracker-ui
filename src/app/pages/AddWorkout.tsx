@@ -53,15 +53,15 @@ export function AddWorkout() {
       <div className="max-w-4xl mx-auto px-6 py-8">
 
         {/* Hero */}
-        <section className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div className="space-y-2">
-            <span className="font-label text-[10px] uppercase tracking-[0.2em] text-secondary font-bold">
-              Start Training
-            </span>
-            <h1 className="font-headline text-5xl md:text-7xl font-bold tracking-tighter text-foreground leading-none">
-              NEW<br />
-              <span className="text-primary-dark">SESSION</span>
+        <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <h1 className="font-headline font-extrabold text-5xl md:text-7xl tracking-tighter leading-none mb-4 uppercase">
+              WORK<br />
+              <span className="text-primary-dark">OUTS</span>
             </h1>
+            <p className="font-sans text-muted-foreground text-lg leading-relaxed">
+              Track your velocity. Analyse your power. Push beyond the baseline.
+            </p>
           </div>
           <Button
             variant="link"
@@ -70,7 +70,7 @@ export function AddWorkout() {
           >
             <Link href="/">&larr; Dashboard</Link>
           </Button>
-        </section>
+        </header>
 
         {/* Form */}
         <form onSubmit={handleSubmit} data-testid="add-workout-form">
@@ -79,7 +79,7 @@ export function AddWorkout() {
             <div className="space-y-2">
               <Label
                 htmlFor="workout-name"
-                className="font-label text-[10px] uppercase tracking-[0.2em] text-secondary font-bold"
+                className="font-sans text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold"
               >
                 Session Name
               </Label>
@@ -91,14 +91,14 @@ export function AddWorkout() {
                 autoComplete="off"
                 required
                 onChange={() => setError(null)}
-                className="bg-surface-container-high border-0 focus-visible:ring-0 focus-visible:bg-surface-container-highest font-body placeholder:text-secondary/50 text-foreground h-12 rounded-xl"
+                className="bg-surface-high border-0 focus-visible:ring-0 focus-visible:bg-surface-highest font-sans placeholder:text-muted-foreground/50 h-12 rounded-xl"
               />
             </div>
 
             <div className="space-y-2">
               <Label
                 htmlFor="workout-date"
-                className="font-label text-[10px] uppercase tracking-[0.2em] text-secondary font-bold"
+                className="font-sans text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold"
               >
                 Date
               </Label>
@@ -109,23 +109,23 @@ export function AddWorkout() {
                 autoComplete="off"
                 required
                 onChange={() => setError(null)}
-                className="bg-surface-container-high border-0 focus-visible:ring-0 focus-visible:bg-surface-container-highest font-body text-foreground h-12 rounded-xl"
+                className="bg-surface-high border-0 focus-visible:ring-0 focus-visible:bg-surface-highest font-sans h-12 rounded-xl"
               />
             </div>
 
             {error && (
-              <div className="p-4 text-sm font-body bg-error/10 text-error rounded-xl">
+              <div className="p-4 text-sm font-sans bg-destructive/10 text-destructive rounded-xl">
                 {error}
               </div>
             )}
 
-            <div className="pt-4 flex flex-col sm:flex-row gap-4">
+            <div className="pt-2">
               <Button
                 type="submit"
                 disabled={busy}
-                className="group bg-primary-container hover:bg-primary-container/90 text-on-primary-container px-8 py-4 h-auto rounded-xl font-headline font-bold uppercase tracking-wider transition-all active:scale-95 shadow-lg shadow-primary/10"
+                className="group bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 h-auto rounded-xl font-headline font-bold uppercase tracking-wider transition-all active:scale-95 shadow-lg"
               >
-                {busy ? "Creating..." : "Create Session"}
+                {busy ? "Creating..." : "Add Workout"}
               </Button>
             </div>
           </div>
