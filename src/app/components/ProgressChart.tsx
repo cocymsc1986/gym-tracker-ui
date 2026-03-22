@@ -4,7 +4,6 @@ import { type Exercise, ExerciseType } from "@/types/Exercise";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
