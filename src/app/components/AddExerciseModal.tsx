@@ -1,6 +1,4 @@
-// build modal for adding exercises using ui/dialog component
 import { useParams } from "wouter";
-import { CardContent, CardFooter } from "@/components/ui/card";
 import { apiClient } from "@/lib/apiClient";
 import { getUserId } from "@/lib/getUserId";
 import {
@@ -23,56 +21,70 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { AddSets } from "./AddSets";
 
 import { DistanceUnits, ExerciseType, WeightUnits } from "@/types/Exercise";
 import { useState } from "react";
 import { Combobox } from "./ui/combobox";
+
 const exerciseTypes = Object.values(ExerciseType);
 const distanceUnits = Object.values(DistanceUnits);
 const weightUnits = Object.values(WeightUnits);
 
+const fieldLabel = "font-sans text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold";
+const fieldInput = "bg-surface-high border-0 focus-visible:ring-0 focus-visible:bg-surface-highest rounded-xl h-12 font-sans placeholder:text-muted-foreground/50";
+
 const TimeInput = () => (
-  <div className="grid gap-2 grid-cols-2">
-    <div className="grid gap-2 w-30">
-      <Label htmlFor="exercise-time-minutes">Minutes</Label>
-      <Input
-        id="exercise-time-minutes"
-        name="exercise-time-minutes"
-        type="text"
-        autoComplete="off"
-      />
-    </div>
-    <div className="grid gap-2 w-30">
-      <Label htmlFor="exercise-time-seconds">Seconds</Label>
-      <Input
-        id="exercise-time-seconds"
-        name="exercise-time-seconds"
-        type="text"
-        autoComplete="off"
-      />
+  <div className="space-y-2">
+    <span className={fieldLabel}>Time</span>
+    <div className="grid gap-2 grid-cols-2">
+      <div className="space-y-1">
+        <Label htmlFor="exercise-time-minutes" className={fieldLabel}>
+          Minutes
+        </Label>
+        <Input
+          id="exercise-time-minutes"
+          name="exercise-time-minutes"
+          type="text"
+          autoComplete="off"
+          className={fieldInput}
+          placeholder="0"
+        />
+      </div>
+      <div className="space-y-1">
+        <Label htmlFor="exercise-time-seconds" className={fieldLabel}>
+          Seconds
+        </Label>
+        <Input
+          id="exercise-time-seconds"
+          name="exercise-time-seconds"
+          type="text"
+          autoComplete="off"
+          className={fieldInput}
+          placeholder="0"
+        />
+      </div>
     </div>
   </div>
 );
 
 const DistanceInput = () => (
-  <div className="grid gap-2 grid-cols-2">
-    <div className="grid gap-2 w-30">
-      <Label htmlFor="exercise-distance">Distance</Label>
+  <div className="space-y-1">
+    <Label htmlFor="exercise-distance" className={fieldLabel}>
+      Distance
+    </Label>
+    <div className="grid gap-2 grid-cols-2">
       <Input
         id="exercise-distance"
         name="exercise-distance"
         type="text"
         autoComplete="off"
-        placeholder="Enter distance (e.g. 5 km)"
+        placeholder="e.g. 5"
+        className={fieldInput}
       />
-    </div>
-    <div className="grid gap-2 w-30">
-      <Label htmlFor="exercise-distance-unit">Unit</Label>
       <Select name="exercise-distance-unit">
-        <SelectTrigger>
-          <SelectValue placeholder="Distance unit" />
+        <SelectTrigger className="bg-surface-high border-0 focus:ring-0 rounded-xl h-12 font-sans">
+          <SelectValue placeholder="Unit" />
         </SelectTrigger>
         <SelectContent>
           {distanceUnits.map((unit) => (
@@ -87,35 +99,39 @@ const DistanceInput = () => (
 );
 
 const LevelInput = () => (
-  <div className="grid gap-2 w-30">
-    <Label htmlFor="exercise-level">Level/Speed</Label>
+  <div className="space-y-1">
+    <Label htmlFor="exercise-level" className={fieldLabel}>
+      Level / Speed
+    </Label>
     <Input
       id="exercise-level"
       name="exercise-level"
       type="number"
       autoComplete="off"
+      className={fieldInput}
+      placeholder="0"
     />
   </div>
 );
 
 const WeightInput = () => (
-  <div className="grid gap-2 grid-cols-2">
-    <div className="grid gap-2 w-30">
-      <Label htmlFor="exercise-weight">Weight</Label>
+  <div className="space-y-1">
+    <Label htmlFor="exercise-weight" className={fieldLabel}>
+      Weight
+    </Label>
+    <div className="grid gap-2 grid-cols-2">
       <Input
         id="exercise-weight"
         name="exercise-weight"
         type="number"
         step="0.1"
         autoComplete="off"
-        placeholder="Enter weight (e.g. 70 kg)"
+        placeholder="e.g. 70"
+        className={fieldInput}
       />
-    </div>
-    <div className="grid gap-2 w-30">
-      <Label htmlFor="exercise-weight-unit">Unit</Label>
       <Select name="exercise-weight-unit">
-        <SelectTrigger>
-          <SelectValue placeholder="Weight unit" />
+        <SelectTrigger className="bg-surface-high border-0 focus:ring-0 rounded-xl h-12 font-sans">
+          <SelectValue placeholder="Unit" />
         </SelectTrigger>
         <SelectContent>
           {weightUnits.map((unit) => (
@@ -130,8 +146,8 @@ const WeightInput = () => (
 );
 
 const SetsInput = () => (
-  <div className="grid gap-2">
-    <Label htmlFor="exercise-sets">Sets</Label>
+  <div className="space-y-2">
+    <span className={fieldLabel}>Sets</span>
     <AddSets />
   </div>
 );
@@ -228,18 +244,13 @@ export function AddExerciseModal({
     }
 
     try {
-      // Step 1: Create the exercise
-      const response = await apiClient.post(
-        `/exercises/${userId}`,
-        validatedFields
-      );
+      const response = await apiClient.post(`/exercises/${userId}`, validatedFields);
 
       if (response.status !== 201) {
         setError("Failed to create exercise");
         return;
       }
 
-      // Step 2: Link the exercise to the workout
       await apiClient.post(
         `/workouts/${userId}/${workoutId}/exercises/${exerciseId}`
       );
@@ -261,59 +272,79 @@ export function AddExerciseModal({
 
   return (
     <Dialog open={showModal} onOpenChange={setShowModal}>
-      <DialogContent>
-        <DialogTitle>Add Exercise</DialogTitle>
-        <DialogDescription>Add your exercise below</DialogDescription>
+      <DialogContent className="max-w-lg rounded-2xl p-8">
+        {/* Header */}
+        <div className="mb-6">
+          <DialogDescription className={`${fieldLabel} mb-1`}>
+            Add your exercise below
+          </DialogDescription>
+          <DialogTitle className="font-headline font-bold text-3xl uppercase tracking-tight text-foreground">
+            Add Exercise
+          </DialogTitle>
+        </div>
+
         <form method="post" onSubmit={onSubmit}>
-          <CardContent className="p-0">
-            <div className="flex flex-col gap-4 mb-6">
-              <div className="grid gap-2">
-                <Label htmlFor="exercise-type">Exercise Type</Label>
-                <Select
-                  name="exercise-type"
-                  onValueChange={(value) => {
-                    setSelectedType(value as ExerciseType);
-                  }}
-                >
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Exercise type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {exerciseTypes.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="exercise-name">Exercise Name</Label>
-                <Combobox
-                  name="exercise-name"
-                  options={uniqueExerciseNames}
-                  value={exerciseName}
-                  onChange={setExerciseName}
-                  placeholder="Type or select a previous exercise name..."
-                />
-              </div>
-              {selectedType ? (
-                exerciseTypeMap[selectedType]
-              ) : (
-                <div className="font-body text-sm text-secondary">Select an exercise type</div>
-              )}
+          <div className="flex flex-col gap-5 mb-6">
+
+            {/* Exercise Type */}
+            <div className="space-y-1">
+              <Label htmlFor="exercise-type" className={fieldLabel}>
+                Exercise Type
+              </Label>
+              <Select
+                name="exercise-type"
+                onValueChange={(value) => setSelectedType(value as ExerciseType)}
+              >
+                <SelectTrigger className="bg-surface-high border-0 focus:ring-0 rounded-xl h-12 font-sans w-full">
+                  <SelectValue placeholder="Select type..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {exerciseTypes.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-            {error && (
-              <div className="mt-4 p-4 text-sm font-body bg-error/10 text-error rounded-xl">
-                {error}
-              </div>
+
+            {/* Exercise Name */}
+            <div className="space-y-1">
+              <Label htmlFor="exercise-name" className={fieldLabel}>
+                Exercise Name
+              </Label>
+              <Combobox
+                name="exercise-name"
+                options={uniqueExerciseNames}
+                value={exerciseName}
+                onChange={setExerciseName}
+                placeholder="Type or select a previous exercise name..."
+              />
+            </div>
+
+            {/* Type-specific fields */}
+            {selectedType ? (
+              exerciseTypeMap[selectedType]
+            ) : (
+              <p className="font-sans text-sm text-muted-foreground">
+                Select an exercise type
+              </p>
             )}
-          </CardContent>
-          <CardFooter className="flex-col gap-2 p-0">
-            <Button type="submit" className="w-full" disabled={busy}>
-              {busy ? "Adding Exercise..." : "Add Exercise"}
-            </Button>
-          </CardFooter>
+          </div>
+
+          {error && (
+            <div className="mb-4 p-4 text-sm font-sans bg-destructive/10 text-destructive rounded-xl">
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={busy}
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-4 rounded-xl font-headline font-bold uppercase tracking-wider transition-all active:scale-95 shadow-lg disabled:opacity-60"
+          >
+            {busy ? "Adding Exercise..." : "Add Exercise"}
+          </button>
         </form>
       </DialogContent>
     </Dialog>

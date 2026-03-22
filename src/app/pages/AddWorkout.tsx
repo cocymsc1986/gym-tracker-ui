@@ -1,7 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useState } from "react";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { apiClient } from "@/lib/apiClient";
@@ -54,22 +53,24 @@ export function AddWorkout() {
 
         {/* Hero */}
         <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div>
-            <h1 className="font-headline font-extrabold text-5xl md:text-7xl tracking-tighter leading-none mb-4 uppercase">
-              WORK<br />
-              <span className="text-primary-dark">OUTS</span>
+          <div className="space-y-2">
+            <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">
+              New Session
+            </span>
+            <h1 className="font-headline font-extrabold text-5xl md:text-7xl tracking-tighter leading-none uppercase">
+              CREATE<br />
+              <span className="text-primary-dark">SESSION</span>
             </h1>
-            <p className="font-sans text-muted-foreground text-lg leading-relaxed">
-              Track your velocity. Analyse your power. Push beyond the baseline.
+            <p className="font-sans text-muted-foreground text-base leading-relaxed pt-1">
+              Name your session and set the date to get started.
             </p>
           </div>
-          <Button
-            variant="link"
-            asChild
-            className="text-primary-dark font-bold text-xs uppercase tracking-widest underline p-0 h-auto self-start md:self-auto"
+          <Link
+            href="/workouts"
+            className="font-sans font-bold text-xs uppercase tracking-widest text-primary-dark underline hover:text-foreground transition-colors self-start md:self-auto"
           >
-            <Link href="/">&larr; Dashboard</Link>
-          </Button>
+            &larr; Workouts
+          </Link>
         </header>
 
         {/* Form */}
@@ -120,13 +121,13 @@ export function AddWorkout() {
             )}
 
             <div className="pt-2">
-              <Button
+              <button
                 type="submit"
                 disabled={busy}
-                className="group bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 h-auto rounded-xl font-headline font-bold uppercase tracking-wider transition-all active:scale-95 shadow-lg"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-xl font-headline font-bold uppercase tracking-wider transition-all active:scale-95 shadow-lg disabled:opacity-60"
               >
                 {busy ? "Creating..." : "Add Workout"}
-              </Button>
+              </button>
             </div>
           </div>
         </form>
