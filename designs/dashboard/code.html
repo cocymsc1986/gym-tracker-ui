@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kinetic Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&amp;family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary-container": "#545c00",
+              "tertiary-fixed": "#fdcc33",
+              "on-secondary-fixed": "#403f3f",
+              "background": "#f9f6f5",
+              "outline-variant": "#afadac",
+              "on-tertiary-container": "#594500",
+              "tertiary-fixed-dim": "#edbe23",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary": "#fff1d6",
+              "secondary-container": "#e5e2e1",
+              "secondary-dim": "#504f4f",
+              "on-tertiary-fixed": "#423200",
+              "primary-fixed-dim": "#d6e807",
+              "surface": "#f9f6f5",
+              "error": "#b02500",
+              "surface-dim": "#d6d4d3",
+              "primary-container": "#e4f725",
+              "surface-tint": "#586000",
+              "primary-dim": "#4d5400",
+              "secondary-fixed-dim": "#d6d4d3",
+              "surface-container-high": "#e4e2e1",
+              "on-background": "#2f2f2e",
+              "surface-variant": "#dfdcdc",
+              "error-container": "#f95630",
+              "inverse-surface": "#0e0e0e",
+              "primary-fixed": "#e4f725",
+              "inverse-primary": "#eafd2d",
+              "outline": "#787676",
+              "on-surface-variant": "#5c5b5b",
+              "on-error": "#ffefec",
+              "on-primary-fixed-variant": "#5e6600",
+              "secondary-fixed": "#e5e2e1",
+              "secondary": "#5c5b5b",
+              "on-primary-fixed": "#424800",
+              "on-secondary-container": "#525151",
+              "surface-container-highest": "#dfdcdc",
+              "on-secondary": "#f5f2f1",
+              "on-primary": "#ecff2f",
+              "surface-container": "#eae7e7",
+              "error-dim": "#b92902",
+              "tertiary": "#715800",
+              "inverse-on-surface": "#9e9c9c",
+              "on-error-container": "#520c00",
+              "tertiary-container": "#fdcc33",
+              "tertiary-dim": "#634d00",
+              "primary": "#586000",
+              "surface-container-low": "#f3f0ef",
+              "on-surface": "#2f2f2e",
+              "on-secondary-fixed-variant": "#5c5b5b",
+              "surface-bright": "#f9f6f5",
+              "on-tertiary-fixed-variant": "#644e00"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .chart-gradient {
+            background: linear-gradient(180deg, rgba(228, 247, 37, 0.2) 0%, rgba(228, 247, 37, 0) 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body selection:bg-primary-container">
+<!-- TopAppBar -->
+<header class="bg-[#f9f6f5] dark:bg-slate-950 flex justify-between items-center w-full px-6 py-4 sticky top-0 z-50">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Athletic male user profile picture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkhPEz4YHKbRhASsPrROOgs5l3BB9fNgcsN3oYqdb8xOjmSNJ-PHRRDTAYV0KDWBUT9HdZfvRZ-3tPRtguPeHkIBqdcMIZcbxIIHV_oteX2n9-Bky59JcnXKpy6fJeyPlSUbNd8GJMKpIE9Cb_v-0PMCIKTHLXtorZW0qsv-S5mH8DuV9Ne8WSDWdR4s1niiSMqQtC-KeYL6BNoED9HG5KbzoqSIThU2RE8Xra3sXo1bU0UX3XLtt0r-CJg_CNZrqUbYppJedR2Ec"/>
+</div>
+<h1 class="text-2xl font-black italic tracking-tighter text-[#586000] dark:text-[#e4f725] font-['Space_Grotesk']">KINETIC</h1>
+</div>
+<button class="text-[#586000] dark:text-[#e4f725] hover:opacity-80 transition-opacity active:scale-95">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</header>
+<div class="bg-[#dfdcdc] dark:bg-slate-800 h-[1px] w-full"></div>
+<main class="max-w-4xl mx-auto px-6 py-8 pb-32">
+<!-- Dashboard Hero Section -->
+<section class="mb-10">
+<span class="font-headline text-primary font-bold tracking-widest uppercase text-xs mb-2 block">Performance Overview</span>
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<h2 class="font-headline text-5xl md:text-6xl font-bold tracking-tight text-on-background">DASHBOARD</h2>
+<div class="flex items-center gap-2 bg-surface-container-high px-4 py-2 rounded-xl">
+<span class="material-symbols-outlined text-primary" data-icon="local_fire_department" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="font-headline font-bold text-xl">12 DAY STREAK</span>
+</div>
+</div>
+</section>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Weekly Activity Tracker (Asymmetric Bento Style) -->
+<section class="md:col-span-1 space-y-6">
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+<h3 class="font-headline font-bold text-xl mb-6">WEEKLY FLOW</h3>
+<div class="flex flex-col gap-4">
+<!-- Monday (Checked) -->
+<div class="flex items-center justify-between p-3 bg-primary-container rounded-lg">
+<span class="font-label font-bold text-on-primary-container">MON</span>
+<span class="material-symbols-outlined text-on-primary-container" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<!-- Tuesday (Checked) -->
+<div class="flex items-center justify-between p-3 bg-primary-container rounded-lg">
+<span class="font-label font-bold text-on-primary-container">TUE</span>
+<span class="material-symbols-outlined text-on-primary-container" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<!-- Wednesday (Empty) -->
+<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg">
+<span class="font-label font-bold text-secondary">WED</span>
+<span class="material-symbols-outlined text-outline-variant" data-icon="radio_button_unchecked">radio_button_unchecked</span>
+</div>
+<!-- Thursday (Checked) -->
+<div class="flex items-center justify-between p-3 bg-primary-container rounded-lg">
+<span class="font-label font-bold text-on-primary-container">THU</span>
+<span class="material-symbols-outlined text-on-primary-container" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<!-- Friday (Checked) -->
+<div class="flex items-center justify-between p-3 bg-primary-container rounded-lg">
+<span class="font-label font-bold text-on-primary-container">FRI</span>
+<span class="material-symbols-outlined text-on-primary-container" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<!-- Sat/Sun Group -->
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col items-center justify-center p-3 bg-surface-container-low rounded-lg aspect-square">
+<span class="font-label font-bold text-secondary mb-1">SAT</span>
+<span class="material-symbols-outlined text-outline-variant" data-icon="radio_button_unchecked">radio_button_unchecked</span>
+</div>
+<div class="flex flex-col items-center justify-center p-3 bg-surface-container-low rounded-lg aspect-square">
+<span class="font-label font-bold text-secondary mb-1">SUN</span>
+<span class="material-symbols-outlined text-outline-variant" data-icon="radio_button_unchecked">radio_button_unchecked</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Secondary Metric -->
+<div class="bg-inverse-surface p-6 rounded-xl text-white">
+<p class="font-label uppercase tracking-widest text-outline-variant mb-1">Total Volume</p>
+<h4 class="font-headline text-4xl font-bold">42.5<span class="text-xl font-light ml-1">TONS</span></h4>
+<div class="mt-4 h-1 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-[75%]"></div>
+</div>
+<p class="text-[10px] mt-2 text-outline-variant font-label">85% OF MONTHLY GOAL</p>
+</div>
+</section>
+<!-- Exercise Progress Chart (Glassmorphism inspired) -->
+<section class="md:col-span-2 space-y-6">
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-sm relative overflow-hidden h-full flex flex-col">
+<div class="flex justify-between items-start mb-8">
+<div>
+<h3 class="font-headline font-bold text-2xl">BENCH PRESS</h3>
+<p class="font-body text-secondary text-sm">One Rep Max (Projected)</p>
+</div>
+<div class="text-right">
+<div class="text-4xl font-headline font-bold text-primary">225 <span class="text-sm font-label text-on-background">LBS</span></div>
+<div class="flex items-center justify-end text-on-primary-container font-bold text-xs gap-1">
+<span class="material-symbols-outlined text-xs" data-icon="trending_up">trending_up</span>
+                                +12%
+                            </div>
+</div>
+</div>
+<!-- Visual Chart Representation -->
+<div class="flex-grow flex items-end relative min-h-[240px]">
+<!-- Vertical Grid Lines -->
+<div class="absolute inset-0 flex justify-between px-2">
+<div class="w-[1px] h-full bg-surface-container"></div>
+<div class="w-[1px] h-full bg-surface-container"></div>
+<div class="w-[1px] h-full bg-surface-container"></div>
+<div class="w-[1px] h-full bg-surface-container"></div>
+<div class="w-[1px] h-full bg-surface-container"></div>
+</div>
+<!-- The SVG Chart -->
+<svg class="w-full h-full relative z-10" preserveaspectratio="none" viewbox="0 0 400 200">
+<defs>
+<lineargradient id="chartFill" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#e4f725" stop-opacity="0.4"></stop>
+<stop offset="100%" stop-color="#e4f725" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<!-- Path -->
+<path d="M 0 180 Q 50 170 100 140 T 200 110 T 300 60 T 400 40 L 400 200 L 0 200 Z" fill="url(#chartFill)"></path>
+<path d="M 0 180 Q 50 170 100 140 T 200 110 T 300 60 T 400 40" fill="none" stroke="#586000" stroke-linecap="round" stroke-width="4"></path>
+<!-- Dots -->
+<circle cx="100" cy="140" fill="#586000" r="4"></circle>
+<circle cx="200" cy="110" fill="#586000" r="4"></circle>
+<circle cx="300" cy="60" fill="#586000" r="4"></circle>
+<circle cx="400" cy="40" fill="#e4f725" r="6" stroke="#586000" stroke-width="2"></circle>
+</svg>
+</div>
+<!-- X-Axis Labels -->
+<div class="flex justify-between mt-6 px-2 font-label text-[10px] text-secondary font-bold uppercase tracking-tighter">
+<span>Jan</span>
+<span>Feb</span>
+<span>Mar</span>
+<span>Apr</span>
+<span>May</span>
+</div>
+<!-- Floating Action Info Chip -->
+<div class="absolute bottom-20 right-8 bg-surface-container-high/80 backdrop-blur-md p-3 rounded-lg border border-white/50 shadow-lg">
+<p class="text-[10px] font-label font-bold text-secondary uppercase">Personal Best</p>
+<p class="text-sm font-headline font-bold">225 lbs — May 12</p>
+</div>
+</div>
+</section>
+</div>
+<!-- Recent Workouts Mini-List -->
+<section class="mt-12">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline font-bold text-2xl tracking-tight">RECENT SESSIONS</h3>
+<button class="font-label font-bold text-primary text-xs uppercase underline">View All</button>
+</div>
+<div class="space-y-4">
+<div class="group bg-surface-container-low hover:bg-primary-container p-5 rounded-xl transition-all duration-300 flex items-center justify-between cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary group-hover:bg-white transition-colors">
+<span class="material-symbols-outlined" data-icon="fitness_center">fitness_center</span>
+</div>
+<div>
+<h4 class="font-headline font-bold text-lg group-hover:text-on-primary-container">Upper Body Hypertrophy</h4>
+<p class="text-xs text-secondary group-hover:text-on-primary-container/70 font-label">FRIDAY, MAY 15 • 72 MINS</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="px-3 py-1 bg-surface-container-highest rounded-full text-[10px] font-bold group-hover:bg-on-primary-container group-hover:text-white transition-colors">PUSH</div>
+<span class="material-symbols-outlined text-outline group-hover:text-on-primary-container transition-colors" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<div class="group bg-surface-container-low hover:bg-primary-container p-5 rounded-xl transition-all duration-300 flex items-center justify-between cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary group-hover:bg-white transition-colors">
+<span class="material-symbols-outlined" data-icon="timer">timer</span>
+</div>
+<div>
+<h4 class="font-headline font-bold text-lg group-hover:text-on-primary-container">Powerlifting - Squat Day</h4>
+<p class="text-xs text-secondary group-hover:text-on-primary-container/70 font-label">THURSDAY, MAY 14 • 85 MINS</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="px-3 py-1 bg-surface-container-highest rounded-full text-[10px] font-bold group-hover:bg-on-primary-container group-hover:text-white transition-colors">LEGS</div>
+<span class="material-symbols-outlined text-outline group-hover:text-on-primary-container transition-colors" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-2 bg-[#f9f6f5] dark:bg-slate-900 z-50 rounded-t-xl shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+<!-- Dashboard (Active) -->
+<a class="flex flex-col items-center justify-center bg-[#e4f725] dark:bg-[#586000] text-black dark:text-white rounded-xl px-6 py-2 transition-all duration-300 active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="analytics" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-widest mt-1">Dashboard</span>
+</a>
+<!-- Workouts -->
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-6 py-2 hover:text-[#586000] dark:hover:text-[#e4f725] transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="fitness_center">fitness_center</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-widest mt-1">Workouts</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-6 py-2 hover:text-[#586000] dark:hover:text-[#e4f725] transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-widest mt-1">Profile</span>
+</a>
+</nav>
+<!-- Floating Action Button - Only on relevant screens -->
+<div class="fixed bottom-24 right-6">
+<button class="w-16 h-16 bg-primary-container text-on-primary-container rounded-2xl shadow-xl flex items-center justify-center hover:scale-105 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-3xl" data-icon="add">add</span>
+</button>
+</div>
+</body></html>
