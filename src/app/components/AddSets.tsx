@@ -32,67 +32,78 @@ export function AddSets() {
     <Card>
       <CardContent>
         {sets.map((set, index) => (
-          <div key={index} className="flex items-center gap-2 mb-2">
-            <Label htmlFor={`set-${index}-weight`}>Weight</Label>
-            <Input
-              type="number"
-              value={set.weight}
-              id={`set-${index}-weight`}
-              name={`set-${index}-weight`}
-              step="0.1"
-              required
-              onChange={(e) =>
-                setSets(
-                  sets.map((s, i) =>
-                    i === index
-                      ? { ...s, weight: parseFloat(e.target.value) }
-                      : s
+          <div key={index} className="grid grid-cols-[1fr_auto_1fr_auto] gap-2 mb-3 items-end">
+            <div className="grid gap-1">
+              <Label htmlFor={`set-${index}-weight`}>Weight</Label>
+              <Input
+                type="number"
+                value={set.weight}
+                id={`set-${index}-weight`}
+                name={`set-${index}-weight`}
+                step="0.1"
+                required
+                onChange={(e) =>
+                  setSets(
+                    sets.map((s, i) =>
+                      i === index
+                        ? { ...s, weight: parseFloat(e.target.value) }
+                        : s
+                    )
                   )
-                )
-              }
-              placeholder="Weight"
-            />
-            <Label htmlFor={`set-${index}-unit`}>Unit</Label>
-            <Select
-              value={set.unit}
-              name={`set-${index}-unit`}
-              onValueChange={(value: WeightUnits) =>
-                setSets(
-                  sets.map((s, i) => (i === index ? { ...s, unit: value } : s))
-                )
-              }
+                }
+                placeholder="Weight"
+              />
+            </div>
+            <div className="grid gap-1">
+              <Label htmlFor={`set-${index}-unit`}>Unit</Label>
+              <Select
+                value={set.unit}
+                name={`set-${index}-unit`}
+                onValueChange={(value: WeightUnits) =>
+                  setSets(
+                    sets.map((s, i) => (i === index ? { ...s, unit: value } : s))
+                  )
+                }
+              >
+                <SelectTrigger className="w-16">
+                  <SelectValue placeholder="Unit" />
+                </SelectTrigger>
+                <SelectContent>
+                  {weightUnits.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid gap-1">
+              <Label htmlFor={`set-${index}-reps`}>Reps</Label>
+              <Input
+                type="number"
+                value={set.reps}
+                id={`set-${index}-reps`}
+                name={`set-${index}-reps`}
+                step="1"
+                min={1}
+                required
+                onChange={(e) =>
+                  setSets(
+                    sets.map((s, i) =>
+                      i === index ? { ...s, reps: parseFloat(e.target.value) } : s
+                    )
+                  )
+                }
+                placeholder="Reps"
+              />
+            </div>
+            <Button
+              variant="destructive"
+              size="icon"
+              onClick={() => removeSet(index)}
+              aria-label={`Remove set ${index + 1}`}
             >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select unit" />
-              </SelectTrigger>
-              <SelectContent>
-                {weightUnits.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {type}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Label htmlFor={`set-${index}-reps`}>Reps</Label>
-            <Input
-              type="number"
-              value={set.reps}
-              id={`set-${index}-reps`}
-              name={`set-${index}-reps`}
-              step="1"
-              min={1}
-              required
-              onChange={(e) =>
-                setSets(
-                  sets.map((s, i) =>
-                    i === index ? { ...s, reps: parseFloat(e.target.value) } : s
-                  )
-                )
-              }
-              placeholder="Reps"
-            />
-            <Button variant="destructive" onClick={() => removeSet(index)}>
-              Remove
+              ✕
             </Button>
           </div>
         ))}
