@@ -1,7 +1,14 @@
 import { Link } from "wouter";
-import { MoreVertical, Trash2 } from "lucide-react";
+import { ChevronRight, MoreVertical, Trash2 } from "lucide-react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,9 +17,95 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { type Exercise, ExerciseType } from "@/types/Exercise";
-import { useState } from "react";
 import { AddExerciseModal } from "@/components/AddExerciseModal";
 import type { Workout } from "@/types/Workout";
+
+function formatExerciseType(type: ExerciseType): string {
+  return type.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+}
+
+function MetricChip({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="bg-surface-low rounded-lg px-4 py-3 flex flex-col items-center min-w-[80px]">
+      <span className="font-sans text-[10px] uppercase tracking-widest text-muted-foreground mb-1">
+        {label}
+      </span>
+      <span className="font-headline font-bold text-foreground">{value}</span>
+    </div>
+  );
+}
+
+function ExerciseDetailModal({
+  exercise,
+  open,
+  onClose,
+}: {
+  exercise: Exercise;
+  open: boolean;
+  onClose: () => void;
+}) {
+  const hasSets = exercise.sets && exercise.sets.length > 0;
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{exercise.name}</DialogTitle>
+        </DialogHeader>
+
+        {/* Weights / Body Weight: full sets grid */}
+        {(exercise.exerciseType === ExerciseType.WEIGHTS || exercise.exerciseType === ExerciseType.BODY_WEIGHT) && hasSets && (
+          <div className="space-y-3 mt-2">
+            <div className="grid grid-cols-3 gap-4 px-4 font-sans text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              <span>Set</span>
+              <span className="text-center">
+                {exercise.sets[0]?.unit?.toUpperCase() ?? "KG"}
+              </span>
+              <span className="text-center">Reps</span>
+            </div>
+            {exercise.sets.map((set, i) => (
+              <div
+                key={i}
+                className="bg-surface-low rounded-lg p-4 grid grid-cols-3 gap-4 items-center"
+              >
+                <span className="font-headline font-bold text-lg text-primary-dark">
+                  {i + 1}
+                </span>
+                <div className="bg-muted rounded p-2 text-center font-headline font-bold">
+                  {set.weight}
+                </div>
+                <div className="bg-muted rounded p-2 text-center font-headline font-bold">
+                  {set.reps}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Cardio / Other: full metrics */}
+        {exercise.exerciseType !== ExerciseType.WEIGHTS && exercise.exerciseType !== ExerciseType.BODY_WEIGHT && (
+          <div className="flex flex-wrap gap-3 mt-2">
+            {exercise.time && (
+              <MetricChip
+                label="Time"
+                value={`${Math.floor(Number(exercise.time) / 60)}m ${Number(exercise.time) % 60}s`}
+              />
+            )}
+            {exercise.distance != null && exercise.distance > 0 && (
+              <MetricChip
+                label="Distance"
+                value={`${exercise.distance} ${exercise.distanceUnit ?? ""}`}
+              />
+            )}
+            {exercise.level != null && exercise.level > 0 && (
+              <MetricChip label="Level" value={String(exercise.level)} />
+            )}
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 function ExerciseCard({
   exercise,
@@ -21,112 +114,115 @@ function ExerciseCard({
   exercise: Exercise;
   onDelete: (id: string) => Promise<void>;
 }) {
-  const hasSets = exercise.exerciseType === ExerciseType.WEIGHTS &&
-    exercise.sets && exercise.sets.length > 0;
+  const [showDetail, setShowDetail] = useState(false);
+
+  const hasSets =
+    (exercise.exerciseType === ExerciseType.WEIGHTS ||
+      exercise.exerciseType === ExerciseType.BODY_WEIGHT) &&
+    exercise.sets &&
+    exercise.sets.length > 0;
+
+  // Compute summary stats for weights exercises
+  let weightsSummary: { sets: number; avgWeight: string; totalReps: number } | null = null;
+  if (hasSets) {
+    const setsCount = exercise.sets.length;
+    const totalReps = exercise.sets.reduce((sum, s) => sum + s.reps, 0);
+    const avgWeightVal =
+      exercise.sets.reduce((sum, s) => sum + s.weight, 0) / setsCount;
+    const unit = exercise.sets[0]?.unit ?? "kg";
+    const avgWeightStr =
+      avgWeightVal === 0
+        ? "Bodyweight"
+        : `${avgWeightVal % 1 === 0 ? avgWeightVal : avgWeightVal.toFixed(1)}${unit}`;
+
+    weightsSummary = { sets: setsCount, avgWeight: avgWeightStr, totalReps };
+  }
 
   return (
-    <article className="bg-card rounded-xl p-6">
-      {/* Exercise header */}
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <h2 className="font-headline text-2xl font-bold text-foreground">
-            {exercise.name}
-          </h2>
-          <div className="flex gap-2 mt-2">
-            <span className="px-3 py-1 bg-surface-high rounded-full text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-              {exercise.exerciseType}
-            </span>
+    <>
+      <article
+        className="bg-card rounded-xl p-6 cursor-pointer hover:ring-1 hover:ring-primary transition-all"
+        onClick={() => setShowDetail(true)}
+      >
+        {/* Exercise header */}
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h2 className="font-headline text-2xl font-bold text-foreground">
+              {exercise.name}
+            </h2>
+            <div className="flex gap-2 mt-2">
+              <span className="px-3 py-1 bg-surface-high rounded-full text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                {formatExerciseType(exercise.exerciseType)}
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center gap-1">
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <MoreVertical className="h-4 w-4" />
+                  <span className="sr-only">Exercise options</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  variant="destructive"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(exercise.exerciseId);
+                  }}
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 text-muted-foreground hover:text-foreground"
-            >
-              <MoreVertical className="h-4 w-4" />
-              <span className="sr-only">Exercise options</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              variant="destructive"
-              onClick={() => onDelete(exercise.exerciseId)}
-            >
-              <Trash2 className="h-4 w-4" />
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
 
-      {/* Weights: sets grid */}
-      {hasSets && (
-        <div className="space-y-3 mt-4">
-          <div className="grid grid-cols-3 gap-4 px-4 font-sans text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-            <span>Set</span>
-            <span className="text-center">
-              {exercise.sets[0]?.unit?.toUpperCase() ?? "KG"}
-            </span>
-            <span className="text-center">Reps</span>
+        {/* Weights: summary chips */}
+        {weightsSummary && (
+          <div className="flex flex-wrap gap-3 mt-4">
+            <MetricChip label="Sets" value={String(weightsSummary.sets)} />
+            <MetricChip label="Avg Weight" value={weightsSummary.avgWeight} />
+            <MetricChip label="Total Reps" value={String(weightsSummary.totalReps)} />
           </div>
-          {exercise.sets.map((set, i) => (
-            <div
-              key={i}
-              className="bg-surface-low rounded-lg p-4 grid grid-cols-3 gap-4 items-center"
-            >
-              <span className="font-headline font-bold text-lg text-primary-dark">
-                {i + 1}
-              </span>
-              <div className="bg-muted rounded p-2 text-center font-headline font-bold">
-                {set.weight}
-              </div>
-              <div className="bg-muted rounded p-2 text-center font-headline font-bold">
-                {set.reps}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+        )}
 
-      {/* Cardio / Other: metric chips */}
-      {exercise.exerciseType !== ExerciseType.WEIGHTS && (
-        <div className="flex flex-wrap gap-3 mt-4">
-          {exercise.time && (
-            <div className="bg-surface-low rounded-lg px-4 py-3 flex flex-col items-center min-w-[80px]">
-              <span className="font-sans text-[10px] uppercase tracking-widest text-muted-foreground mb-1">
-                Time
-              </span>
-              <span className="font-headline font-bold text-foreground">
-                {Math.floor(Number(exercise.time) / 60)}m{" "}
-                {Number(exercise.time) % 60}s
-              </span>
-            </div>
-          )}
-          {exercise.distance != null && exercise.distance > 0 && (
-            <div className="bg-surface-low rounded-lg px-4 py-3 flex flex-col items-center min-w-[80px]">
-              <span className="font-sans text-[10px] uppercase tracking-widest text-muted-foreground mb-1">
-                Distance
-              </span>
-              <span className="font-headline font-bold text-foreground">
-                {exercise.distance} {exercise.distanceUnit ?? ""}
-              </span>
-            </div>
-          )}
-          {exercise.level != null && exercise.level > 0 && (
-            <div className="bg-surface-low rounded-lg px-4 py-3 flex flex-col items-center min-w-[80px]">
-              <span className="font-sans text-[10px] uppercase tracking-widest text-muted-foreground mb-1">
-                Level
-              </span>
-              <span className="font-headline font-bold text-foreground">
-                {exercise.level}
-              </span>
-            </div>
-          )}
-        </div>
-      )}
-    </article>
+        {/* Cardio / Other: metric chips */}
+        {exercise.exerciseType !== ExerciseType.WEIGHTS && exercise.exerciseType !== ExerciseType.BODY_WEIGHT && (
+          <div className="flex flex-wrap gap-3 mt-4">
+            {exercise.time && (
+              <MetricChip
+                label="Time"
+                value={`${Math.floor(Number(exercise.time) / 60)}m ${Number(exercise.time) % 60}s`}
+              />
+            )}
+            {exercise.distance != null && exercise.distance > 0 && (
+              <MetricChip
+                label="Distance"
+                value={`${exercise.distance} ${exercise.distanceUnit ?? ""}`}
+              />
+            )}
+            {exercise.level != null && exercise.level > 0 && (
+              <MetricChip label="Level" value={String(exercise.level)} />
+            )}
+          </div>
+        )}
+      </article>
+
+      <ExerciseDetailModal
+        exercise={exercise}
+        open={showDetail}
+        onClose={() => setShowDetail(false)}
+      />
+    </>
   );
 }
 

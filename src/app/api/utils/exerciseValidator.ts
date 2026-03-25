@@ -15,6 +15,15 @@ interface WeightsExercise extends BaseExercise {
   }>;
 }
 
+interface BodyWeightExercise extends BaseExercise {
+  exerciseType: ExerciseType.BODY_WEIGHT;
+  sets: Array<{
+    weight: number;
+    unit: WeightUnits;
+    reps: number;
+  }>;
+}
+
 interface CardioExercise extends BaseExercise {
   exerciseType: ExerciseType.CARDIO;
   time: number; // total seconds
@@ -33,27 +42,22 @@ interface OtherExercise extends BaseExercise {
   weightUnit: WeightUnits;
 }
 
-type ValidatedExercise = WeightsExercise | CardioExercise | OtherExercise;
+type ValidatedExercise = WeightsExercise | BodyWeightExercise | CardioExercise | OtherExercise;
 
 function validateWeights(formData: FormData): WeightsExercise | false {
   const exerciseId = formData.get("exercise-id")?.toString().trim();
   const name = formData.get("exercise-name")?.toString().trim();
-  
+
   if (!exerciseId || !name) {
     return false;
   }
 
   const sets = [];
   let i = 0;
-  
-  // Look for sets data
-  while (formData.get(`set-${i}-weight`)) {
-    const weight = parseFloat(
-      formData.get(`set-${i}-weight`)?.toString() || "0"
-    );
+  while (formData.get(`set-${i}-weight`) !== null) {
+    const weight = parseFloat(formData.get(`set-${i}-weight`)?.toString() || "0");
     const unit = formData.get(`set-${i}-unit`)?.toString() as WeightUnits || WeightUnits.KG;
     const reps = parseInt(formData.get(`set-${i}-reps`)?.toString() || "0", 10);
-    
     if (weight > 0 && reps > 0) {
       sets.push({ weight, unit, reps });
     }
@@ -64,18 +68,40 @@ function validateWeights(formData: FormData): WeightsExercise | false {
     return false;
   }
 
-  return { 
-    exerciseId, 
-    name, 
-    exerciseType: ExerciseType.WEIGHTS, 
-    sets 
-  };
+  return { exerciseId, name, exerciseType: ExerciseType.WEIGHTS, sets };
+}
+
+function validateBodyWeight(formData: FormData): BodyWeightExercise | false {
+  const exerciseId = formData.get("exercise-id")?.toString().trim();
+  const name = formData.get("exercise-name")?.toString().trim();
+
+  if (!exerciseId || !name) {
+    return false;
+  }
+
+  const sets = [];
+  let i = 0;
+  while (formData.get(`set-${i}-weight`) !== null) {
+    const weight = parseFloat(formData.get(`set-${i}-weight`)?.toString() || "0");
+    const unit = formData.get(`set-${i}-unit`)?.toString() as WeightUnits || WeightUnits.KG;
+    const reps = parseInt(formData.get(`set-${i}-reps`)?.toString() || "0", 10);
+    if (reps > 0) {
+      sets.push({ weight, unit, reps });
+    }
+    i++;
+  }
+
+  if (sets.length === 0) {
+    return false;
+  }
+
+  return { exerciseId, name, exerciseType: ExerciseType.BODY_WEIGHT, sets };
 }
 
 function validateCardio(formData: FormData): CardioExercise | false {
   const exerciseId = formData.get("exercise-id")?.toString().trim();
   const name = formData.get("exercise-name")?.toString().trim();
-  
+
   if (!exerciseId || !name) {
     return false;
   }
@@ -113,7 +139,7 @@ function validateCardio(formData: FormData): CardioExercise | false {
 function validateOther(formData: FormData): OtherExercise | false {
   const exerciseId = formData.get("exercise-id")?.toString().trim();
   const name = formData.get("exercise-name")?.toString().trim();
-  
+
   if (!exerciseId || !name) {
     return false;
   }
@@ -152,5 +178,5 @@ function validateOther(formData: FormData): OtherExercise | false {
   };
 }
 
-export { validateWeights, validateCardio, validateOther };
-export type { ValidatedExercise, WeightsExercise, CardioExercise, OtherExercise };
+export { validateWeights, validateBodyWeight, validateCardio, validateOther };
+export type { ValidatedExercise, WeightsExercise, BodyWeightExercise, CardioExercise, OtherExercise };

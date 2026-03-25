@@ -5,6 +5,7 @@ import { apiClient } from "@/lib/apiClient";
 import { getUserId } from "@/lib/getUserId";
 import {
   validateWeights,
+  validateBodyWeight,
   validateCardio,
   validateOther,
 } from "@/api/utils/exerciseValidator";
@@ -32,6 +33,10 @@ import { Combobox } from "./ui/combobox";
 const exerciseTypes = Object.values(ExerciseType);
 const distanceUnits = Object.values(DistanceUnits);
 const weightUnits = Object.values(WeightUnits);
+
+function formatExerciseType(type: ExerciseType): string {
+  return type.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+}
 
 const TimeInput = () => (
   <div className="grid gap-2 grid-cols-2">
@@ -138,6 +143,7 @@ const SetsInput = () => (
 
 const exerciseTypeMap = {
   [ExerciseType.WEIGHTS]: <SetsInput />,
+  [ExerciseType.BODY_WEIGHT]: <SetsInput />,
   [ExerciseType.CARDIO]: (
     <>
       <DistanceInput />
@@ -208,6 +214,9 @@ export function AddExerciseModal({
     switch (exerciseType) {
       case ExerciseType.WEIGHTS:
         validatedFields = validateWeights(formData);
+        break;
+      case ExerciseType.BODY_WEIGHT:
+        validatedFields = validateBodyWeight(formData);
         break;
       case ExerciseType.CARDIO:
         validatedFields = validateCardio(formData);
@@ -281,7 +290,7 @@ export function AddExerciseModal({
                   <SelectContent>
                     {exerciseTypes.map((type) => (
                       <SelectItem key={type} value={type}>
-                        {type}
+                        {formatExerciseType(type)}
                       </SelectItem>
                     ))}
                   </SelectContent>
