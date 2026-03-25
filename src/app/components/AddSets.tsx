@@ -101,9 +101,7 @@ export function AddSets({ bodyWeight = false }: { bodyWeight?: boolean }) {
             )}
 
             <div className="grid gap-1">
-              <Label htmlFor={`set-${index}-reps`}>
-                Reps{bodyWeight && <span className="text-muted-foreground"> (opt)</span>}
-              </Label>
+              <Label htmlFor={`set-${index}-reps`}>Reps</Label>
               <Input
                 type="number"
                 value={set.reps || ""}
@@ -127,9 +125,7 @@ export function AddSets({ bodyWeight = false }: { bodyWeight?: boolean }) {
 
             {bodyWeight && (
               <div className="grid gap-1">
-                <Label htmlFor={`set-${index}-duration`}>
-                  Duration (s)<span className="text-muted-foreground"> (opt)</span>
-                </Label>
+                <Label htmlFor={`set-${index}-duration`}>Duration (s)</Label>
                 <Input
                   type="number"
                   value={set.duration || ""}
