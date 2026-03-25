@@ -20,6 +20,10 @@ import { type Exercise, ExerciseType } from "@/types/Exercise";
 import { AddExerciseModal } from "@/components/AddExerciseModal";
 import type { Workout } from "@/types/Workout";
 
+function formatExerciseType(type: ExerciseType): string {
+  return type.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+}
+
 function MetricChip({ label, value }: { label: string; value: string }) {
   return (
     <div className="bg-surface-low rounded-lg px-4 py-3 flex flex-col items-center min-w-[80px]">
@@ -148,7 +152,7 @@ function ExerciseCard({
             </h2>
             <div className="flex gap-2 mt-2">
               <span className="px-3 py-1 bg-surface-high rounded-full text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                {exercise.exerciseType}
+                {formatExerciseType(exercise.exerciseType)}
               </span>
             </div>
           </div>
