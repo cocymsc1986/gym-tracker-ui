@@ -141,9 +141,16 @@ const SetsInput = () => (
   </div>
 );
 
+const BodyWeightSetsInput = () => (
+  <div className="grid gap-2">
+    <Label htmlFor="exercise-sets">Sets</Label>
+    <AddSets bodyWeight />
+  </div>
+);
+
 const exerciseTypeMap = {
   [ExerciseType.WEIGHTS]: <SetsInput />,
-  [ExerciseType.BODY_WEIGHT]: <SetsInput />,
+  [ExerciseType.BODY_WEIGHT]: <BodyWeightSetsInput />,
   [ExerciseType.CARDIO]: (
     <>
       <DistanceInput />
