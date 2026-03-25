@@ -85,8 +85,15 @@ function validateBodyWeight(formData: FormData): BodyWeightExercise | false {
     const weight = parseFloat(formData.get(`set-${i}-weight`)?.toString() || "0");
     const unit = formData.get(`set-${i}-unit`)?.toString() as WeightUnits || WeightUnits.KG;
     const reps = parseInt(formData.get(`set-${i}-reps`)?.toString() || "0", 10);
-    if (reps > 0) {
-      sets.push({ weight, unit, reps });
+    const duration = parseInt(formData.get(`set-${i}-duration`)?.toString() || "0", 10);
+    // A valid bodyweight set needs at least reps or duration
+    if (reps > 0 || duration > 0) {
+      sets.push({
+        weight,
+        unit,
+        reps,
+        ...(duration > 0 ? { duration } : {}),
+      });
     }
     i++;
   }
