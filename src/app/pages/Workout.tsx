@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { ChevronRight, MoreVertical, Trash2 } from "lucide-react";
+import { ChevronRight, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ import {
 
 import { type Exercise, ExerciseType } from "@/types/Exercise";
 import { AddExerciseModal } from "@/components/AddExerciseModal";
+import { EditExerciseModal } from "@/components/EditExerciseModal";
 import type { Workout } from "@/types/Workout";
 
 function formatDuration(seconds: number): string {
@@ -126,11 +127,18 @@ function ExerciseDetailModal({
 function ExerciseCard({
   exercise,
   onDelete,
+  onEdit,
+  userExercises,
+  onExerciseUpdated,
 }: {
   exercise: Exercise;
   onDelete: (id: string) => Promise<void>;
+  onEdit?: (exercise: Exercise) => void;
+  userExercises?: string[];
+  onExerciseUpdated?: () => void;
 }) {
   const [showDetail, setShowDetail] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
 
   const hasSets =
     (exercise.exerciseType === ExerciseType.WEIGHTS ||
@@ -201,6 +209,15 @@ function ExerciseCard({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowEdit(true);
+                  }}
+                >
+                  <Pencil className="h-4 w-4" />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem
                   variant="destructive"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -258,6 +275,16 @@ function ExerciseCard({
         open={showDetail}
         onClose={() => setShowDetail(false)}
       />
+
+      {showEdit && (
+        <EditExerciseModal
+          exercise={exercise}
+          showModal={showEdit}
+          setShowModal={setShowEdit}
+          userExercises={userExercises ?? []}
+          onExerciseUpdated={onExerciseUpdated}
+        />
+      )}
     </>
   );
 }
@@ -273,7 +300,8 @@ export function Workout({
   };
   onDeleteExercise: (exerciseId: string) => Promise<void>;
   onRefresh: () => void;
-}) {
+})
+ {
   const workout = loaderData?.workout;
   const userExercises = loaderData?.userExercises;
 
@@ -337,6 +365,8 @@ export function Workout({
                 key={exercise.exerciseId}
                 exercise={exercise}
                 onDelete={onDeleteExercise}
+                userExercises={userExercises}
+                onExerciseUpdated={onRefresh}
               />
             ))
           )}

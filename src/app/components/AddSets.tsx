@@ -15,10 +15,10 @@ import { WeightUnits, type WeightItem } from "@/types/Exercise";
 
 const weightUnits = Object.values(WeightUnits);
 
-export function AddSets({ bodyWeight = false }: { bodyWeight?: boolean }) {
-  const [sets, setSets] = useState<WeightItem[]>([
-    { weight: 0, unit: WeightUnits.KG, reps: 0 },
-  ]);
+export function AddSets({ bodyWeight = false, initialSets }: { bodyWeight?: boolean; initialSets?: WeightItem[] }) {
+  const [sets, setSets] = useState<WeightItem[]>(
+    initialSets ?? [{ weight: 0, unit: WeightUnits.KG, reps: 0 }]
+  );
 
   const addSet = () => {
     setSets([...sets, { weight: 0, unit: WeightUnits.KG, reps: 0 }]);
