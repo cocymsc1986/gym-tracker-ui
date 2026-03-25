@@ -1,7 +1,8 @@
 export enum ExerciseType {
-  WEIGHTS = "Weights",
-  CARDIO = "Cardio",
-  OTHER = "Other",
+  WEIGHTS = "weights",
+  CARDIO = "cardio",
+  BODY_WEIGHT = "body_weight",
+  OTHER = "other",
 }
 
 export enum WeightUnits {
@@ -13,6 +14,7 @@ export type WeightItem = {
   weight: GLfloat;
   unit: WeightUnits;
   reps: number;
+  duration?: number; // seconds; for timed sets (e.g. plank)
 };
 
 export enum DistanceUnits {
@@ -25,7 +27,7 @@ export type Exercise = {
   exerciseId: string;
   name: string;
   exerciseType: ExerciseType;
-  time?: string;
+  time?: number;
   distance?: GLfloat;
   distanceUnit?: DistanceUnits;
   level?: number;
