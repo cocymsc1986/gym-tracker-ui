@@ -15,7 +15,7 @@ import { WeightUnits, type WeightItem } from "@/types/Exercise";
 
 const weightUnits = Object.values(WeightUnits);
 
-export function AddSets() {
+export function AddSets({ bodyWeight = false }: { bodyWeight?: boolean }) {
   const [sets, setSets] = useState<WeightItem[]>([
     { weight: 0, unit: WeightUnits.KG, reps: 0 },
   ]);
@@ -32,71 +32,124 @@ export function AddSets() {
     <Card>
       <CardContent>
         {sets.map((set, index) => (
-          <div key={index} className="grid grid-cols-[1fr_auto_1fr_auto] gap-2 mb-3 items-end">
-            <div className="grid gap-1">
-              <Label htmlFor={`set-${index}-weight`}>Weight</Label>
-              <Input
-                type="number"
-                value={set.weight}
-                id={`set-${index}-weight`}
-                name={`set-${index}-weight`}
-                step="0.1"
-                required
-                onChange={(e) =>
-                  setSets(
-                    sets.map((s, i) =>
-                      i === index
-                        ? { ...s, weight: parseFloat(e.target.value) }
-                        : s
-                    )
-                  )
-                }
-                placeholder="Weight"
-              />
-            </div>
-            <div className="grid gap-1">
-              <Label htmlFor={`set-${index}-unit`}>Unit</Label>
-              <Select
-                value={set.unit}
-                name={`set-${index}-unit`}
-                onValueChange={(value: WeightUnits) =>
-                  setSets(
-                    sets.map((s, i) => (i === index ? { ...s, unit: value } : s))
-                  )
-                }
-              >
-                <SelectTrigger className="w-16">
-                  <SelectValue placeholder="Unit" />
-                </SelectTrigger>
-                <SelectContent>
-                  {weightUnits.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          <div
+            key={index}
+            className={`grid gap-2 mb-3 items-end ${
+              bodyWeight
+                ? "grid-cols-[1fr_1fr_auto]"
+                : "grid-cols-[1fr_auto_1fr_auto]"
+            }`}
+          >
+            {/* Bodyweight: hidden weight + unit so API payload stays consistent */}
+            {bodyWeight && (
+              <>
+                <input type="hidden" name={`set-${index}-weight`} value="0" />
+                <input type="hidden" name={`set-${index}-unit`} value={WeightUnits.KG} />
+              </>
+            )}
+
+            {/* Weighted: visible weight + unit */}
+            {!bodyWeight && (
+              <>
+                <div className="grid gap-1">
+                  <Label htmlFor={`set-${index}-weight`}>Weight</Label>
+                  <Input
+                    type="number"
+                    value={set.weight}
+                    id={`set-${index}-weight`}
+                    name={`set-${index}-weight`}
+                    step="0.1"
+                    required
+                    onChange={(e) =>
+                      setSets(
+                        sets.map((s, i) =>
+                          i === index
+                            ? { ...s, weight: parseFloat(e.target.value) }
+                            : s
+                        )
+                      )
+                    }
+                    placeholder="Weight"
+                  />
+                </div>
+                <div className="grid gap-1">
+                  <Label htmlFor={`set-${index}-unit`}>Unit</Label>
+                  <Select
+                    value={set.unit}
+                    name={`set-${index}-unit`}
+                    onValueChange={(value: WeightUnits) =>
+                      setSets(
+                        sets.map((s, i) =>
+                          i === index ? { ...s, unit: value } : s
+                        )
+                      )
+                    }
+                  >
+                    <SelectTrigger className="w-16">
+                      <SelectValue placeholder="Unit" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {weightUnits.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
+            )}
+
             <div className="grid gap-1">
               <Label htmlFor={`set-${index}-reps`}>Reps</Label>
               <Input
                 type="number"
-                value={set.reps}
+                value={set.reps || ""}
                 id={`set-${index}-reps`}
                 name={`set-${index}-reps`}
                 step="1"
                 min={1}
-                required
+                required={!bodyWeight}
                 onChange={(e) =>
                   setSets(
                     sets.map((s, i) =>
-                      i === index ? { ...s, reps: parseFloat(e.target.value) } : s
+                      i === index
+                        ? { ...s, reps: parseInt(e.target.value, 10) || 0 }
+                        : s
                     )
                   )
                 }
                 placeholder="Reps"
               />
             </div>
+
+            {bodyWeight && (
+              <div className="grid gap-1">
+                <Label htmlFor={`set-${index}-duration`}>Duration (s)</Label>
+                <Input
+                  type="number"
+                  value={set.duration || ""}
+                  id={`set-${index}-duration`}
+                  name={`set-${index}-duration`}
+                  step="1"
+                  min={1}
+                  onChange={(e) =>
+                    setSets(
+                      sets.map((s, i) =>
+                        i === index
+                          ? {
+                              ...s,
+                              duration: parseInt(e.target.value, 10) || undefined,
+                            }
+                          : s
+                      )
+                    )
+                  }
+                  placeholder="e.g. 60"
+                />
+              </div>
+            )}
+
             <Button
               variant="destructive"
               size="icon"
