@@ -20,6 +20,14 @@ import { type Exercise, ExerciseType } from "@/types/Exercise";
 import { AddExerciseModal } from "@/components/AddExerciseModal";
 import type { Workout } from "@/types/Workout";
 
+function formatDuration(seconds: number): string {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  if (mins === 0) return `${secs}s`;
+  if (secs === 0) return `${mins}m`;
+  return `${mins}m ${secs}s`;
+}
+
 function formatExerciseType(type: ExerciseType): string {
   return type.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
 }
@@ -54,33 +62,41 @@ function ExerciseDetailModal({
         </DialogHeader>
 
         {/* Weights / Body Weight: full sets grid */}
-        {(exercise.exerciseType === ExerciseType.WEIGHTS || exercise.exerciseType === ExerciseType.BODY_WEIGHT) && hasSets && (
-          <div className="space-y-3 mt-2">
-            <div className="grid grid-cols-3 gap-4 px-4 font-sans text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-              <span>Set</span>
-              <span className="text-center">
-                {exercise.sets[0]?.unit?.toUpperCase() ?? "KG"}
-              </span>
-              <span className="text-center">Reps</span>
-            </div>
-            {exercise.sets.map((set, i) => (
-              <div
-                key={i}
-                className="bg-surface-low rounded-lg p-4 grid grid-cols-3 gap-4 items-center"
-              >
-                <span className="font-headline font-bold text-lg text-primary-dark">
-                  {i + 1}
-                </span>
-                <div className="bg-muted rounded p-2 text-center font-headline font-bold">
-                  {set.weight}
-                </div>
-                <div className="bg-muted rounded p-2 text-center font-headline font-bold">
-                  {set.reps}
-                </div>
+        {(exercise.exerciseType === ExerciseType.WEIGHTS || exercise.exerciseType === ExerciseType.BODY_WEIGHT) && hasSets && (() => {
+          const showWeight = exercise.sets.some((s) => s.weight > 0);
+          const showReps = exercise.sets.some((s) => !isNaN(s.reps) && s.reps > 0);
+          const showDuration = exercise.sets.some((s) => s.duration != null && s.duration > 0);
+          const colCount = 1 + (showWeight ? 1 : 0) + (showReps ? 1 : 0) + (showDuration ? 1 : 0);
+          const gridClass = ({ 2: "grid-cols-2", 3: "grid-cols-3", 4: "grid-cols-4" } as Record<number, string>)[colCount] ?? "grid-cols-3";
+          return (
+            <div className="space-y-3 mt-2">
+              <div className={`grid ${gridClass} gap-4 px-4 font-sans text-[10px] font-bold uppercase tracking-widest text-muted-foreground`}>
+                <span>Set</span>
+                {showWeight && <span className="text-center">{exercise.sets[0]?.unit?.toUpperCase() ?? "KG"}</span>}
+                {showReps && <span className="text-center">Reps</span>}
+                {showDuration && <span className="text-center">Duration</span>}
               </div>
-            ))}
-          </div>
-        )}
+              {exercise.sets.map((set, i) => (
+                <div key={i} className={`bg-surface-low rounded-lg p-4 grid ${gridClass} gap-4 items-center`}>
+                  <span className="font-headline font-bold text-lg text-primary-dark">{i + 1}</span>
+                  {showWeight && (
+                    <div className="bg-muted rounded p-2 text-center font-headline font-bold">{set.weight}</div>
+                  )}
+                  {showReps && (
+                    <div className="bg-muted rounded p-2 text-center font-headline font-bold">
+                      {!isNaN(set.reps) && set.reps > 0 ? set.reps : "—"}
+                    </div>
+                  )}
+                  {showDuration && (
+                    <div className="bg-muted rounded p-2 text-center font-headline font-bold">
+                      {set.duration != null && set.duration > 0 ? formatDuration(set.duration) : "—"}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          );
+        })()}
 
         {/* Cardio / Other: full metrics */}
         {exercise.exerciseType !== ExerciseType.WEIGHTS && exercise.exerciseType !== ExerciseType.BODY_WEIGHT && (
@@ -122,20 +138,33 @@ function ExerciseCard({
     exercise.sets &&
     exercise.sets.length > 0;
 
-  // Compute summary stats for weights exercises
-  let weightsSummary: { sets: number; avgWeight: string; totalReps: number } | null = null;
+  // Compute summary stats for weights/bodyweight exercises
+  let weightsSummary: {
+    sets: number;
+    avgWeight: string | null;
+    totalReps: number | null;
+    avgDuration: string | null;
+  } | null = null;
   if (hasSets) {
     const setsCount = exercise.sets.length;
-    const totalReps = exercise.sets.reduce((sum, s) => sum + s.reps, 0);
-    const avgWeightVal =
-      exercise.sets.reduce((sum, s) => sum + s.weight, 0) / setsCount;
-    const unit = exercise.sets[0]?.unit ?? "kg";
-    const avgWeightStr =
-      avgWeightVal === 0
-        ? "Bodyweight"
-        : `${avgWeightVal % 1 === 0 ? avgWeightVal : avgWeightVal.toFixed(1)}${unit}`;
 
-    weightsSummary = { sets: setsCount, avgWeight: avgWeightStr, totalReps };
+    const validReps = exercise.sets.filter((s) => !isNaN(s.reps) && s.reps > 0);
+    const totalReps = validReps.length > 0
+      ? validReps.reduce((sum, s) => sum + s.reps, 0)
+      : null;
+
+    const avgWeightVal = exercise.sets.reduce((sum, s) => sum + s.weight, 0) / setsCount;
+    const unit = exercise.sets[0]?.unit ?? "kg";
+    const avgWeight = avgWeightVal === 0
+      ? "Bodyweight"
+      : `${avgWeightVal % 1 === 0 ? avgWeightVal : avgWeightVal.toFixed(1)}${unit}`;
+
+    const setsWithDuration = exercise.sets.filter((s) => s.duration != null && s.duration > 0);
+    const avgDuration = setsWithDuration.length > 0
+      ? formatDuration(Math.round(setsWithDuration.reduce((sum, s) => sum + (s.duration ?? 0), 0) / setsWithDuration.length))
+      : null;
+
+    weightsSummary = { sets: setsCount, avgWeight, totalReps, avgDuration };
   }
 
   return (
@@ -186,12 +215,19 @@ function ExerciseCard({
           </div>
         </div>
 
-        {/* Weights: summary chips */}
+        {/* Weights / Body Weight: summary chips */}
         {weightsSummary && (
           <div className="flex flex-wrap gap-3 mt-4">
             <MetricChip label="Sets" value={String(weightsSummary.sets)} />
-            <MetricChip label="Avg Weight" value={weightsSummary.avgWeight} />
-            <MetricChip label="Total Reps" value={String(weightsSummary.totalReps)} />
+            {weightsSummary.avgWeight && (
+              <MetricChip label="Avg Weight" value={weightsSummary.avgWeight} />
+            )}
+            {weightsSummary.totalReps != null && (
+              <MetricChip label="Total Reps" value={String(weightsSummary.totalReps)} />
+            )}
+            {weightsSummary.avgDuration && (
+              <MetricChip label="Avg Duration" value={weightsSummary.avgDuration} />
+            )}
           </div>
         )}
 
