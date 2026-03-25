@@ -127,13 +127,11 @@ function ExerciseDetailModal({
 function ExerciseCard({
   exercise,
   onDelete,
-  onEdit,
   userExercises,
   onExerciseUpdated,
 }: {
   exercise: Exercise;
   onDelete: (id: string) => Promise<void>;
-  onEdit?: (exercise: Exercise) => void;
   userExercises?: string[];
   onExerciseUpdated?: () => void;
 }) {
