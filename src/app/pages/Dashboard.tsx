@@ -43,7 +43,7 @@ export function Dashboard({ workouts, exercises, onDeleteWorkout }: DashboardPro
       {/* Floating action button */}
       <Link href="/workout">
         <button
-          className="fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-2xl font-bold transition-transform active:scale-95 z-50"
+          className="fixed bottom-[34px] right-[34px] w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-2xl font-bold transition-transform active:scale-95 z-50"
           style={{ backgroundColor: "#e4f725", color: "#545c00" }}
           aria-label="Add Workout"
         >

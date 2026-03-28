@@ -164,4 +164,9 @@
   body {
     @apply bg-background text-foreground font-sans;
   }
+  /* Normalise date inputs so they match text input sizing exactly */
+  input[type="date"] {
+    -webkit-appearance: none;
+    appearance: none;
+  }
 }
