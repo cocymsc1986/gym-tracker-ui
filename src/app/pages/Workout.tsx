@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { ChevronRight, MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { ChevronRight, Copy, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -127,16 +127,19 @@ function ExerciseDetailModal({
 function ExerciseCard({
   exercise,
   onDelete,
+  onDuplicate,
   userExercises,
   onExerciseUpdated,
 }: {
   exercise: Exercise;
   onDelete: (id: string) => Promise<void>;
+  onDuplicate: (exercise: Exercise) => Promise<void>;
   userExercises?: string[];
   onExerciseUpdated?: () => void;
 }) {
   const [showDetail, setShowDetail] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
+  const [isDuplicating, setIsDuplicating] = useState(false);
 
   const hasSets =
     (exercise.exerciseType === ExerciseType.WEIGHTS ||
@@ -193,40 +196,60 @@ function ExerciseCard({
           </div>
           <div className="flex items-center gap-1">
             <ChevronRight className="h-4 w-4 text-muted-foreground" />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <MoreVertical className="h-4 w-4" />
-                  <span className="sr-only">Exercise options</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowEdit(true);
-                  }}
-                >
-                  <Pencil className="h-4 w-4" />
-                  Edit
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  variant="destructive"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete(exercise.exerciseId);
-                  }}
-                >
-                  <Trash2 className="h-4 w-4" />
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {isDuplicating ? (
+              <div className="h-8 w-8 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-dark" />
+              </div>
+            ) : (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <MoreVertical className="h-4 w-4" />
+                    <span className="sr-only">Exercise options</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowEdit(true);
+                    }}
+                  >
+                    <Pencil className="h-4 w-4" />
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      setIsDuplicating(true);
+                      try {
+                        await onDuplicate(exercise);
+                      } finally {
+                        setIsDuplicating(false);
+                      }
+                    }}
+                  >
+                    <Copy className="h-4 w-4" />
+                    Duplicate
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    variant="destructive"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDelete(exercise.exerciseId);
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
         </div>
 
@@ -290,6 +313,7 @@ function ExerciseCard({
 export function Workout({
   loaderData,
   onDeleteExercise,
+  onDuplicateExercise,
   onRefresh,
 }: {
   loaderData: {
@@ -297,6 +321,7 @@ export function Workout({
     userExercises: string[];
   };
   onDeleteExercise: (exerciseId: string) => Promise<void>;
+  onDuplicateExercise: (exercise: import("@/types/Exercise").Exercise) => Promise<void>;
   onRefresh: () => void;
 })
  {
@@ -363,6 +388,7 @@ export function Workout({
                 key={exercise.exerciseId}
                 exercise={exercise}
                 onDelete={onDeleteExercise}
+                onDuplicate={onDuplicateExercise}
                 userExercises={userExercises}
                 onExerciseUpdated={onRefresh}
               />

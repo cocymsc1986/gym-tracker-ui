@@ -223,6 +223,21 @@ export function WorkoutWithData({ workoutId }: { workoutId: string }) {
     );
   };
 
+  const handleDuplicateExercise = async (exercise: ExerciseType) => {
+    const userId = getUserId();
+    if (!userId) return;
+
+    const newExerciseId = crypto.randomUUID();
+    await apiClient.post(`/exercises/${userId}`, {
+      ...exercise,
+      exerciseId: newExerciseId,
+    });
+    await apiClient.post(
+      `/workouts/${userId}/${workoutId}/exercises/${newExerciseId}`,
+    );
+    await loadData();
+  };
+
   useEffect(() => {
     loadData();
   }, [loadData]);
@@ -242,6 +257,7 @@ export function WorkoutWithData({ workoutId }: { workoutId: string }) {
     <Workout
       loaderData={data || { workout: null, userExercises: [] }}
       onDeleteExercise={handleDeleteExercise}
+      onDuplicateExercise={handleDuplicateExercise}
       onRefresh={loadData}
     />
   );

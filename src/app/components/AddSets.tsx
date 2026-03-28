@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Copy, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,6 +29,12 @@ export function AddSets({ bodyWeight = false, initialSets }: { bodyWeight?: bool
     setSets(sets.filter((_, i) => i !== index));
   };
 
+  const duplicateSet = (index: number) => {
+    const newSets = [...sets];
+    newSets.splice(index + 1, 0, { ...sets[index] });
+    setSets(newSets);
+  };
+
   return (
     <Card>
       <CardContent>
@@ -36,8 +43,8 @@ export function AddSets({ bodyWeight = false, initialSets }: { bodyWeight?: bool
             key={index}
             className={`grid gap-2 mb-3 items-end ${
               bodyWeight
-                ? "grid-cols-[1fr_1fr_auto]"
-                : "grid-cols-[1fr_auto_1fr_auto]"
+                ? "grid-cols-[1fr_1fr_auto_auto]"
+                : "grid-cols-[1fr_auto_1fr_auto_auto]"
             }`}
           >
             {/* Bodyweight: hidden weight + unit so API payload stays consistent */}
@@ -151,12 +158,22 @@ export function AddSets({ bodyWeight = false, initialSets }: { bodyWeight?: bool
             )}
 
             <Button
+              variant="outline"
+              size="icon"
+              type="button"
+              onClick={() => duplicateSet(index)}
+              aria-label={`Duplicate set ${index + 1}`}
+            >
+              <Copy className="h-4 w-4" />
+            </Button>
+            <Button
               variant="destructive"
               size="icon"
+              type="button"
               onClick={() => removeSet(index)}
               aria-label={`Remove set ${index + 1}`}
             >
-              ✕
+              <X className="h-4 w-4" />
             </Button>
           </div>
         ))}
