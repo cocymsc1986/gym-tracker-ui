@@ -25,21 +25,21 @@ export const Tracker = ({ workouts }: { workouts: Workout[] }) => {
   return (
     <div className="bg-card p-4 rounded-xl h-full">
       <h3 className="font-headline font-bold text-xl mb-4">WEEKLY FLOW</h3>
-      <div className="flex flex-row gap-2">
+      <div className="flex flex-row md:flex-col gap-2">
         {weekDays.map(({ dateStr, dayName, workedOut }) => (
           <div
             key={dateStr}
-            className={`flex flex-col items-center justify-center p-2 rounded-lg flex-1 ${
+            className={`flex flex-col md:flex-row items-center md:justify-between p-2 md:p-3 rounded-lg flex-1 md:flex-none ${
               workedOut
                 ? "bg-primary text-primary-foreground"
                 : "bg-muted text-muted-foreground"
             }`}
           >
-            <span className="font-headline font-bold text-xs">{dayName}</span>
+            <span className="font-headline font-bold text-xs md:text-sm">{dayName}</span>
             {workedOut ? (
-              <CircleCheck className="h-4 w-4 mt-1" />
+              <CircleCheck className="h-4 w-4 mt-1 md:mt-0" />
             ) : (
-              <Circle className="h-4 w-4 mt-1 opacity-40" />
+              <Circle className="h-4 w-4 mt-1 md:mt-0 opacity-40" />
             )}
           </div>
         ))}
