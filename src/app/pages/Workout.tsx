@@ -197,7 +197,7 @@ function ExerciseCard({
           <div className="flex items-center gap-1">
             <ChevronRight className="h-4 w-4 text-muted-foreground" />
             {isDuplicating ? (
-              <div className="h-8 w-8 flex items-center justify-center">
+              <div className="h-8 w-8 flex items-center justify-center" role="status" aria-label="Duplicating exercise">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-dark" />
               </div>
             ) : (
