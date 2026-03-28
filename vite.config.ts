@@ -4,8 +4,10 @@ import path from "path";
 import { defineConfig } from "vite";
 
 // https://vite.dev/config/
-export default defineConfig({
-  base: './', // Use relative paths for Capacitor
+export default defineConfig(({ mode }) => ({
+  // Mobile (Capacitor) builds need relative paths for file:// protocol.
+  // Web builds must use '/' so asset paths resolve correctly on deep routes like /workout/123.
+  base: mode === 'mobile' || mode === 'mobile-dev' ? './' : '/',
   plugins: [tailwindcss(), react()],
   resolve: {
     alias: {
@@ -15,4 +17,4 @@ export default defineConfig({
   build: {
     outDir: "build/client",
   },
-});
+}));
