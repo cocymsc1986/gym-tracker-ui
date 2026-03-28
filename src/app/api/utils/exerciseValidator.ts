@@ -125,9 +125,8 @@ function validateCardio(formData: FormData): CardioExercise | false {
     formData.get("exercise-time-seconds")?.toString() || "0",
     10
   );
-  const level = parseInt(
-    formData.get("exercise-level")?.toString() || "1",
-    10
+  const level = parseFloat(
+    formData.get("exercise-level")?.toString() || "1"
   );
 
   const totalTimeInSeconds = (timeMinutes * 60) + timeSeconds;
@@ -165,9 +164,8 @@ function validateOther(formData: FormData): OtherExercise | false {
   const distanceUnit = formData.get("exercise-distance-unit")?.toString() as DistanceUnits || DistanceUnits.KM;
   const weight = parseFloat(formData.get("exercise-weight")?.toString() || "0");
   const weightUnit = formData.get("exercise-weight-unit")?.toString() as WeightUnits || WeightUnits.KG;
-  const level = parseInt(
-    formData.get("exercise-level")?.toString() || "1",
-    10
+  const level = parseFloat(
+    formData.get("exercise-level")?.toString() || "1"
   );
 
   const totalTimeInSeconds = (timeMinutes * 60) + timeSeconds;
