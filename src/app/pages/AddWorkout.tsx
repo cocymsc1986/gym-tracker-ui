@@ -74,7 +74,7 @@ export function AddWorkout() {
 
         {/* Form */}
         <form onSubmit={handleSubmit} data-testid="add-workout-form">
-          <div className="space-y-6 max-w-lg">
+          <div className="space-y-6 w-full max-w-lg">
 
             <div className="space-y-2">
               <Label
@@ -109,7 +109,7 @@ export function AddWorkout() {
                 autoComplete="off"
                 required
                 onChange={() => setError(null)}
-                className="bg-surface-high border-0 focus-visible:ring-0 focus-visible:bg-surface-highest font-sans h-12 rounded-xl"
+                className="w-full bg-surface-high border-0 focus-visible:ring-0 focus-visible:bg-surface-highest font-sans h-12 rounded-xl"
               />
             </div>
 
