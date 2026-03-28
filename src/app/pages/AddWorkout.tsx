@@ -66,7 +66,7 @@ export function AddWorkout() {
           <Button
             variant="link"
             asChild
-            className="text-primary-dark font-bold text-xs uppercase tracking-widest underline p-0 h-auto self-start md:self-auto"
+            className="text-primary-dark font-bold text-xs uppercase tracking-widest underline p-0 h-auto self-start"
           >
             <Link href="/">&larr; Dashboard</Link>
           </Button>
