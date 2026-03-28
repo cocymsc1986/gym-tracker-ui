@@ -25,47 +25,26 @@ export const Tracker = ({ workouts }: { workouts: Workout[] }) => {
   const weekend = weekDays.slice(5);
 
   return (
-    <div className="bg-card p-6 rounded-xl h-full">
-      <h3 className="font-headline font-bold text-xl mb-6">WEEKLY FLOW</h3>
-      <div className="flex flex-col gap-3">
-        {weekdays.map(({ dateStr, dayName, workedOut }) => (
+    <div className="bg-card p-4 rounded-xl h-full">
+      <h3 className="font-headline font-bold text-xl mb-4">WEEKLY FLOW</h3>
+      <div className="flex flex-row gap-2">
+        {weekDays.map(({ dateStr, dayName, workedOut }) => (
           <div
             key={dateStr}
-            className={`flex items-center justify-between p-3 rounded-lg ${
+            className={`flex flex-col items-center justify-center p-2 rounded-lg flex-1 ${
               workedOut
                 ? "bg-primary text-primary-foreground"
                 : "bg-muted text-muted-foreground"
             }`}
           >
-            <span className="font-headline font-bold text-sm">{dayName}</span>
+            <span className="font-headline font-bold text-xs">{dayName}</span>
             {workedOut ? (
-              <CircleCheck className="h-5 w-5" />
+              <CircleCheck className="h-4 w-4 mt-1" />
             ) : (
-              <Circle className="h-5 w-5 opacity-40" />
+              <Circle className="h-4 w-4 mt-1 opacity-40" />
             )}
           </div>
         ))}
-        <div className="grid grid-cols-2 gap-3">
-          {weekend.map(({ dateStr, dayName, workedOut }) => (
-            <div
-              key={dateStr}
-              className={`flex flex-col items-center justify-center p-3 rounded-lg aspect-square ${
-                workedOut
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground"
-              }`}
-            >
-              <span className="font-headline font-bold text-sm mb-1">
-                {dayName}
-              </span>
-              {workedOut ? (
-                <CircleCheck className="h-5 w-5" />
-              ) : (
-                <Circle className="h-5 w-5 opacity-40" />
-              )}
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   );
