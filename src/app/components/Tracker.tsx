@@ -21,8 +21,6 @@ export const Tracker = ({ workouts }: { workouts: Workout[] }) => {
   };
 
   const weekDays = getWeekProgress();
-  const weekdays = weekDays.slice(0, 5);
-  const weekend = weekDays.slice(5);
 
   return (
     <div className="bg-card p-4 rounded-xl h-full">
