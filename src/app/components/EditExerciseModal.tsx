@@ -203,7 +203,9 @@ export function EditExerciseModal({
                       <Input
                         id="exercise-distance"
                         name="exercise-distance"
-                        type="text"
+                        type="number"
+                        min={0}
+                        step="any"
                         autoComplete="off"
                         defaultValue={exercise.distance ?? ""}
                         placeholder="e.g. 5"
@@ -236,7 +238,8 @@ export function EditExerciseModal({
                       <Input
                         id="exercise-time-minutes"
                         name="exercise-time-minutes"
-                        type="text"
+                        type="number"
+                        min={0}
                         autoComplete="off"
                         defaultValue={timeMinutes || ""}
                       />
@@ -246,7 +249,9 @@ export function EditExerciseModal({
                       <Input
                         id="exercise-time-seconds"
                         name="exercise-time-seconds"
-                        type="text"
+                        type="number"
+                        min={0}
+                        max={59}
                         autoComplete="off"
                         defaultValue={timeSeconds || ""}
                       />
@@ -260,6 +265,8 @@ export function EditExerciseModal({
                       id="exercise-level"
                       name="exercise-level"
                       type="number"
+                      min={0}
+                      step="any"
                       autoComplete="off"
                       defaultValue={exercise.level ?? ""}
                     />

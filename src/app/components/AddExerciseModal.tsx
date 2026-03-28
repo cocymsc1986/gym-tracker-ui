@@ -45,7 +45,8 @@ const TimeInput = () => (
       <Input
         id="exercise-time-minutes"
         name="exercise-time-minutes"
-        type="text"
+        type="number"
+        min={0}
         autoComplete="off"
       />
     </div>
@@ -54,7 +55,9 @@ const TimeInput = () => (
       <Input
         id="exercise-time-seconds"
         name="exercise-time-seconds"
-        type="text"
+        type="number"
+        min={0}
+        max={59}
         autoComplete="off"
       />
     </div>
@@ -68,9 +71,11 @@ const DistanceInput = () => (
       <Input
         id="exercise-distance"
         name="exercise-distance"
-        type="text"
+        type="number"
+        min={0}
+        step="any"
         autoComplete="off"
-        placeholder="Enter distance (e.g. 5 km)"
+        placeholder="e.g. 5"
       />
     </div>
     <div className="grid gap-2 w-30">
@@ -98,6 +103,8 @@ const LevelInput = () => (
       id="exercise-level"
       name="exercise-level"
       type="number"
+      min={0}
+      step="any"
       autoComplete="off"
     />
   </div>
