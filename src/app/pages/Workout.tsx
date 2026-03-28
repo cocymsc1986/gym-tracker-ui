@@ -374,6 +374,17 @@ export function Workout({
           </Button>
         </section>
 
+        {/* Add Exercise CTA */}
+        <div className="mb-10">
+          <button
+            onClick={() => setShowModal(true)}
+            className="group w-full md:w-auto bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-xl flex items-center justify-center md:inline-flex gap-3 transition-all active:scale-95 shadow-lg font-headline font-bold uppercase tracking-wider"
+          >
+            <span className="text-xl leading-none">+</span>
+            Add Exercise
+          </button>
+        </div>
+
         {/* Exercise list */}
         <div className="space-y-6">
           {!workout.exercises || workout.exercises.length === 0 ? (
@@ -394,21 +405,6 @@ export function Workout({
               />
             ))
           )}
-
-          {/* Add Exercise CTA */}
-          <div className="pt-2">
-            <button
-              onClick={() => setShowModal(true)}
-              className="w-full py-8 border-2 border-dashed border-surface-highest rounded-xl flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary-dark hover:border-primary transition-all group"
-            >
-              <span className="font-headline text-3xl group-hover:scale-110 transition-transform inline-block leading-none">
-                +
-              </span>
-              <span className="font-headline font-bold uppercase tracking-widest text-sm">
-                Add Exercise
-              </span>
-            </button>
-          </div>
         </div>
       </div>
 

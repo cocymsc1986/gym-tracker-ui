@@ -1,4 +1,3 @@
-import { Link } from "wouter";
 import { useAuth } from "@/lib/authContext";
 import { Button } from "@/components/ui/button";
 
@@ -16,12 +15,6 @@ export function Header() {
             KINETIC
           </h1>
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/">Dashboard</Link>
-            </Button>
-            <Button variant="outline" size="sm" asChild>
-              <Link href="/workout">Add Workout</Link>
-            </Button>
             <Button onClick={logout} variant="outline" size="sm">
               Logout
             </Button>
