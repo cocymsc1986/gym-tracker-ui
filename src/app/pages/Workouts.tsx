@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { Plus } from "lucide-react";
 import { type Workout } from "@/types/Workout";
 import { WorkoutRow } from "@/components/Activities";
+import { Button } from "@/components/ui/button";
 
 interface WorkoutsProps {
   workouts: Workout[];
@@ -48,15 +49,24 @@ export function Workouts({ workouts, onDeleteWorkout }: WorkoutsProps) {
               Track your velocity. Analyse your power. Push beyond the baseline.
             </p>
           </div>
-          <div className="flex flex-col items-start md:items-end">
-            <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1">
-              This Week
-            </span>
-            <div className="font-headline font-bold text-4xl text-foreground">
-              {weeklyCount}{" "}
-              <span className="text-sm font-medium text-muted-foreground">
-                SESSION{weeklyCount !== 1 ? "S" : ""}
+          <div className="flex flex-col items-start md:items-end gap-4">
+            <Button
+              variant="link"
+              asChild
+              className="text-primary-dark font-bold text-xs uppercase tracking-widest underline p-0 h-auto self-start"
+            >
+              <Link href="/">&larr; Dashboard</Link>
+            </Button>
+            <div className="flex flex-col items-start md:items-end">
+              <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1">
+                This Week
               </span>
+              <div className="font-headline font-bold text-4xl text-foreground">
+                {weeklyCount}{" "}
+                <span className="text-sm font-medium text-muted-foreground">
+                  SESSION{weeklyCount !== 1 ? "S" : ""}
+                </span>
+              </div>
             </div>
           </div>
         </header>
