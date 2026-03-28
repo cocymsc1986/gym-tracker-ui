@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { ChevronRight, Copy, MoreVertical, Pencil, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -330,6 +330,17 @@ export function Workout({
 
   const [showModal, setShowModal] = useState(false);
 
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const [ctaOffScreen, setCtaOffScreen] = useState(false);
+
+  useEffect(() => {
+    const el = ctaRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => setCtaOffScreen(!entry.isIntersecting), { threshold: 0 });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   if (!workout) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -375,7 +386,7 @@ export function Workout({
         </section>
 
         {/* Add Exercise CTA */}
-        <div className="mb-10">
+        <div ref={ctaRef} className="mb-10">
           <button
             onClick={() => setShowModal(true)}
             className="group w-full md:w-auto bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-xl flex items-center justify-center md:inline-flex gap-3 transition-all active:scale-95 shadow-lg font-headline font-bold uppercase tracking-wider"
@@ -416,6 +427,16 @@ export function Workout({
           onExerciseAdded={onRefresh}
         />
       )}
+
+      {/* Floating action button — slides in when Add Exercise CTA scrolls off-screen */}
+      <button
+        onClick={() => setShowModal(true)}
+        className={`fixed bottom-[34px] right-[34px] w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-2xl font-bold z-50 transition-all duration-300 ${ctaOffScreen ? "translate-y-0 opacity-100" : "translate-y-16 opacity-0 pointer-events-none"}`}
+        style={{ backgroundColor: "#e4f725", color: "#545c00" }}
+        aria-label="Add Exercise"
+      >
+        +
+      </button>
     </div>
   );
 }

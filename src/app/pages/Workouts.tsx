@@ -1,3 +1,4 @@
+import { useRef, useState, useEffect } from "react";
 import { Link } from "wouter";
 import { Plus } from "lucide-react";
 import { type Workout } from "@/types/Workout";
@@ -20,6 +21,17 @@ function getWeeklyCount(workouts: Workout[]): number {
 export function Workouts({ workouts, onDeleteWorkout }: WorkoutsProps) {
   const sorted = [...workouts].sort((a, b) => b.date.localeCompare(a.date));
   const weeklyCount = getWeeklyCount(workouts);
+
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const [ctaOffScreen, setCtaOffScreen] = useState(false);
+
+  useEffect(() => {
+    const el = ctaRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => setCtaOffScreen(!entry.isIntersecting), { threshold: 0 });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -50,7 +62,7 @@ export function Workouts({ workouts, onDeleteWorkout }: WorkoutsProps) {
         </header>
 
         {/* Add Workout CTA */}
-        <div className="mb-10">
+        <div ref={ctaRef} className="mb-10">
           <Link
             href="/workout"
             className="group w-full md:w-auto bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-xl flex items-center justify-center md:inline-flex gap-3 transition-all active:scale-95 shadow-lg font-headline font-bold uppercase tracking-wider"
@@ -90,6 +102,17 @@ export function Workouts({ workouts, onDeleteWorkout }: WorkoutsProps) {
         </section>
 
       </div>
+
+      {/* Floating action button — slides in when Add Workout CTA scrolls off-screen */}
+      <Link href="/workout">
+        <button
+          className={`fixed bottom-[34px] right-[34px] w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-2xl font-bold z-50 transition-all duration-300 ${ctaOffScreen ? "translate-y-0 opacity-100" : "translate-y-16 opacity-0 pointer-events-none"}`}
+          style={{ backgroundColor: "#e4f725", color: "#545c00" }}
+          aria-label="Add Workout"
+        >
+          +
+        </button>
+      </Link>
     </div>
   );
 }
