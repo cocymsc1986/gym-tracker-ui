@@ -1,3 +1,4 @@
+import { Link } from "wouter";
 import { type Workout } from "@/types/Workout";
 import { type Exercise } from "@/types/Exercise";
 
@@ -14,7 +15,7 @@ interface DashboardProps {
 export function Dashboard({ workouts, exercises, onDeleteWorkout }: DashboardProps) {
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="max-w-4xl mx-auto px-6 py-8 pb-28">
         {/* Hero */}
         <section className="mb-10">
           <span className="font-headline font-bold tracking-widest uppercase text-xs text-primary-dark mb-2 block">
@@ -38,6 +39,17 @@ export function Dashboard({ workouts, exercises, onDeleteWorkout }: DashboardPro
         {/* Recent Sessions */}
         <Activities workouts={workouts} onDeleteWorkout={onDeleteWorkout} />
       </div>
+
+      {/* Floating action button */}
+      <Link href="/workout">
+        <button
+          className="fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-2xl font-bold transition-transform active:scale-95 z-50"
+          style={{ backgroundColor: "#e4f725", color: "#545c00" }}
+          aria-label="Add Workout"
+        >
+          +
+        </button>
+      </Link>
     </div>
   );
 }
