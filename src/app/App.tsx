@@ -6,6 +6,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 // Pages
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
+import { ForgotPassword } from "./pages/ForgotPassword";
 import { AddWorkout } from "./pages/AddWorkout";
 
 import { DashboardWithData, WorkoutWithData, WorkoutsWithData } from "./components/RouteWrappers";
@@ -23,6 +24,7 @@ function App() {
           {/* Public routes */}
           <Route path="/login" component={Login} />
           <Route path="/register" component={Register} />
+          <Route path="/forgot-password" component={ForgotPassword} />
 
           {/* Protected routes */}
           <Route path="/">

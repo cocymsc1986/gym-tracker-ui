@@ -90,12 +90,12 @@ export function Login() {
                 <Label htmlFor="password" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                   Password
                 </Label>
-                <a
-                  href="#"
+                <Link
+                  to="/forgot-password"
                   className="text-[10px] font-bold uppercase tracking-widest text-primary-dark hover:opacity-70 transition-opacity"
                 >
                   Forgot?
-                </a>
+                </Link>
               </div>
               <Input
                 id="password"
