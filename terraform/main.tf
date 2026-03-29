@@ -12,6 +12,95 @@ provider "aws" {
   region = var.aws_region
 }
 
+# ACM certificates for CloudFront must be provisioned in us-east-1
+provider "aws" {
+  alias  = "us_east_1"
+  region = "us-east-1"
+}
+
+# ---------------------------------------------------------------------------
+# Route 53 hosted zone
+# ---------------------------------------------------------------------------
+resource "aws_route53_zone" "app_zone" {
+  name = var.domain_name
+
+  tags = {
+    Name        = var.domain_name
+    Environment = var.environment
+  }
+}
+
+# ---------------------------------------------------------------------------
+# ACM certificate (must be in us-east-1 for CloudFront)
+# ---------------------------------------------------------------------------
+resource "aws_acm_certificate" "app_cert" {
+  provider                  = aws.us_east_1
+  domain_name               = var.domain_name
+  subject_alternative_names = ["www.${var.domain_name}"]
+  validation_method         = "DNS"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  tags = {
+    Name        = var.domain_name
+    Environment = var.environment
+  }
+}
+
+resource "aws_route53_record" "cert_validation" {
+  for_each = {
+    for dvo in aws_acm_certificate.app_cert.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
+
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = aws_route53_zone.app_zone.zone_id
+}
+
+resource "aws_acm_certificate_validation" "app_cert" {
+  provider                = aws.us_east_1
+  certificate_arn         = aws_acm_certificate.app_cert.arn
+  validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
+}
+
+# ---------------------------------------------------------------------------
+# Route 53 alias records pointing to CloudFront
+# ---------------------------------------------------------------------------
+resource "aws_route53_record" "app_root" {
+  zone_id = aws_route53_zone.app_zone.zone_id
+  name    = var.domain_name
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.app_distribution.domain_name
+    zone_id                = aws_cloudfront_distribution.app_distribution.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
+resource "aws_route53_record" "app_www" {
+  zone_id = aws_route53_zone.app_zone.zone_id
+  name    = "www.${var.domain_name}"
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.app_distribution.domain_name
+    zone_id                = aws_cloudfront_distribution.app_distribution.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
+# ---------------------------------------------------------------------------
+
 resource "random_string" "bucket_suffix" {
   length  = 8
   special = false
@@ -81,6 +170,7 @@ resource "aws_cloudfront_distribution" "app_distribution" {
   is_ipv6_enabled     = true
   comment             = "${var.app_name} distribution"
   default_root_object = "index.html"
+  aliases             = [var.domain_name, "www.${var.domain_name}"]
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
@@ -121,7 +211,9 @@ resource "aws_cloudfront_distribution" "app_distribution" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = aws_acm_certificate_validation.app_cert.certificate_arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
   }
 
   tags = {

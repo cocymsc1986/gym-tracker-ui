@@ -15,3 +15,9 @@ variable "environment" {
   type        = string
   default     = "dev"
 }
+
+variable "domain_name" {
+  description = "Custom domain name for the application"
+  type        = string
+  default     = "kinetic-fitness.me"
+}
