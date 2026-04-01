@@ -63,19 +63,6 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v3
-
-    - name: Terraform Init
-      working-directory: terraform
-      run: terraform init
-
-    - name: Terraform Apply
-      working-directory: terraform
-      run: terraform apply -auto-approve
-      env:
-        TF_VAR_hosted_zone_id: ${{ secrets.ROUTE53_ZONE_ID }}
-
     - name: Deploy to S3
       run: aws s3 sync build/client/ s3://${{ secrets.S3_BUCKET_NAME }} --delete
 
