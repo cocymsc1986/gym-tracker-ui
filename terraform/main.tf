@@ -20,14 +20,13 @@ provider "aws" {
 
 # ---------------------------------------------------------------------------
 # Route 53 hosted zone
+# If the domain was purchased via Route 53 registrar, AWS creates this zone
+# automatically. Using a data source avoids creating a duplicate zone with
+# different nameservers that the domain registration wouldn't point to.
 # ---------------------------------------------------------------------------
-resource "aws_route53_zone" "app_zone" {
-  name = var.domain_name
-
-  tags = {
-    Name        = var.domain_name
-    Environment = var.environment
-  }
+data "aws_route53_zone" "app_zone" {
+  name         = var.domain_name
+  private_zone = false
 }
 
 # ---------------------------------------------------------------------------
@@ -63,7 +62,7 @@ resource "aws_route53_record" "cert_validation" {
   records         = [each.value.record]
   ttl             = 60
   type            = each.value.type
-  zone_id         = aws_route53_zone.app_zone.zone_id
+  zone_id         = data.aws_route53_zone.app_zone.zone_id
 }
 
 resource "aws_acm_certificate_validation" "app_cert" {
@@ -76,7 +75,7 @@ resource "aws_acm_certificate_validation" "app_cert" {
 # Route 53 alias records pointing to CloudFront
 # ---------------------------------------------------------------------------
 resource "aws_route53_record" "app_root" {
-  zone_id = aws_route53_zone.app_zone.zone_id
+  zone_id = data.aws_route53_zone.app_zone.zone_id
   name    = var.domain_name
   type    = "A"
 
@@ -88,7 +87,7 @@ resource "aws_route53_record" "app_root" {
 }
 
 resource "aws_route53_record" "app_www" {
-  zone_id = aws_route53_zone.app_zone.zone_id
+  zone_id = data.aws_route53_zone.app_zone.zone_id
   name    = "www.${var.domain_name}"
   type    = "A"
 

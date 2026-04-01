@@ -25,10 +25,10 @@ output "app_url" {
 
 output "route53_zone_id" {
   description = "Route 53 hosted zone ID"
-  value       = aws_route53_zone.app_zone.zone_id
+  value       = data.aws_route53_zone.app_zone.zone_id
 }
 
 output "route53_nameservers" {
   description = "Route 53 nameservers - update your domain registrar to use these"
-  value       = aws_route53_zone.app_zone.name_servers
+  value       = data.aws_route53_zone.app_zone.name_servers
 }
