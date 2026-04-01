@@ -21,3 +21,8 @@ variable "domain_name" {
   type        = string
   default     = "kinetic-fitness.me"
 }
+
+variable "hosted_zone_id" {
+  description = "Route 53 hosted zone ID for the domain. Find it in AWS Console > Route 53 > Hosted zones."
+  type        = string
+}

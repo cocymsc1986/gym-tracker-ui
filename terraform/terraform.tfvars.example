@@ -1,3 +1,5 @@
-aws_region  = "us-east-1"
-app_name    = "gym-tracker-ui"
-environment = "dev"
+aws_region     = "us-east-1"
+app_name       = "gym-tracker-ui"
+environment    = "dev"
+domain_name    = "kinetic-fitness.me"
+hosted_zone_id = "REPLACE_WITH_ZONE_ID"  # AWS Console > Route 53 > Hosted zones

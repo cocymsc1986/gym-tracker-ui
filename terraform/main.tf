@@ -25,8 +25,7 @@ provider "aws" {
 # different nameservers that the domain registration wouldn't point to.
 # ---------------------------------------------------------------------------
 data "aws_route53_zone" "app_zone" {
-  name         = var.domain_name
-  private_zone = false
+  zone_id = var.hosted_zone_id
 }
 
 # ---------------------------------------------------------------------------
