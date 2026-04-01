@@ -36,33 +36,46 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20'
         cache: 'npm'
-    
+
     - name: Install dependencies
       run: npm ci
-    
+
     - name: Build application
       run: npm run build
       env:
         VITE_API_URL: ${{ secrets.VITE_API_URL }}
         VITE_COGNITO_USER_POOL_ID: ${{ secrets.VITE_COGNITO_USER_POOL_ID }}
         VITE_COGNITO_CLIENT_ID: ${{ secrets.VITE_COGNITO_CLIENT_ID }}
-    
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
-    
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+
+    - name: Terraform Init
+      working-directory: terraform
+      run: terraform init
+
+    - name: Terraform Apply
+      working-directory: terraform
+      run: terraform apply -auto-approve
+      env:
+        TF_VAR_hosted_zone_id: ${{ secrets.ROUTE53_ZONE_ID }}
+
     - name: Deploy to S3
       run: aws s3 sync build/client/ s3://${{ secrets.S3_BUCKET_NAME }} --delete
 
@@ -70,6 +83,4 @@ jobs:
       run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
 
     - name: Output deployment URL
-      run: |
-        DOMAIN=$(aws cloudfront get-distribution --id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --query 'Distribution.DomainName' --output text)
-        echo "## Deployed to https://${DOMAIN}" >> $GITHUB_STEP_SUMMARY
+      run: echo "## Deployed to https://kinetic-fitness.me" >> $GITHUB_STEP_SUMMARY
