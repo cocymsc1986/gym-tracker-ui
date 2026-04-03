@@ -64,10 +64,10 @@ export function EditExerciseModal({
   const [exerciseName, setExerciseName] = useState(exercise.name);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [distanceUnit, setDistanceUnit] = useState<DistanceUnits>(
-    exercise.distanceUnit ?? DistanceUnits.KM
-  );
   const [storeRpm, setStoreRpm] = useState(false);
+  const [isCaloriesUnit, setIsCaloriesUnit] = useState(
+    exercise.distanceUnit === DistanceUnits.CALORIES
+  );
 
   const timeMinutes = Math.floor((exercise.time ?? 0) / 60);
   const timeSeconds = (exercise.time ?? 0) % 60;
@@ -223,10 +223,11 @@ export function EditExerciseModal({
                       <Label htmlFor="exercise-distance-unit">Unit</Label>
                       <Select
                         name="exercise-distance-unit"
-                        value={distanceUnit}
+                        defaultValue={exercise.distanceUnit ?? DistanceUnits.KM}
                         onValueChange={(value) => {
-                          setDistanceUnit(value as DistanceUnits);
-                          if (value === DistanceUnits.CALORIES) setStoreRpm(false);
+                          const calories = value === DistanceUnits.CALORIES;
+                          setIsCaloriesUnit(calories);
+                          if (calories) setStoreRpm(false);
                         }}
                       >
                         <SelectTrigger>
@@ -328,12 +329,12 @@ export function EditExerciseModal({
                         type="checkbox"
                         checked={storeRpm}
                         onChange={(e) => setStoreRpm(e.target.checked)}
-                        disabled={distanceUnit === DistanceUnits.CALORIES}
+                        disabled={isCaloriesUnit}
                         className="h-4 w-4 rounded accent-primary-dark disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
                       />
                       <Label
                         htmlFor="exercise-store-rpm"
-                        className={`font-body text-sm cursor-pointer select-none ${distanceUnit === DistanceUnits.CALORIES ? "opacity-40" : ""}`}
+                        className={`font-body text-sm cursor-pointer select-none ${isCaloriesUnit ? "opacity-40" : ""}`}
                       >
                         Show RPM
                       </Label>
