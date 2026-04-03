@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { apiClient } from "@/lib/apiClient";
 import { getUserId } from "@/lib/getUserId";
@@ -68,9 +68,17 @@ export function EditExerciseModal({
   const [isCaloriesUnit, setIsCaloriesUnit] = useState(
     exercise.distanceUnit === DistanceUnits.CALORIES
   );
+  const [curTimeMinutes, setCurTimeMinutes] = useState(Math.floor((exercise.time ?? 0) / 60));
+  const [curTimeSeconds, setCurTimeSeconds] = useState((exercise.time ?? 0) % 60);
 
   const timeMinutes = Math.floor((exercise.time ?? 0) / 60);
   const timeSeconds = (exercise.time ?? 0) % 60;
+  const hasTime = curTimeMinutes > 0 || curTimeSeconds > 0;
+  const rpmDisabled = !hasTime || isCaloriesUnit;
+
+  useEffect(() => {
+    if (rpmDisabled) setStoreRpm(false);
+  }, [rpmDisabled]);
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -255,6 +263,7 @@ export function EditExerciseModal({
                         min={0}
                         autoComplete="off"
                         defaultValue={timeMinutes || ""}
+                        onChange={(e) => setCurTimeMinutes(Number(e.target.value) || 0)}
                       />
                     </div>
                     <div className="grid gap-2 w-30">
@@ -267,23 +276,60 @@ export function EditExerciseModal({
                         max={59}
                         autoComplete="off"
                         defaultValue={timeSeconds || ""}
+                        onChange={(e) => setCurTimeSeconds(Number(e.target.value) || 0)}
                       />
                     </div>
                   </div>
 
-                  {/* Level */}
-                  <div className="grid gap-2 w-30">
-                    <Label htmlFor="exercise-level">Level/Speed</Label>
-                    <Input
-                      id="exercise-level"
-                      name="exercise-level"
-                      type="number"
-                      min={0}
-                      step="any"
-                      autoComplete="off"
-                      defaultValue={exercise.level ?? ""}
-                    />
-                  </div>
+                  {/* Level + Show RPM (Cardio: 2-col grid; Other: level only) */}
+                  {selectedType === ExerciseType.CARDIO ? (
+                    <div className="grid gap-2 grid-cols-2">
+                      <div className="grid gap-2">
+                        <Label htmlFor="exercise-level">Level/Speed</Label>
+                        <Input
+                          id="exercise-level"
+                          name="exercise-level"
+                          type="number"
+                          min={0}
+                          step="any"
+                          autoComplete="off"
+                          defaultValue={exercise.level ?? ""}
+                        />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="exercise-store-rpm">Show RPM</Label>
+                        <div className={`flex items-center gap-3 p-3 bg-surface-low rounded-xl ${rpmDisabled ? "opacity-40" : ""}`}>
+                          <input
+                            id="exercise-store-rpm"
+                            type="checkbox"
+                            checked={storeRpm}
+                            onChange={(e) => setStoreRpm(e.target.checked)}
+                            disabled={rpmDisabled}
+                            className="h-4 w-4 rounded accent-primary-dark cursor-pointer disabled:cursor-not-allowed"
+                          />
+                          <Label
+                            htmlFor="exercise-store-rpm"
+                            className="font-body text-sm cursor-pointer select-none"
+                          >
+                            Show RPM
+                          </Label>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="grid gap-2 w-30">
+                      <Label htmlFor="exercise-level">Level/Speed</Label>
+                      <Input
+                        id="exercise-level"
+                        name="exercise-level"
+                        type="number"
+                        min={0}
+                        step="any"
+                        autoComplete="off"
+                        defaultValue={exercise.level ?? ""}
+                      />
+                    </div>
+                  )}
 
                   {/* Weight (Other only) */}
                   {selectedType === ExerciseType.OTHER && (
@@ -318,26 +364,6 @@ export function EditExerciseModal({
                           </SelectContent>
                         </Select>
                       </div>
-                    </div>
-                  )}
-
-                  {/* Show RPM (Cardio only) */}
-                  {selectedType === ExerciseType.CARDIO && (
-                    <div className="flex items-center gap-3 p-3 bg-surface-low rounded-xl">
-                      <input
-                        id="exercise-store-rpm"
-                        type="checkbox"
-                        checked={storeRpm}
-                        onChange={(e) => setStoreRpm(e.target.checked)}
-                        disabled={isCaloriesUnit}
-                        className="h-4 w-4 rounded accent-primary-dark disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
-                      />
-                      <Label
-                        htmlFor="exercise-store-rpm"
-                        className={`font-body text-sm cursor-pointer select-none ${isCaloriesUnit ? "opacity-40" : ""}`}
-                      >
-                        Show RPM
-                      </Label>
                     </div>
                   )}
                 </>
