@@ -113,6 +113,7 @@ describe("exerciseValidator", () => {
         distance: 5.2,
         distanceUnit: DistanceUnits.KM,
         level: 7,
+        storeRpm: false,
       });
     });
 
@@ -153,6 +154,7 @@ describe("exerciseValidator", () => {
         distance: 0,
         distanceUnit: DistanceUnits.KM,
         level: 1,
+        storeRpm: false,
       });
     });
 
