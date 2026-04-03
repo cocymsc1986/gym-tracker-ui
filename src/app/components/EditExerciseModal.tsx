@@ -64,6 +64,10 @@ export function EditExerciseModal({
   const [exerciseName, setExerciseName] = useState(exercise.name);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [storeRpm, setStoreRpm] = useState(false);
+  const [isCaloriesUnit, setIsCaloriesUnit] = useState(
+    exercise.distanceUnit === DistanceUnits.CALORIES
+  );
 
   const timeMinutes = Math.floor((exercise.time ?? 0) / 60);
   const timeSeconds = (exercise.time ?? 0) % 60;
@@ -196,6 +200,10 @@ export function EditExerciseModal({
               {/* Cardio / Other exercises */}
               {!isSets && (
                 <>
+                  {/* hidden input so FormData always carries the rpm flag for cardio */}
+                  {selectedType === ExerciseType.CARDIO && (
+                    <input type="hidden" name="exercise-store-rpm" value={storeRpm ? "true" : "false"} />
+                  )}
                   {/* Distance */}
                   <div className="grid gap-2 grid-cols-2">
                     <div className="grid gap-2 w-30">
@@ -216,6 +224,11 @@ export function EditExerciseModal({
                       <Select
                         name="exercise-distance-unit"
                         defaultValue={exercise.distanceUnit ?? DistanceUnits.KM}
+                        onValueChange={(value) => {
+                          const calories = value === DistanceUnits.CALORIES;
+                          setIsCaloriesUnit(calories);
+                          if (calories) setStoreRpm(false);
+                        }}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Distance unit" />
@@ -305,6 +318,26 @@ export function EditExerciseModal({
                           </SelectContent>
                         </Select>
                       </div>
+                    </div>
+                  )}
+
+                  {/* Show RPM (Cardio only) */}
+                  {selectedType === ExerciseType.CARDIO && (
+                    <div className="flex items-center gap-3 p-3 bg-surface-low rounded-xl">
+                      <input
+                        id="exercise-store-rpm"
+                        type="checkbox"
+                        checked={storeRpm}
+                        onChange={(e) => setStoreRpm(e.target.checked)}
+                        disabled={isCaloriesUnit}
+                        className="h-4 w-4 rounded accent-primary-dark disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
+                      />
+                      <Label
+                        htmlFor="exercise-store-rpm"
+                        className={`font-body text-sm cursor-pointer select-none ${isCaloriesUnit ? "opacity-40" : ""}`}
+                      >
+                        Show RPM
+                      </Label>
                     </div>
                   )}
                 </>

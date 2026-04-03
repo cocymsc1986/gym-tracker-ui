@@ -30,6 +30,7 @@ interface CardioExercise extends BaseExercise {
   distance: number;
   distanceUnit: DistanceUnits;
   level: number;
+  storeRpm: boolean;
 }
 
 interface OtherExercise extends BaseExercise {
@@ -128,6 +129,7 @@ function validateCardio(formData: FormData): CardioExercise | false {
   const level = parseFloat(
     formData.get("exercise-level")?.toString() || "1"
   );
+  const storeRpm = formData.get("exercise-store-rpm") === "true";
 
   const totalTimeInSeconds = (timeMinutes * 60) + timeSeconds;
 
@@ -139,6 +141,7 @@ function validateCardio(formData: FormData): CardioExercise | false {
     distance,
     distanceUnit,
     level,
+    storeRpm,
   };
 }
 
