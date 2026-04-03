@@ -117,6 +117,9 @@ function ExerciseDetailModal({
             {exercise.level != null && exercise.level > 0 && (
               <MetricChip label="Level" value={String(exercise.level)} />
             )}
+            {exercise.rpm != null && exercise.rpm > 0 && (
+              <MetricChip label="RPM" value={String(exercise.rpm)} />
+            )}
           </div>
         )}
       </DialogContent>
@@ -286,6 +289,9 @@ function ExerciseCard({
             )}
             {exercise.level != null && exercise.level > 0 && (
               <MetricChip label="Level" value={String(exercise.level)} />
+            )}
+            {exercise.rpm != null && exercise.rpm > 0 && (
+              <MetricChip label="RPM" value={String(exercise.rpm)} />
             )}
           </div>
         )}

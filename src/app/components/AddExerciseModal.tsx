@@ -158,13 +158,6 @@ const BodyWeightSetsInput = () => (
 const exerciseTypeMap = {
   [ExerciseType.WEIGHTS]: <SetsInput />,
   [ExerciseType.BODY_WEIGHT]: <BodyWeightSetsInput />,
-  [ExerciseType.CARDIO]: (
-    <>
-      <DistanceInput />
-      <TimeInput />
-      <LevelInput />
-    </>
-  ),
   [ExerciseType.OTHER]: (
     <>
       <DistanceInput />
@@ -190,6 +183,8 @@ export function AddExerciseModal({
   const [exerciseName, setExerciseName] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [distanceUnit, setDistanceUnit] = useState<DistanceUnits>(DistanceUnits.KM);
+  const [storeRpm, setStoreRpm] = useState(false);
 
   const params = useParams();
   const { id: workoutId } = params;
@@ -270,6 +265,8 @@ export function AddExerciseModal({
       setShowModal(false);
       setExerciseName("");
       setSelectedType(null);
+      setDistanceUnit(DistanceUnits.KM);
+      setStoreRpm(false);
       onExerciseAdded?.();
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (err: any) {
@@ -320,7 +317,65 @@ export function AddExerciseModal({
                   placeholder="Type or select a previous exercise name..."
                 />
               </div>
-              {selectedType ? (
+              {selectedType === ExerciseType.CARDIO ? (
+                <>
+                  {/* hidden input so FormData always carries the rpm flag */}
+                  <input type="hidden" name="exercise-store-rpm" value={storeRpm ? "true" : "false"} />
+                  <div className="grid gap-2 grid-cols-2">
+                    <div className="grid gap-2 w-30">
+                      <Label htmlFor="exercise-distance">Distance</Label>
+                      <Input
+                        id="exercise-distance"
+                        name="exercise-distance"
+                        type="number"
+                        min={0}
+                        step="any"
+                        autoComplete="off"
+                        placeholder="e.g. 5"
+                      />
+                    </div>
+                    <div className="grid gap-2 w-30">
+                      <Label htmlFor="exercise-distance-unit">Unit</Label>
+                      <Select
+                        name="exercise-distance-unit"
+                        onValueChange={(value) => {
+                          setDistanceUnit(value as DistanceUnits);
+                          if (value === DistanceUnits.CALORIES) setStoreRpm(false);
+                        }}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Distance unit" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {distanceUnits.map((unit) => (
+                            <SelectItem key={unit} value={unit}>
+                              {unit}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <TimeInput />
+                  <LevelInput />
+                  <div className="flex items-center gap-3 p-3 bg-surface-low rounded-xl">
+                    <input
+                      id="exercise-store-rpm"
+                      type="checkbox"
+                      checked={storeRpm}
+                      onChange={(e) => setStoreRpm(e.target.checked)}
+                      disabled={distanceUnit === DistanceUnits.CALORIES}
+                      className="h-4 w-4 rounded accent-primary-dark disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
+                    />
+                    <Label
+                      htmlFor="exercise-store-rpm"
+                      className={`font-body text-sm cursor-pointer select-none ${distanceUnit === DistanceUnits.CALORIES ? "opacity-40" : ""}`}
+                    >
+                      Show RPM
+                    </Label>
+                  </div>
+                </>
+              ) : selectedType ? (
                 exerciseTypeMap[selectedType]
               ) : (
                 <div className="font-body text-sm text-secondary">Select an exercise type</div>

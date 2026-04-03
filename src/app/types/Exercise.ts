@@ -31,5 +31,6 @@ export type Exercise = {
   distance?: GLfloat;
   distanceUnit?: DistanceUnits;
   level?: number;
+  rpm?: number;
   sets: WeightItem[];
 };
