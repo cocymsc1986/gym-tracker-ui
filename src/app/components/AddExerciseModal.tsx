@@ -28,7 +28,7 @@ import { Button } from "@/components/ui/button";
 import { AddSets } from "./AddSets";
 
 import { DistanceUnits, ExerciseType, WeightUnits } from "@/types/Exercise";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Combobox } from "./ui/combobox";
 const exerciseTypes = Object.values(ExerciseType);
 const distanceUnits = Object.values(DistanceUnits);
@@ -38,7 +38,13 @@ function formatExerciseType(type: ExerciseType): string {
   return type.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
 }
 
-const TimeInput = () => (
+const TimeInput = ({
+  onMinutesChange,
+  onSecondsChange,
+}: {
+  onMinutesChange?: (val: number) => void;
+  onSecondsChange?: (val: number) => void;
+} = {}) => (
   <div className="grid gap-2 grid-cols-2">
     <div className="grid gap-2 w-30">
       <Label htmlFor="exercise-time-minutes">Minutes</Label>
@@ -48,6 +54,7 @@ const TimeInput = () => (
         type="number"
         min={0}
         autoComplete="off"
+        onChange={(e) => onMinutesChange?.(Number(e.target.value) || 0)}
       />
     </div>
     <div className="grid gap-2 w-30">
@@ -59,6 +66,7 @@ const TimeInput = () => (
         min={0}
         max={59}
         autoComplete="off"
+        onChange={(e) => onSecondsChange?.(Number(e.target.value) || 0)}
       />
     </div>
   </div>
@@ -156,9 +164,18 @@ const BodyWeightSetsInput = () => (
 );
 
 function CardioInput() {
-  const [distanceUnit, setDistanceUnit] = useState<DistanceUnits>(DistanceUnits.KM);
+  const [distanceUnit, setDistanceUnit] = useState<DistanceUnits | null>(null);
   const [storeRpm, setStoreRpm] = useState(false);
+  const [timeMinutes, setTimeMinutes] = useState(0);
+  const [timeSeconds, setTimeSeconds] = useState(0);
+
   const isCalories = distanceUnit === DistanceUnits.CALORIES;
+  const hasTime = timeMinutes > 0 || timeSeconds > 0;
+  const rpmDisabled = !hasTime || !distanceUnit || isCalories;
+
+  useEffect(() => {
+    if (rpmDisabled) setStoreRpm(false);
+  }, [rpmDisabled]);
 
   return (
     <>
@@ -166,26 +183,33 @@ function CardioInput() {
       <DistanceInput
         onUnitChange={(unit) => {
           setDistanceUnit(unit);
-          if (unit === DistanceUnits.CALORIES) setStoreRpm(false);
         }}
       />
-      <TimeInput />
-      <LevelInput />
-      <div className="flex items-center gap-3 p-3 bg-surface-low rounded-xl">
-        <input
-          id="exercise-store-rpm"
-          type="checkbox"
-          checked={storeRpm}
-          onChange={(e) => setStoreRpm(e.target.checked)}
-          disabled={isCalories}
-          className="h-4 w-4 rounded accent-primary-dark disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
-        />
-        <Label
-          htmlFor="exercise-store-rpm"
-          className={`font-body text-sm cursor-pointer select-none ${isCalories ? "opacity-40" : ""}`}
-        >
-          Show RPM
-        </Label>
+      <TimeInput
+        onMinutesChange={setTimeMinutes}
+        onSecondsChange={setTimeSeconds}
+      />
+      <div className="grid gap-2 grid-cols-2">
+        <LevelInput />
+        <div className="grid gap-2">
+          <Label htmlFor="exercise-store-rpm">Show RPM</Label>
+          <div className={`flex items-center gap-3 p-3 bg-surface-low rounded-xl ${rpmDisabled ? "opacity-40" : ""}`}>
+            <input
+              id="exercise-store-rpm"
+              type="checkbox"
+              checked={storeRpm}
+              onChange={(e) => setStoreRpm(e.target.checked)}
+              disabled={rpmDisabled}
+              className="h-4 w-4 rounded accent-primary-dark cursor-pointer disabled:cursor-not-allowed"
+            />
+            <Label
+              htmlFor="exercise-store-rpm"
+              className="font-body text-sm cursor-pointer select-none"
+            >
+              Show RPM
+            </Label>
+          </div>
+        </div>
       </div>
     </>
   );
