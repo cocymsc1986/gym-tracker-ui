@@ -126,9 +126,8 @@ function validateCardio(formData: FormData): CardioExercise | false {
     formData.get("exercise-time-seconds")?.toString() || "0",
     10
   );
-  const level = parseFloat(
-    formData.get("exercise-level")?.toString() || "1"
-  );
+  const levelStr = formData.get("exercise-level")?.toString().trim();
+  const level = levelStr ? parseFloat(levelStr) : undefined;
   const storeRpm = formData.get("exercise-store-rpm") === "true";
 
   const totalTimeInSeconds = (timeMinutes * 60) + timeSeconds;
@@ -140,7 +139,7 @@ function validateCardio(formData: FormData): CardioExercise | false {
     time: totalTimeInSeconds,
     distance,
     distanceUnit,
-    level,
+    ...(level !== undefined && !isNaN(level) ? { level } : {}),
     storeRpm,
   };
 }
