@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import { type Workout } from "@/types/Workout";
-import { type Exercise, ExerciseType } from "@/types/Exercise";
+import { type Exercise, ExerciseType, DistanceUnits } from "@/types/Exercise";
 import {
   Card,
   CardContent,
@@ -37,6 +37,22 @@ interface ChartDataPoint {
   [key: string]: string | number;
 }
 
+// Normalize distance values to meters for consistent charting
+function normalizeDistanceToMeters(
+  distance: number,
+  unit?: DistanceUnits | string
+): number {
+  switch (unit) {
+    case DistanceUnits.KM:
+      return distance * 1000;
+    case DistanceUnits.MILES:
+      return Math.round(distance * 1609.34);
+    default:
+      // meters (DistanceUnits.METERS) or no unit — treat as meters
+      return distance;
+  }
+}
+
 // Get unique exercise names from all exercises
 function getUniqueExerciseNames(
   exercises: Exercise[] | null | undefined
@@ -61,10 +77,20 @@ function transformExerciseData(
   workouts: Workout[] | null | undefined,
   exercises: Exercise[] | null | undefined,
   exerciseName: string
-): { data: ChartDataPoint[]; metrics: string[]; exerciseType: ExerciseType } {
-  if (!workouts || !exercises || !exerciseName) {
-    return { data: [], metrics: [], exerciseType: ExerciseType.OTHER };
-  }
+): {
+  data: ChartDataPoint[];
+  availableMetrics: string[];
+  defaultMetrics: string[];
+  exerciseType: ExerciseType;
+} {
+  const empty = {
+    data: [],
+    availableMetrics: [],
+    defaultMetrics: [],
+    exerciseType: ExerciseType.OTHER,
+  };
+
+  if (!workouts || !exercises || !exerciseName) return empty;
 
   const exerciseMap = new Map<string, Exercise>();
   exercises.forEach((exercise) => {
@@ -105,9 +131,7 @@ function transformExerciseData(
     }
   });
 
-  if (exercisesByDate.length === 0) {
-    return { data: [], metrics: [], exerciseType: ExerciseType.OTHER };
-  }
+  if (exercisesByDate.length === 0) return empty;
 
   const exerciseType = exercisesByDate[0].exercise.exerciseType;
   const dataByDate = new Map<string, ChartDataPoint>();
@@ -131,13 +155,33 @@ function transformExerciseData(
           const maxWeight = Math.max(...exercise.sets.map((s) => s.weight));
           const totalReps = exercise.sets.reduce((sum, s) => sum + s.reps, 0);
           const setsCount = exercise.sets.length;
-
           dataPoint["Weight"] = Math.max(
             (dataPoint["Weight"] as number) || 0,
             maxWeight
           );
-          dataPoint["Reps"] = ((dataPoint["Reps"] as number) || 0) + totalReps;
-          dataPoint["Sets"] = ((dataPoint["Sets"] as number) || 0) + setsCount;
+          dataPoint["Reps"] =
+            ((dataPoint["Reps"] as number) || 0) + totalReps;
+          dataPoint["Sets"] =
+            ((dataPoint["Sets"] as number) || 0) + setsCount;
+        }
+        break;
+
+      case ExerciseType.BODY_WEIGHT:
+        if (exercise.sets && exercise.sets.length > 0) {
+          const totalReps = exercise.sets.reduce((sum, s) => sum + s.reps, 0);
+          const setsCount = exercise.sets.length;
+          const totalDuration = exercise.sets.reduce(
+            (sum, s) => sum + (s.duration || 0),
+            0
+          );
+          dataPoint["Reps"] =
+            ((dataPoint["Reps"] as number) || 0) + totalReps;
+          dataPoint["Sets"] =
+            ((dataPoint["Sets"] as number) || 0) + setsCount;
+          if (totalDuration > 0) {
+            dataPoint["Time (s)"] =
+              ((dataPoint["Time (s)"] as number) || 0) + totalDuration;
+          }
         }
         break;
 
@@ -151,13 +195,29 @@ function transformExerciseData(
             ((dataPoint["Time (min)"] as number) || 0) +
             Math.round((timeInSeconds / 60) * 100) / 100;
         }
-        if (exercise.distance) {
-          dataPoint["Distance"] =
-            ((dataPoint["Distance"] as number) || 0) + exercise.distance;
+        if (exercise.distance != null) {
+          if (exercise.distanceUnit === DistanceUnits.CALORIES) {
+            dataPoint["Calories"] =
+              ((dataPoint["Calories"] as number) || 0) + exercise.distance;
+          } else {
+            const normalizedDistance = normalizeDistanceToMeters(
+              exercise.distance,
+              exercise.distanceUnit
+            );
+            dataPoint["Distance (m)"] =
+              ((dataPoint["Distance (m)"] as number) || 0) +
+              normalizedDistance;
+          }
         }
-        if (exercise.level) {
-          dataPoint["Speed"] = Math.max(
-            (dataPoint["Speed"] as number) || 0,
+        if (exercise.rpm != null) {
+          dataPoint["RPM"] = Math.max(
+            (dataPoint["RPM"] as number) || 0,
+            exercise.rpm
+          );
+        }
+        if (exercise.level != null) {
+          dataPoint["Level"] = Math.max(
+            (dataPoint["Level"] as number) || 0,
             exercise.level
           );
         }
@@ -172,33 +232,70 @@ function transformExerciseData(
           dataPoint["Time (s)"] =
             ((dataPoint["Time (s)"] as number) || 0) + timeInSeconds;
         }
-        if (exercise.distance) {
-          dataPoint["Distance"] =
-            ((dataPoint["Distance"] as number) || 0) + exercise.distance;
+        if (exercise.distance != null) {
+          if (exercise.distanceUnit === DistanceUnits.CALORIES) {
+            dataPoint["Calories"] =
+              ((dataPoint["Calories"] as number) || 0) + exercise.distance;
+          } else {
+            const normalizedDistance = normalizeDistanceToMeters(
+              exercise.distance,
+              exercise.distanceUnit
+            );
+            dataPoint["Distance (m)"] =
+              ((dataPoint["Distance (m)"] as number) || 0) +
+              normalizedDistance;
+          }
+        }
+        if (exercise.level != null) {
+          dataPoint["Level"] = Math.max(
+            (dataPoint["Level"] as number) || 0,
+            exercise.level
+          );
         }
         break;
     }
   });
 
   const chartData = Array.from(dataByDate.entries())
-    .sort(([dateA], [dateB]) => {
-      return new Date(dateA).getTime() - new Date(dateB).getTime();
-    })
+    .sort(([dateA], [dateB]) => new Date(dateA).getTime() - new Date(dateB).getTime())
     .map(([_, point]) => point);
 
-  let metrics: string[] = [];
-  if (exerciseType === ExerciseType.WEIGHTS) {
-    metrics = ["Weight", "Reps", "Sets"];
-  } else if (exerciseType === ExerciseType.CARDIO) {
-    if (chartData.some((d) => d["Time (min)"])) metrics.push("Time (min)");
-    if (chartData.some((d) => d["Distance"])) metrics.push("Distance");
-    if (chartData.some((d) => d["Speed"])) metrics.push("Speed");
-  } else {
-    if (chartData.some((d) => d["Time (s)"])) metrics.push("Time (s)");
-    if (chartData.some((d) => d["Distance"])) metrics.push("Distance");
+  // All possible metrics per type (defines display order)
+  let allPossibleMetrics: string[] = [];
+  let preferredDefaults: string[] = [];
+
+  switch (exerciseType) {
+    case ExerciseType.WEIGHTS:
+      allPossibleMetrics = ["Weight", "Reps", "Sets"];
+      preferredDefaults = ["Weight"];
+      break;
+    case ExerciseType.BODY_WEIGHT:
+      allPossibleMetrics = ["Reps", "Sets", "Time (s)"];
+      preferredDefaults = ["Reps"];
+      break;
+    case ExerciseType.CARDIO:
+      allPossibleMetrics = ["Distance (m)", "Calories", "Time (min)", "RPM", "Level"];
+      preferredDefaults = ["Distance (m)", "Calories"];
+      break;
+    case ExerciseType.OTHER:
+      allPossibleMetrics = ["Distance (m)", "Calories", "Time (s)", "Level"];
+      preferredDefaults = ["Distance (m)", "Calories", "Time (s)"];
+      break;
   }
 
-  return { data: chartData, metrics, exerciseType };
+  // Only include metrics that have at least one data point
+  const availableMetrics = allPossibleMetrics.filter((metric) =>
+    chartData.some((d) => d[metric] != null)
+  );
+
+  // Default to first preferred metric that has data, else first available
+  const validDefaults = preferredDefaults.filter((m) =>
+    availableMetrics.includes(m)
+  );
+  const defaultMetrics =
+    validDefaults.length > 0 ? [validDefaults[0]] : availableMetrics.slice(0, 1);
+
+  return { data: chartData, availableMetrics, defaultMetrics, exerciseType };
 }
 
 // Kinetic palette for chart series
@@ -209,13 +306,15 @@ const KINETIC_COLORS = [
 ];
 
 const chartConfig = {
-  Weight:       { label: "Weight (kg)", color: "#586000" },
-  Reps:         { label: "Reps",        color: "#e4f725" },
-  Sets:         { label: "Sets",        color: "#afadac" },
-  "Time (min)": { label: "Time (min)",  color: "#586000" },
-  "Time (s)":   { label: "Time (s)",    color: "#586000" },
-  Distance:     { label: "Distance",    color: "#e4f725" },
-  Speed:        { label: "Speed",       color: "#afadac" },
+  Weight:         { label: "Weight (kg)",  color: "#586000" },
+  Reps:           { label: "Reps",         color: "#e4f725" },
+  Sets:           { label: "Sets",         color: "#afadac" },
+  "Time (min)":   { label: "Time (min)",   color: "#586000" },
+  "Time (s)":     { label: "Time (s)",     color: "#586000" },
+  "Distance (m)": { label: "Distance (m)", color: "#e4f725" },
+  Calories:       { label: "Calories",     color: "#e4f725" },
+  RPM:            { label: "RPM",          color: "#afadac" },
+  Level:          { label: "Level",        color: "#afadac" },
 };
 
 export function ProgressChart({ workouts, exercises }: ProgressChartProps) {
@@ -230,16 +329,32 @@ export function ProgressChart({ workouts, exercises }: ProgressChartProps) {
     exerciseNames[0] || ""
   );
 
-  const { data, metrics } = useMemo(
+  const { data, availableMetrics, defaultMetrics } = useMemo(
     () => transformExerciseData(workouts, exercises, selectedExercise),
     [workouts, exercises, selectedExercise]
   );
+
+  const [activeMetrics, setActiveMetrics] = useState<string[]>(defaultMetrics);
+
+  // Reset active metrics when exercise selection changes
+  useEffect(() => {
+    setActiveMetrics(defaultMetrics);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedExercise]);
 
   useEffect(() => {
     setIsLoading(true);
     const timer = setTimeout(() => setIsLoading(false), 150);
     return () => clearTimeout(timer);
   }, [selectedExercise, data]);
+
+  function toggleMetric(metric: string) {
+    setActiveMetrics((prev) =>
+      prev.includes(metric)
+        ? prev.filter((m) => m !== metric)
+        : [...prev, metric]
+    );
+  }
 
   if (exerciseNames.length === 0) {
     return (
@@ -261,6 +376,11 @@ export function ProgressChart({ workouts, exercises }: ProgressChartProps) {
       </Card>
     );
   }
+
+  // Only render areas for active metrics that also have data
+  const visibleMetrics = activeMetrics.filter((m) =>
+    availableMetrics.includes(m)
+  );
 
   return (
     <Card className="w-full h-full">
@@ -285,6 +405,38 @@ export function ProgressChart({ workouts, exercises }: ProgressChartProps) {
             </SelectContent>
           </Select>
         </div>
+
+        {availableMetrics.length > 1 && (
+          <div className="flex flex-wrap gap-2 pt-2">
+            {availableMetrics.map((metric) => {
+              const isActive = activeMetrics.includes(metric);
+              const colorIndex = availableMetrics.indexOf(metric);
+              const color = KINETIC_COLORS[colorIndex % KINETIC_COLORS.length];
+              return (
+                <button
+                  key={metric}
+                  onClick={() => toggleMetric(metric)}
+                  className="px-3 py-1 rounded-full text-xs font-medium transition-colors border"
+                  style={
+                    isActive
+                      ? {
+                          backgroundColor: color,
+                          borderColor: color,
+                          color: color === "#e4f725" ? "#1a1a00" : "#ffffff",
+                        }
+                      : {
+                          backgroundColor: "transparent",
+                          borderColor: "#d1cfcf",
+                          color: "#5c5b5b",
+                        }
+                  }
+                >
+                  {metric}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </CardHeader>
 
       <CardContent>
@@ -303,9 +455,9 @@ export function ProgressChart({ workouts, exercises }: ProgressChartProps) {
               margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
             >
               <defs>
-                {metrics.map((metric, index) => {
-                  const color =
-                    KINETIC_COLORS[index % KINETIC_COLORS.length];
+                {visibleMetrics.map((metric) => {
+                  const index = availableMetrics.indexOf(metric);
+                  const color = KINETIC_COLORS[index % KINETIC_COLORS.length];
                   return (
                     <linearGradient
                       key={metric}
@@ -352,9 +504,9 @@ export function ProgressChart({ workouts, exercises }: ProgressChartProps) {
                 cursor={{ stroke: "#dfdcdc", strokeWidth: 1 }}
               />
 
-              {metrics.map((metric, index) => {
-                const color =
-                  KINETIC_COLORS[index % KINETIC_COLORS.length];
+              {visibleMetrics.map((metric) => {
+                const index = availableMetrics.indexOf(metric);
+                const color = KINETIC_COLORS[index % KINETIC_COLORS.length];
                 return (
                   <Area
                     key={metric}
