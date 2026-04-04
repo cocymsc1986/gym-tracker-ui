@@ -29,7 +29,7 @@ interface CardioExercise extends BaseExercise {
   time: number; // total seconds
   distance: number;
   distanceUnit: DistanceUnits;
-  level: number;
+  level?: number;
   storeRpm: boolean;
 }
 

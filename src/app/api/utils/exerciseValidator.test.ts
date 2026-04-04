@@ -153,7 +153,6 @@ describe("exerciseValidator", () => {
         time: 0,
         distance: 0,
         distanceUnit: DistanceUnits.KM,
-        level: 1,
         storeRpm: false,
       });
     });
