@@ -19,6 +19,7 @@ export type WeightItem = {
 
 export enum DistanceUnits {
   KM = "km",
+  METERS = "m",
   MILES = "miles",
   CALORIES = "calories",
 }
