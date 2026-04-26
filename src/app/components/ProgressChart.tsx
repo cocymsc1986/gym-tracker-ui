@@ -434,7 +434,7 @@ export function ProgressChart({ workouts, exercises }: ProgressChartProps) {
               margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
             >
               <defs>
-                {activeMetrics.map((metric, index) => {
+                {activeMetrics.map((metric) => {
                   const color =
                     KINETIC_COLORS[
                       metrics.indexOf(metric) % KINETIC_COLORS.length
