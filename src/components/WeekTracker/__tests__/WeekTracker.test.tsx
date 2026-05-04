@@ -56,7 +56,7 @@ const futureDay: WeekDay = {
 };
 
 /** Minimal 7-day array that covers all states under test */
-const makeWeekDays = (overrides: Partial<WeekDay>[] = []): WeekDay[] => [
+const makeWeekDays = (): WeekDay[] => [
   { date: '2024-06-05', label: 'Wed', hasWorkout: false },
   { date: '2024-06-06', label: 'Thu', hasWorkout: false },
   { date: '2024-06-07', label: 'Fri', hasWorkout: false },
@@ -214,14 +214,10 @@ describe('WeekTracker', () => {
 
       buttons.forEach((button) => {
         const { props } = button;
-        // React Native Testing Library exposes style as a flat object
-        // after resolving StyleSheet IDs when using `style` prop directly.
-        // We check the computed style object on the Pressable node.
         const flatStyle = Array.isArray(props.style)
           ? Object.assign({}, ...props.style.filter(Boolean))
           : props.style ?? {};
 
-        // minWidth / minHeight must be >= 44
         if (flatStyle.minWidth !== undefined) {
           expect(flatStyle.minWidth).toBeGreaterThanOrEqual(44);
         }
