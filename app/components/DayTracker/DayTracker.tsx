@@ -1,4 +1,4 @@
-import { useNavigate } from 'wouter';
+import { useLocation } from 'wouter';
 import { format, startOfWeek, addDays } from 'date-fns';
 import { Check } from 'lucide-react';
 
@@ -13,7 +13,7 @@ interface DayTrackerProps {
 }
 
 export function DayTracker({ workouts }: DayTrackerProps) {
-  const [, navigate] = useNavigate();
+  const [, navigate] = useLocation();
   const today = new Date();
   const weekStart = startOfWeek(today, { weekStartsOn: 1 });
   
@@ -45,7 +45,7 @@ export function DayTracker({ workouts }: DayTrackerProps) {
           <button
             key={format(date, 'yyyy-MM-dd')}
             onClick={() => handleDayClick(date)}
-            className="cursor-pointer flex flex-col items-center gap-1 p-2 rounded hover:bg-gray-100 transition-colors"
+            className="cursor-pointer flex flex-col items-center gap-1 p-2 rounded"
             aria-label={`${dayLabel} ${hasActivity ? 'completed' : 'no activity'}`}
           >
             <div className="text-sm font-medium text-gray-600">{dayLabel}</div>
