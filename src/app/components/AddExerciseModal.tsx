@@ -30,6 +30,7 @@ import { AddSets } from "./AddSets";
 import { DistanceUnits, ExerciseType, WeightUnits, type Exercise } from "@/types/Exercise";
 import { useEffect, useState } from "react";
 import { Combobox } from "./ui/combobox";
+import { History } from "lucide-react";
 const exerciseTypes = Object.values(ExerciseType);
 const distanceUnits = Object.values(DistanceUnits);
 const weightUnits = Object.values(WeightUnits);
@@ -314,6 +315,7 @@ export function AddExerciseModal({
   const [selectedType, setSelectedType] = useState<ExerciseType | null>(null);
   const [exerciseName, setExerciseName] = useState("");
   const [lastExercise, setLastExercise] = useState<Exercise | null>(null);
+  const [showLastSession, setShowLastSession] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -397,6 +399,7 @@ export function AddExerciseModal({
       setExerciseName("");
       setSelectedType(null);
       setLastExercise(null);
+      setShowLastSession(false);
       onExerciseAdded?.();
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (err: any) {
@@ -448,14 +451,33 @@ export function AddExerciseModal({
                     const matching = allUserExercises.filter(
                       (e) => e.name.toLowerCase() === name.toLowerCase()
                     );
-                    setLastExercise(matching.length > 0 ? matching[matching.length - 1] : null);
+                    const found = matching.length > 0 ? matching[matching.length - 1] : null;
+                    setLastExercise(found);
+                    if (!found) setShowLastSession(false);
                   }}
                   placeholder="Type or select a previous exercise name..."
                 />
               </div>
-              {lastExercise && (
-                <LastSessionPanel exercise={lastExercise} />
-              )}
+              <div className="flex items-center">
+                <button
+                  type="button"
+                  disabled={!lastExercise}
+                  onClick={() => setShowLastSession((v) => !v)}
+                  className={`flex items-center gap-1.5 text-xs font-body transition-all duration-200 select-none ${
+                    lastExercise
+                      ? "text-primary-dark hover:opacity-70 cursor-pointer"
+                      : "text-muted-foreground/40 cursor-not-allowed"
+                  }`}
+                >
+                  <History className={`h-3.5 w-3.5 transition-transform duration-300 ${showLastSession ? "rotate-180" : ""}`} />
+                  {showLastSession ? "Hide last session" : "View last session"}
+                </button>
+              </div>
+              <div className={`grid transition-all duration-300 ease-in-out ${showLastSession && lastExercise ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
+                <div className="overflow-hidden">
+                  {lastExercise && <LastSessionPanel exercise={lastExercise} />}
+                </div>
+              </div>
               {selectedType ? (
                 exerciseTypeMap[selectedType]
               ) : (
