@@ -270,14 +270,15 @@ export function Workout({
   loaderData: {
     workout: Workout | null;
     userExercises: string[];
+    allUserExercises: Exercise[];
   };
   onDeleteExercise: (exerciseId: string) => Promise<void>;
-  onDuplicateExercise: (exercise: import("@/types/Exercise").Exercise) => Promise<void>;
+  onDuplicateExercise: (exercise: Exercise) => Promise<void>;
   onRefresh: () => void;
-})
- {
+}) {
   const workout = loaderData?.workout;
   const userExercises = loaderData?.userExercises;
+  const allUserExercises = loaderData?.allUserExercises ?? [];
 
   const [showModal, setShowModal] = useState(false);
 
@@ -375,6 +376,7 @@ export function Workout({
           showModal={showModal}
           setShowModal={setShowModal}
           userExercises={userExercises}
+          allUserExercises={allUserExercises}
           onExerciseAdded={onRefresh}
         />
       )}

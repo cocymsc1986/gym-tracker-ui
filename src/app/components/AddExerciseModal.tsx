@@ -27,9 +27,10 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { AddSets } from "./AddSets";
 
-import { DistanceUnits, ExerciseType, WeightUnits } from "@/types/Exercise";
+import { DistanceUnits, ExerciseType, WeightUnits, type Exercise } from "@/types/Exercise";
 import { useEffect, useState } from "react";
 import { Combobox } from "./ui/combobox";
+import { History } from "lucide-react";
 const exerciseTypes = Object.values(ExerciseType);
 const distanceUnits = Object.values(DistanceUnits);
 const weightUnits = Object.values(WeightUnits);
@@ -163,6 +164,75 @@ const BodyWeightSetsInput = () => (
   </div>
 );
 
+function formatDuration(seconds: number): string {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  if (mins === 0) return `${secs}s`;
+  if (secs === 0) return `${mins}m`;
+  return `${mins}m ${secs}s`;
+}
+
+function LastSessionPanel({ exercise }: { exercise: Exercise }) {
+  const hasSets =
+    (exercise.exerciseType === ExerciseType.WEIGHTS ||
+      exercise.exerciseType === ExerciseType.BODY_WEIGHT) &&
+    exercise.sets &&
+    exercise.sets.length > 0;
+
+  return (
+    <div className="rounded-xl bg-surface-low p-4">
+      <p className="font-sans text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-3">
+        Last Session
+      </p>
+      {hasSets ? (
+        <div className="space-y-1.5">
+          {exercise.sets.map((set, i) => (
+            <div key={i} className="flex items-center gap-2 text-sm font-body">
+              <span className="font-bold text-primary-dark w-5 shrink-0">{i + 1}</span>
+              {set.weight > 0 && (
+                <span className="font-headline font-bold">{set.weight} {set.unit}</span>
+              )}
+              {!isNaN(set.reps) && set.reps > 0 && (
+                <span className="text-muted-foreground">× {set.reps} reps</span>
+              )}
+              {set.duration != null && set.duration > 0 && (
+                <span className="text-muted-foreground">· {formatDuration(set.duration)}</span>
+              )}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-wrap gap-2">
+          {exercise.time != null && Number(exercise.time) > 0 && (
+            <div className="flex flex-col items-center bg-background rounded-lg px-3 py-2 min-w-[64px]">
+              <span className="font-sans text-[9px] uppercase tracking-widest text-muted-foreground">Time</span>
+              <span className="font-headline font-bold text-sm">{formatDuration(Number(exercise.time))}</span>
+            </div>
+          )}
+          {exercise.distance != null && exercise.distance > 0 && (
+            <div className="flex flex-col items-center bg-background rounded-lg px-3 py-2 min-w-[64px]">
+              <span className="font-sans text-[9px] uppercase tracking-widest text-muted-foreground">Dist</span>
+              <span className="font-headline font-bold text-sm">{exercise.distance} {exercise.distanceUnit ?? ""}</span>
+            </div>
+          )}
+          {exercise.level != null && exercise.level > 0 && (
+            <div className="flex flex-col items-center bg-background rounded-lg px-3 py-2 min-w-[64px]">
+              <span className="font-sans text-[9px] uppercase tracking-widest text-muted-foreground">Level</span>
+              <span className="font-headline font-bold text-sm">{exercise.level}</span>
+            </div>
+          )}
+          {exercise.rpm != null && exercise.rpm > 0 && (
+            <div className="flex flex-col items-center bg-background rounded-lg px-3 py-2 min-w-[64px]">
+              <span className="font-sans text-[9px] uppercase tracking-widest text-muted-foreground">RPM</span>
+              <span className="font-headline font-bold text-sm">{exercise.rpm}</span>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function CardioInput() {
   const [distanceUnit, setDistanceUnit] = useState<DistanceUnits | null>(null);
   const [storeRpm, setStoreRpm] = useState(false);
@@ -233,15 +303,19 @@ export function AddExerciseModal({
   showModal,
   setShowModal,
   userExercises,
+  allUserExercises = [],
   onExerciseAdded,
 }: {
   showModal: boolean;
   setShowModal: (open: boolean) => void;
   userExercises: string[];
+  allUserExercises?: Exercise[];
   onExerciseAdded?: () => void;
 }) {
   const [selectedType, setSelectedType] = useState<ExerciseType | null>(null);
   const [exerciseName, setExerciseName] = useState("");
+  const [lastExercise, setLastExercise] = useState<Exercise | null>(null);
+  const [showLastSession, setShowLastSession] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -324,6 +398,8 @@ export function AddExerciseModal({
       setShowModal(false);
       setExerciseName("");
       setSelectedType(null);
+      setLastExercise(null);
+      setShowLastSession(false);
       onExerciseAdded?.();
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     } catch (err: any) {
@@ -370,9 +446,37 @@ export function AddExerciseModal({
                   name="exercise-name"
                   options={uniqueExerciseNames}
                   value={exerciseName}
-                  onChange={setExerciseName}
+                  onChange={(name) => {
+                    setExerciseName(name);
+                    const matching = allUserExercises.filter(
+                      (e) => e.name.toLowerCase() === name.toLowerCase()
+                    );
+                    const found = matching.length > 0 ? matching[matching.length - 1] : null;
+                    setLastExercise(found);
+                    if (!found) setShowLastSession(false);
+                  }}
                   placeholder="Type or select a previous exercise name..."
                 />
+              </div>
+              <div className="flex items-center">
+                <button
+                  type="button"
+                  disabled={!lastExercise}
+                  onClick={() => setShowLastSession((v) => !v)}
+                  className={`flex items-center gap-1.5 text-xs font-body transition-all duration-200 select-none ${
+                    lastExercise
+                      ? "text-primary-dark hover:opacity-70 cursor-pointer"
+                      : "text-muted-foreground/40 cursor-not-allowed"
+                  }`}
+                >
+                  <History className={`h-3.5 w-3.5 transition-transform duration-300 ${showLastSession ? "rotate-180" : ""}`} />
+                  {showLastSession ? "Hide last session" : "View last session"}
+                </button>
+              </div>
+              <div className={`grid transition-all duration-300 ease-in-out ${showLastSession && lastExercise ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
+                <div className="overflow-hidden">
+                  {lastExercise && <LastSessionPanel exercise={lastExercise} />}
+                </div>
               </div>
               {selectedType ? (
                 exerciseTypeMap[selectedType]
