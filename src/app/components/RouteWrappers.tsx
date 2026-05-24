@@ -158,6 +158,7 @@ export function WorkoutWithData({ workoutId }: { workoutId: string }) {
   const [data, setData] = useState<{
     workout: WorkoutType;
     userExercises: string[];
+    allUserExercises: ExerciseType[];
   } | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -191,7 +192,7 @@ export function WorkoutWithData({ workoutId }: { workoutId: string }) {
           ),
         };
 
-        setData({ workout: workoutData, userExercises });
+        setData({ workout: workoutData, userExercises, allUserExercises: exercisesResponse.data });
       }
     } catch (error) {
       console.error("Error fetching workout data:", error);
@@ -255,7 +256,7 @@ export function WorkoutWithData({ workoutId }: { workoutId: string }) {
 
   return (
     <Workout
-      loaderData={data || { workout: null, userExercises: [] }}
+      loaderData={data || { workout: null, userExercises: [], allUserExercises: [] }}
       onDeleteExercise={handleDeleteExercise}
       onDuplicateExercise={handleDuplicateExercise}
       onRefresh={loadData}
