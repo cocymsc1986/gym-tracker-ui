@@ -270,7 +270,7 @@ export function Workout({
   loaderData: {
     workout: Workout | null;
     userExercises: string[];
-    allUserExercises: Exercise[];
+    allUserExercises?: Exercise[];
   };
   onDeleteExercise: (exerciseId: string) => Promise<void>;
   onDuplicateExercise: (exercise: Exercise) => Promise<void>;
