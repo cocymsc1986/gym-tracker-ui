@@ -26,6 +26,8 @@ build
 
 # env - all environment files excluded for security
 .env*
+!.env-example
+!.env.mock
 
 # Terraform
 .terraform/
