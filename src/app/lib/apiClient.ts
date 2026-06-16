@@ -3,6 +3,11 @@ import { Capacitor } from "@capacitor/core";
 
 // Determine API URL based on environment
 function getApiUrl() {
+  // Priority 0: Mock mode — same-origin relative URLs (the mock server serves the SPA + API)
+  if (import.meta.env.VITE_MOCK_AUTH === "true") {
+    return "";
+  }
+
   // Priority 1: Capacitor-specific URL (for mobile development)
   if (import.meta.env.VITE_CAPACITOR_API_URL && Capacitor.isNativePlatform()) {
     return import.meta.env.VITE_CAPACITOR_API_URL;

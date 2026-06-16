@@ -36,6 +36,19 @@ export interface TokenValidationResult {
 export async function validateJWT(
   token: string
 ): Promise<TokenValidationResult> {
+  // Mock mode: skip Cognito verification (no JWKS network call), trust the local decode.
+  if (import.meta.env.VITE_MOCK_AUTH === "true") {
+    const payload = decodeJWT(token);
+    if (!payload) {
+      return { isValid: false, error: "Invalid token format" };
+    }
+    const now = Math.floor(Date.now() / 1000);
+    if (payload.exp && payload.exp < now) {
+      return { isValid: false, error: "Token has expired", isExpired: true };
+    }
+    return { isValid: true, payload, isExpired: false };
+  }
+
   try {
     // Verify and decode the JWT
     const payload = (await verifier.verify(

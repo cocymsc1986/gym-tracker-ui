@@ -261,6 +261,53 @@ Exercise IDs are generated client-side with `crypto.randomUUID()` (see `RouteWra
 - Hardcode API URLs. Use the env-driven `apiClient`.
 - Change Vite `base` for non-mobile modes.
 
+## Stubbed Mode (`mode=mock`) — QA / Docker
+
+A fully external-dependency-free runtime exists for QA agents and offline work. Two pieces:
+
+1. **`VITE_MOCK_AUTH=true`** (set automatically by `.env.mock` when building with `--mode mock`).
+   - `src/app/lib/jwtValidation.ts` short-circuits Cognito verification to a local `decodeJWT` + expiry check.
+   - `src/app/lib/apiClient.ts` returns `baseURL: ""` so all axios calls become same-origin relative URLs.
+2. **`mock-server/server.mjs`** — plain-Node http server (no new deps). Serves the built SPA out of `build/client/` and implements every endpoint the app calls against an in-memory store seeded from `mock-server/fixtures.mjs`.
+
+### Running it
+
+```bash
+npm run mock:start          # build + serve on :8080
+# or
+npm run docker:qa           # build image, run container on :8080
+```
+
+### Test endpoints (QA-only)
+
+Gated on `ALLOW_TEST_ENDPOINTS` (default `true`):
+
+- `POST /__test__/reset` — restore initial fixtures (use between agent runs).
+- `GET  /__test__/state`  — dump the current in-memory state.
+- `GET  /__test__/token`  — mint a fresh `qa-user` access token without going through the UI.
+
+### Auth in mock mode
+
+- The mock server issues unsigned `alg: none` JWTs containing `{ sub: "qa-user", username: "qa-user", exp: now+1h, ... }`.
+- The signature is ignored: client-side validation is `decodeJWT` only when `VITE_MOCK_AUTH=true`.
+- Any email/password combination succeeds on `/auth/signin`.
+- The seeded fixtures are scoped to the `qa-user` userId — that's the username the JWT decodes to and the segment used in `/workouts/:userId/...` paths.
+
+### Adding new endpoints
+
+If you add a new `apiClient.*` call:
+
+1. Add a matching route to the `routes` array in `mock-server/server.mjs`. Use the existing `match(pattern, pathname)` helper for `:params`.
+2. If it returns new shapes that the dashboard expects, add or update seed entries in `mock-server/fixtures.mjs`.
+3. Don't forget the user-scoped store (`getWorkouts(userId)` / `getExercises(userId)`).
+4. Smoke test with `curl http://localhost:8080/your-new-endpoint`.
+
+### Things NOT to do in mock mode
+
+- Don't try to validate against a real Cognito pool — the mock JWT has no signature.
+- Don't hardcode `qa-user` in the SPA. Always use `getUserId()` so the production flow stays intact.
+- Don't add the mock server to the production Docker / S3 deploy. It is only built into the `gym-tracker-ui-qa` image and is gitignored from any deploy bundle.
+
 ## Working in Claude Code Sessions
 
 When this repo is opened in a Claude Code on the web session, the session is configured with a **dedicated development branch** (passed in the task brief, e.g. `claude/<slug>`). Develop on that branch, commit with descriptive messages, and push with `git push -u origin <branch>`. **Do not push to `main`.** Do not open a PR unless the user explicitly asks for one.

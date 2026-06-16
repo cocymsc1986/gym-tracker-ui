@@ -96,6 +96,12 @@ API URL resolution lives in `src/app/lib/apiClient.ts`:
 | `npm run lint`               | ESLint                                                        |
 | `npm run typecheck`          | `tsc --noEmit` against `tsconfig.app.json`                    |
 | `npm test`                   | Vitest (jsdom)                                                |
+| `npm run build:mock`         | Build the SPA with mock auth/API baked in (`mode=mock`)       |
+| `npm run mock:server`        | Run the in-process mock API + static server (needs prior build) |
+| `npm run mock:start`         | `build:mock` then `mock:server` — full local QA stack         |
+| `npm run docker:build`       | Build the QA Docker image (`gym-tracker-ui-qa`)               |
+| `npm run docker:run`         | Run the QA image, mapping host `:8080`                        |
+| `npm run docker:qa`          | Build + run the QA image                                      |
 
 CI (`.github/workflows/deploy.yml`) runs `lint`, `typecheck`, and `test` on every push / PR, then deploys `main` to S3 + CloudFront.
 
@@ -207,6 +213,54 @@ The app talks to the Go backend (`gym-tracker-api`). Selected endpoints:
 - `POST /workouts/:userId`, `DELETE /workouts/:userId/:workoutId`
 - `POST /workouts/:userId/:workoutId/exercises/:exerciseId`
 - `GET /exercises/:userId`, `POST /exercises/:userId`, `DELETE /exercises/:userId/:exerciseId`
+
+## Stubbed Mode (QA / Docker)
+
+For QA agents, E2E tests, and offline development there is a fully stubbed mode that runs the SPA with **no external dependencies** — no backend API, no AWS Cognito. Everything (auth, workouts, exercises) is served by a tiny in-process mock server with seeded fixtures.
+
+### Run via Docker (recommended for QA)
+
+```bash
+npm run docker:build
+npm run docker:run    # listens on http://localhost:8080
+# or
+npm run docker:qa     # build + run
+```
+
+The container serves the SPA and the mock API from the same origin on port 8080.
+
+### Run without Docker
+
+```bash
+npm run mock:start    # builds with mode=mock, then runs the mock server
+# afterwards just:
+npm run mock:server
+```
+
+### What's stubbed
+
+- **Auth**: `mode=mock` sets `VITE_MOCK_AUTH=true`, which short-circuits Cognito JWT verification (`src/app/lib/jwtValidation.ts`) to a local decode. The mock server signs unsigned `alg: none` tokens for `qa-user`. Any email/password combination succeeds.
+- **API**: `apiClient` uses an empty (same-origin) `baseURL` in mock mode. The mock server (`mock-server/server.mjs`) implements every route the app calls — `/auth/*`, `/workouts/*`, `/exercises/*` — backed by an in-memory store seeded from `mock-server/fixtures.mjs` (2 workouts, 4 exercises, user id `qa-user`).
+
+### QA helper endpoints
+
+Gated by `ALLOW_TEST_ENDPOINTS=true` (default in the Docker image):
+
+| Endpoint                  | Purpose                                      |
+| ------------------------- | -------------------------------------------- |
+| `POST /__test__/reset`    | Restore the initial fixture state            |
+| `GET  /__test__/state`    | Dump current in-memory state                 |
+| `GET  /__test__/token`    | Mint a fresh QA access token (skip the UI)   |
+
+Set `ALLOW_TEST_ENDPOINTS=false` to disable them.
+
+### Configuration
+
+| Env var                  | Default               | Purpose                                       |
+| ------------------------ | --------------------- | --------------------------------------------- |
+| `PORT`                   | `8080`                | Port the mock server listens on               |
+| `STATIC_ROOT`            | `build/client`        | Directory served as the SPA                   |
+| `ALLOW_TEST_ENDPOINTS`   | `true`                | Toggle the `/__test__/*` helpers              |
 
 ## Deployment
 
