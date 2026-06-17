@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { apiClient } from "@/lib/apiClient";
 import { getUserId } from "@/lib/getUserId";
+import { getTodayLocalDate } from "@/lib/utils";
 
 export function AddWorkout() {
   const [, setLocation] = useLocation();
@@ -106,6 +107,7 @@ export function AddWorkout() {
                 id="workout-date"
                 name="workout-date"
                 type="date"
+                defaultValue={getTodayLocalDate()}
                 autoComplete="off"
                 required
                 onChange={() => setError(null)}
