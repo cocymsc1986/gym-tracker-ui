@@ -67,7 +67,7 @@ describe("AddWorkout", () => {
     vi.setSystemTime(new Date('2024-06-15T12:00:00'));
 
     render(<AddWorkout />);
-    const user = userEvent.setup({ delay: null });
+    const user = userEvent.setup();
     const dateInput = screen.getByLabelText(/date/i) as HTMLInputElement;
 
     expect(dateInput.value).toBe('2024-06-15');
