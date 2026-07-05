@@ -24,6 +24,10 @@ describe("Tracker", () => {
     vi.clearAllMocks();
   });
 
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("renders 7 day buttons", () => {
     render(<Tracker workouts={[]} />);
     const buttons = screen.getAllByRole("button");
@@ -105,7 +109,6 @@ describe("Tracker", () => {
 
     render(<Tracker workouts={workouts} />);
 
-    // The button for Monday should have aria-label indicating view
     const mondayButton = screen.getByRole("button", { name: /view workout for/i });
     expect(mondayButton).toBeInTheDocument();
   });
@@ -123,5 +126,18 @@ describe("Tracker", () => {
     buttons.forEach((btn) => {
       expect(btn).toHaveClass("cursor-pointer");
     });
+  });
+
+  it("clicking an empty weekday navigates to /workout which pre-fills today's date", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2024-06-15"));
+
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    render(<Tracker workouts={[]} />);
+
+    const buttons = screen.getAllByRole("button");
+    await user.click(buttons[0]);
+
+    expect(mockSetLocation).toHaveBeenCalledWith("/workout");
   });
 });
