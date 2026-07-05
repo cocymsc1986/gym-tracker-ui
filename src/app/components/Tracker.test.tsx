@@ -1,8 +1,8 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Tracker } from "./Tracker";
 import { type Workout } from "@/types/Workout";
-import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const mockSetLocation = vi.fn();
 
@@ -85,7 +85,6 @@ describe("Tracker", () => {
     render(<Tracker workouts={workouts} />);
 
     const buttons = screen.getAllByRole("button");
-    // Tuesday (index 1) has no workout
     await user.click(buttons[1]);
 
     expect(mockSetLocation).toHaveBeenCalledWith("/workout");
@@ -106,7 +105,6 @@ describe("Tracker", () => {
 
     render(<Tracker workouts={workouts} />);
 
-    // The button for Monday should have aria-label indicating view
     const mondayButton = screen.getByRole("button", { name: /view workout for/i });
     expect(mondayButton).toBeInTheDocument();
   });
