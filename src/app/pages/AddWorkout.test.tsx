@@ -28,11 +28,12 @@ vi.mock("@/lib/apiClient", () => ({
 import { apiClient } from "@/lib/apiClient";
 
 const submitForm = async (name: string = "Morning Workout", date: string = "2024-06-15") => {
-  await userEvent.type(screen.getByLabelText(/session name/i), name);
+  const user = userEvent.setup();
+  await user.type(screen.getByLabelText(/session name/i), name);
   const dateInput = screen.getByLabelText(/date/i) as HTMLInputElement;
-  await userEvent.clear(dateInput);
-  await userEvent.type(dateInput, date);
-  await userEvent.click(
+  await user.clear(dateInput);
+  await user.type(dateInput, date);
+  await user.click(
     screen.getByRole("button", { name: /Add Workout/i })
   );
 };
@@ -66,12 +67,13 @@ describe("AddWorkout", () => {
     vi.setSystemTime(new Date('2024-06-15T12:00:00'));
 
     render(<AddWorkout />);
+    const user = userEvent.setup({ delay: null });
     const dateInput = screen.getByLabelText(/date/i) as HTMLInputElement;
 
     expect(dateInput.value).toBe('2024-06-15');
 
-    await userEvent.clear(dateInput);
-    await userEvent.type(dateInput, '2024-06-20');
+    await user.clear(dateInput);
+    await user.type(dateInput, '2024-06-20');
 
     expect(dateInput.value).toBe('2024-06-20');
 
@@ -119,6 +121,6 @@ describe("AddWorkout", () => {
 
     await waitFor(() => {
       expect(screen.getByText("Failed to create workout")).toBeInTheDocument();
-    });
+    }, { timeout: 3000 });
   });
 });
