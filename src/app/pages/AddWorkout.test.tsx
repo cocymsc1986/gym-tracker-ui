@@ -27,9 +27,11 @@ vi.mock("@/lib/apiClient", () => ({
 
 import { apiClient } from "@/lib/apiClient";
 
-const submitForm = async () => {
-  await userEvent.type(screen.getByLabelText(/name/i), "Morning Workout");
-  await userEvent.type(screen.getByLabelText(/date/i), "2023-10-01");
+const submitForm = async (name: string = "Morning Workout", date: string = "2024-06-15") => {
+  await userEvent.type(screen.getByLabelText(/session name/i), name);
+  const dateInput = screen.getByLabelText(/date/i) as HTMLInputElement;
+  await userEvent.clear(dateInput);
+  await userEvent.type(dateInput, date);
   await userEvent.click(
     screen.getByRole("button", { name: /Add Workout/i })
   );
@@ -43,8 +45,37 @@ describe("AddWorkout", () => {
   it("renders workout name and date fields", () => {
     render(<AddWorkout />);
 
-    expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/session name/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/date/i)).toBeInTheDocument();
+  });
+
+  it("defaults date field to today's date", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2024-06-15T12:00:00'));
+
+    render(<AddWorkout />);
+    const dateInput = screen.getByLabelText(/date/i) as HTMLInputElement;
+
+    expect(dateInput.value).toBe('2024-06-15');
+
+    vi.useRealTimers();
+  });
+
+  it("allows changing the date from the default", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2024-06-15T12:00:00'));
+
+    render(<AddWorkout />);
+    const dateInput = screen.getByLabelText(/date/i) as HTMLInputElement;
+
+    expect(dateInput.value).toBe('2024-06-15');
+
+    await userEvent.clear(dateInput);
+    await userEvent.type(dateInput, '2024-06-20');
+
+    expect(dateInput.value).toBe('2024-06-20');
+
+    vi.useRealTimers();
   });
 
   it("submits form and calls API with correct data", async () => {
@@ -54,12 +85,12 @@ describe("AddWorkout", () => {
     });
 
     render(<AddWorkout />);
-    await submitForm();
+    await submitForm("Morning Workout", "2024-06-15");
 
     await waitFor(() => {
       expect(apiClient.post).toHaveBeenCalledWith("/workouts/test-user-id", {
         name: "Morning Workout",
-        date: "2023-10-01",
+        date: "2024-06-15",
       });
     });
   });
