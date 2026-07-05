@@ -37,7 +37,7 @@ describe("Tracker", () => {
   });
 
   it("navigates to /workout when clicking a day with no activity", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     render(<Tracker workouts={[]} />);
 
     const buttons = screen.getAllByRole("button");
@@ -47,7 +47,7 @@ describe("Tracker", () => {
   });
 
   it("navigates to /workout/:id when clicking a day with a logged workout", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     const monday = getMonday();
     const mondayStr = toDateStr(monday);
 
@@ -69,7 +69,7 @@ describe("Tracker", () => {
   });
 
   it("navigates to /workout for a day with no workout even when other days have workouts", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     const monday = getMonday();
     const mondayStr = toDateStr(monday);
 
@@ -125,7 +125,7 @@ describe("Tracker", () => {
   });
 
   it("clicking a day with no workout navigates to /workout (allowing user to add with today's default)", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2024-06-15T12:00:00'));
 
