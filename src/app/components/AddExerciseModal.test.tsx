@@ -1,7 +1,7 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AddExerciseModal } from "./AddExerciseModal";
-import { describe, it, expect, vi, beforeEach } from "vitest";
 
 vi.mock("wouter", () => ({
   useParams: () => ({ id: "123" }),
@@ -237,8 +237,6 @@ describe("AddExerciseModal", () => {
 
     renderModal();
 
-    // The date is stored in state internally and used when submitting
-    // We verify it indirectly through the fact that no error occurs
     expect(screen.getByText("Add your exercise below")).toBeInTheDocument();
 
     vi.useRealTimers();
