@@ -6,11 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { apiClient } from "@/lib/apiClient";
 import { getUserId } from "@/lib/getUserId";
+import { getTodayDateString } from "@/lib/utils";
 
 export function AddWorkout() {
   const [, setLocation] = useLocation();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [date] = useState(getTodayDateString());
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -19,7 +21,7 @@ export function AddWorkout() {
 
     const formData = new FormData(e.currentTarget);
     const name = formData.get("workout-name") as string;
-    const date = formData.get("workout-date") as string;
+    const workoutDate = formData.get("workout-date") as string;
     const userId = getUserId();
 
     if (!userId) {
@@ -31,7 +33,7 @@ export function AddWorkout() {
     try {
       const response = await apiClient.post(`/workouts/${userId}`, {
         name,
-        date,
+        date: workoutDate,
       });
 
       if (response.status === 201 && response.data.workoutId) {
@@ -108,6 +110,7 @@ export function AddWorkout() {
                 type="date"
                 autoComplete="off"
                 required
+                defaultValue={date}
                 onChange={() => setError(null)}
                 className="w-full bg-surface-high border-0 focus-visible:ring-0 focus-visible:bg-surface-highest font-sans h-12 rounded-xl"
               />
