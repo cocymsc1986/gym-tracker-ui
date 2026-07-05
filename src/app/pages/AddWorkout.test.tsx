@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AddWorkout } from "./AddWorkout";
@@ -40,11 +40,25 @@ describe("AddWorkout", () => {
     vi.clearAllMocks();
   });
 
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("renders workout name and date fields", () => {
     render(<AddWorkout />);
 
     expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/date/i)).toBeInTheDocument();
+  });
+
+  it("defaults date field to today's date on initial render", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2024-06-15"));
+
+    render(<AddWorkout />);
+
+    const dateInput = screen.getByLabelText(/date/i) as HTMLInputElement;
+    expect(dateInput.value).toBe("2024-06-15");
   });
 
   it("submits form and calls API with correct data", async () => {
