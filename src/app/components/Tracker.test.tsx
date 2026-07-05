@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Tracker } from "./Tracker";
 import { type Workout } from "@/types/Workout";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const mockSetLocation = vi.fn();
 
@@ -123,5 +124,19 @@ describe("Tracker", () => {
     buttons.forEach((btn) => {
       expect(btn).toHaveClass("cursor-pointer");
     });
+  });
+
+  it("clicking a day with no workout navigates to /workout (allowing user to add with today's default)", async () => {
+    const user = userEvent.setup();
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2024-06-15T12:00:00'));
+
+    render(<Tracker workouts={[]} />);
+    const buttons = screen.getAllByRole("button");
+    await user.click(buttons[0]);
+
+    expect(mockSetLocation).toHaveBeenCalledWith("/workout");
+
+    vi.useRealTimers();
   });
 });
