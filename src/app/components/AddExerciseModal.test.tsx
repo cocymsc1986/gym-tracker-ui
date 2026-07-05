@@ -71,7 +71,7 @@ describe("AddExerciseModal", () => {
   });
 
   it("allows typing custom exercise name in combobox", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderModal();
 
     const exerciseNameInput = screen.getByPlaceholderText(
@@ -83,7 +83,7 @@ describe("AddExerciseModal", () => {
   });
 
   it("filters and displays previous exercise names in combobox", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderModal(["Bench Press", "Squats", "Deadlift"]);
 
     const exerciseNameInput = screen.getByPlaceholderText(
@@ -107,7 +107,7 @@ describe("AddExerciseModal", () => {
   });
 
   it("removes duplicate exercise names from options", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderModal(["Bench Press", "Bench Press", "Squats"]);
 
     const exerciseNameInput = screen.getByPlaceholderText(
@@ -124,7 +124,7 @@ describe("AddExerciseModal", () => {
   });
 
   it("selects previous exercise name from combobox options", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderModal(["Bench Press", "Squats", "Deadlift"]);
 
     const exerciseNameInput = screen.getByPlaceholderText(
@@ -141,7 +141,7 @@ describe("AddExerciseModal", () => {
   });
 
   it("filters combobox options based on input", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderModal(["Bench Press", "Squats", "Deadlift"]);
 
     const exerciseNameInput = screen.getByPlaceholderText(
@@ -178,7 +178,7 @@ describe("AddExerciseModal", () => {
   });
 
   it("closes modal when close button is clicked", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderModal();
 
     const closeButton = screen.getByRole("button", { name: /Close/i });
@@ -205,7 +205,7 @@ describe("AddExerciseModal", () => {
   });
 
   it("allows clearing and re-entering exercise name", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderModal();
 
     const exerciseNameInput = screen.getByPlaceholderText(
