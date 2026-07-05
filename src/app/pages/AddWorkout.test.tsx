@@ -121,6 +121,6 @@ describe("AddWorkout", () => {
 
     await waitFor(() => {
       expect(screen.getByText("Failed to create workout")).toBeInTheDocument();
-    }, { timeout: 3000 });
+    });
   });
 });
