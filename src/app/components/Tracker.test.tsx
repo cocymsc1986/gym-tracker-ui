@@ -130,7 +130,7 @@ describe("Tracker", () => {
 
   it("clicking an empty weekday navigates to /workout which pre-fills today's date", async () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date("2024-06-15"));
+    vi.setSystemTime(new Date("2024-06-15T12:00:00"));
 
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     render(<Tracker workouts={[]} />);
