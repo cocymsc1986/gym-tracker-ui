@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AddWorkout } from "./AddWorkout";
 
@@ -29,7 +29,9 @@ import { apiClient } from "@/lib/apiClient";
 
 const submitForm = async () => {
   await userEvent.type(screen.getByLabelText(/name/i), "Morning Workout");
-  await userEvent.type(screen.getByLabelText(/date/i), "2023-10-01");
+  fireEvent.change(screen.getByLabelText(/date/i), {
+    target: { value: "2023-10-01" },
+  });
   await userEvent.click(
     screen.getByRole("button", { name: /Add Workout/i })
   );
@@ -53,7 +55,7 @@ describe("AddWorkout", () => {
 
   it("defaults date field to today's date on initial render", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date("2024-06-15"));
+    vi.setSystemTime(new Date("2024-06-15T12:00:00"));
 
     render(<AddWorkout />);
 
