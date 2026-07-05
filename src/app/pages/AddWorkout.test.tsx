@@ -27,17 +27,6 @@ vi.mock("@/lib/apiClient", () => ({
 
 import { apiClient } from "@/lib/apiClient";
 
-const submitForm = async (name: string = "Morning Workout", date: string = "2024-06-15") => {
-  const user = userEvent.setup();
-  await user.type(screen.getByLabelText(/session name/i), name);
-  const dateInput = screen.getByLabelText(/date/i) as HTMLInputElement;
-  await user.clear(dateInput);
-  await user.type(dateInput, date);
-  await user.click(
-    screen.getByRole("button", { name: /Add Workout/i })
-  );
-};
-
 describe("AddWorkout", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -67,7 +56,7 @@ describe("AddWorkout", () => {
     vi.setSystemTime(new Date('2024-06-15T12:00:00'));
 
     render(<AddWorkout />);
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     const dateInput = screen.getByLabelText(/date/i) as HTMLInputElement;
 
     expect(dateInput.value).toBe('2024-06-15');
@@ -87,7 +76,13 @@ describe("AddWorkout", () => {
     });
 
     render(<AddWorkout />);
-    await submitForm("Morning Workout", "2024-06-15");
+    const user = userEvent.setup({ delay: null });
+    
+    await user.type(screen.getByLabelText(/session name/i), "Morning Workout");
+    const dateInput = screen.getByLabelText(/date/i) as HTMLInputElement;
+    await user.clear(dateInput);
+    await user.type(dateInput, "2024-06-15");
+    await user.click(screen.getByRole("button", { name: /Add Workout/i }));
 
     await waitFor(() => {
       expect(apiClient.post).toHaveBeenCalledWith("/workouts/test-user-id", {
@@ -104,7 +99,13 @@ describe("AddWorkout", () => {
     });
 
     render(<AddWorkout />);
-    await submitForm();
+    const user = userEvent.setup({ delay: null });
+    
+    await user.type(screen.getByLabelText(/session name/i), "Morning Workout");
+    const dateInput = screen.getByLabelText(/date/i) as HTMLInputElement;
+    await user.clear(dateInput);
+    await user.type(dateInput, "2024-06-15");
+    await user.click(screen.getByRole("button", { name: /Add Workout/i }));
 
     await waitFor(() => {
       expect(mockSetLocation).toHaveBeenCalledWith("/workout/123");
@@ -117,7 +118,13 @@ describe("AddWorkout", () => {
     });
 
     render(<AddWorkout />);
-    await submitForm();
+    const user = userEvent.setup({ delay: null });
+    
+    await user.type(screen.getByLabelText(/session name/i), "Morning Workout");
+    const dateInput = screen.getByLabelText(/date/i) as HTMLInputElement;
+    await user.clear(dateInput);
+    await user.type(dateInput, "2024-06-15");
+    await user.click(screen.getByRole("button", { name: /Add Workout/i }));
 
     await waitFor(() => {
       expect(screen.getByText("Failed to create workout")).toBeInTheDocument();
