@@ -1,3 +1,4 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AddExerciseModal } from "./AddExerciseModal";
@@ -70,7 +71,7 @@ describe("AddExerciseModal", () => {
   });
 
   it("allows typing custom exercise name in combobox", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderModal();
 
     const exerciseNameInput = screen.getByPlaceholderText(
@@ -82,7 +83,7 @@ describe("AddExerciseModal", () => {
   });
 
   it("filters and displays previous exercise names in combobox", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderModal(["Bench Press", "Squats", "Deadlift"]);
 
     const exerciseNameInput = screen.getByPlaceholderText(
@@ -106,7 +107,7 @@ describe("AddExerciseModal", () => {
   });
 
   it("removes duplicate exercise names from options", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderModal(["Bench Press", "Bench Press", "Squats"]);
 
     const exerciseNameInput = screen.getByPlaceholderText(
@@ -123,7 +124,7 @@ describe("AddExerciseModal", () => {
   });
 
   it("selects previous exercise name from combobox options", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderModal(["Bench Press", "Squats", "Deadlift"]);
 
     const exerciseNameInput = screen.getByPlaceholderText(
@@ -140,7 +141,7 @@ describe("AddExerciseModal", () => {
   });
 
   it("filters combobox options based on input", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderModal(["Bench Press", "Squats", "Deadlift"]);
 
     const exerciseNameInput = screen.getByPlaceholderText(
@@ -177,7 +178,7 @@ describe("AddExerciseModal", () => {
   });
 
   it("closes modal when close button is clicked", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderModal();
 
     const closeButton = screen.getByRole("button", { name: /Close/i });
@@ -204,7 +205,7 @@ describe("AddExerciseModal", () => {
   });
 
   it("allows clearing and re-entering exercise name", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderModal();
 
     const exerciseNameInput = screen.getByPlaceholderText(
@@ -228,5 +229,29 @@ describe("AddExerciseModal", () => {
       "Type or select a previous exercise name..."
     );
     expect(exerciseNameInput).toBeInTheDocument();
+  });
+
+  it("defaults exercise date to today when no override provided", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2024-06-15T12:00:00'));
+
+    renderModal();
+
+    expect(screen.getByText("Add your exercise below")).toBeInTheDocument();
+
+    vi.useRealTimers();
+  });
+
+  it("uses provided exercise date override when supplied", () => {
+    render(
+      <AddExerciseModal
+        showModal={true}
+        setShowModal={mockSetShowModal}
+        userExercises={[]}
+        exerciseDateOverride="2024-06-20"
+      />
+    );
+
+    expect(screen.getByText("Add your exercise below")).toBeInTheDocument();
   });
 });

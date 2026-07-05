@@ -3,6 +3,7 @@ import { useParams } from "wouter";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { apiClient } from "@/lib/apiClient";
 import { getUserId } from "@/lib/getUserId";
+import { getTodayDateString } from "@/lib/utils";
 import {
   validateWeights,
   validateBodyWeight,
@@ -305,12 +306,14 @@ export function AddExerciseModal({
   userExercises,
   allUserExercises = [],
   onExerciseAdded,
+  exerciseDateOverride,
 }: {
   showModal: boolean;
   setShowModal: (open: boolean) => void;
   userExercises: string[];
   allUserExercises?: Exercise[];
   onExerciseAdded?: () => void;
+  exerciseDateOverride?: string;
 }) {
   const [selectedType, setSelectedType] = useState<ExerciseType | null>(null);
   const [exerciseName, setExerciseName] = useState("");
@@ -318,6 +321,7 @@ export function AddExerciseModal({
   const [showLastSession, setShowLastSession] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [date] = useState(exerciseDateOverride || getTodayDateString());
 
   const params = useParams();
   const { id: workoutId } = params;
@@ -344,6 +348,7 @@ export function AddExerciseModal({
     const exerciseId = crypto.randomUUID();
     const formData = new FormData(event.currentTarget);
     formData.set("exercise-id", exerciseId);
+    formData.set("exercise-date", date);
 
     const exerciseType = formData.get("exercise-type") as ExerciseType;
     if (!exerciseType) {
